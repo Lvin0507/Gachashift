@@ -97,15 +97,35 @@ def kill_processes(procs):
 
 
 # ---------- logs ----------
+# The first bytes of each log at the time its size was taken. Some tools (OneDragon) start
+# a new log file on every launch; once the new file grows past the old size, a size check
+# alone can no longer tell, so a changed start of the file also means "read from the top".
+_LOG_HEADS = {}
+HEAD_BYTES = 256
+
+
+def _head(path):
+    try:
+        with open(path, "rb") as f:
+            return f.read(HEAD_BYTES)
+    except OSError:
+        return b""
+
+
 def log_size(path):
-    return os.path.getsize(path) if path and os.path.exists(path) else 0
+    if not path or not os.path.exists(path):
+        return 0
+    _LOG_HEADS[path] = _head(path)
+    return os.path.getsize(path)
 
 
 def read_since(path, offset):
     """Everything written to `path` after byte `offset` (handles truncation/rotation)."""
     if not path or not os.path.exists(path):
         return ""
-    if os.path.getsize(path) < offset:
+    old_head = _LOG_HEADS.get(path, b"")
+    replaced = offset and old_head and _head(path)[:len(old_head)] != old_head
+    if replaced or os.path.getsize(path) < offset:
         offset = 0
     with open(path, "rb") as f:
         f.seek(offset)

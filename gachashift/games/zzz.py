@@ -125,6 +125,9 @@ class ZenlessZoneZero(Game):
         if stop:
             stop.report = rep
             raise stop
-        if not rep.tasks:
+        finished = any(key == "note.finished" for key, _ in rep.notes)
+        if not rep.tasks and finished:
+            rep.note("note.no_task_lines")  # the run ended well, but no app lines were read
+        elif not rep.tasks:
             rep.note("note.no_done_marker", reason=f"{reason}, OneDragon seen={saw_od}")
         return rep
