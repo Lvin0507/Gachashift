@@ -16,7 +16,7 @@
 
 ## 下载
 
-到 [Releases](https://github.com/Lvin0507/Gachashift/releases/latest) 下载 `Gachashift-x.y.z.zip`，解压到一个你有写入权限的文件夹（不要放在 Program Files），然后打开 `Gachashift.exe`。App 会一步步带你完成设置。
+到 [Releases](https://github.com/Lvin0507/Gachashift/releases/latest) 下载 `Gachashift-x.y.z.zip`，解压到一个你有写入权限的文件夹（不要放在 Program Files），然后打开 `Gachashift.exe`。App 会一步步带你完成设置。有新版本时首页会提示；按 **更新** 会自动下载、用 Release 附带的校验码确认文件没被改动、装到原本的文件夹并重新打开，你的设置和日志都会保留。
 
 因为 exe 没有数字签名，Windows 可能会显示“Windows 已保护你的电脑”：按 **更多信息 → 仍要运行** 即可。
 
@@ -146,6 +146,7 @@ gachashift/           程序本体
   report.py           结构化的结果、Telegram 与 Discord 消息
   updates.py          向 GitHub 查询有没有新版本
   finder.py           在电脑上寻找各游戏的工具
+  selfupdate.py       打包版 exe 的一键更新
   i18n.py             所有中英文文字
   games/              每款游戏一个模块
 tests/                读日志规则的测试，每次 push 都会跑
@@ -195,7 +196,7 @@ python -m unittest discover -s tests
 
 如果某天战报看起来不对，把那天的日志加进 `tests/logs`，写一个测试说明战报“应该”显示什么，再修改读日志的规则直到测试通过。
 
-在 `gachashift/__init__.py` 改好版本号，commit 并 push，再推送一个对应的 tag，例如 `v1.0.1`。GitHub Actions 会在 Windows 上打包 `Gachashift.exe`，并发布附上 zip 的 Release；如果 tag 和版本号对不上，或有测试没通过，它会停下来不发布。
+在 `gachashift/__init__.py` 改好版本号，commit 并 push，再推送一个对应的 tag，例如 `v1.0.1`。GitHub Actions 会在 Windows 上打包 `Gachashift.exe`，并发布附上 zip 的 Release；如果 tag 和版本号对不上，或有测试没通过，它会停下来不发布。zip 旁边还会附上 `.sha256` 校验码，供 App 的一键更新核对。
 
 ## 基于以下项目
 

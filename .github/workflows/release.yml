@@ -48,8 +48,20 @@ jobs:
       - name: Build
         run: python build.py
 
+      # The app's one-click update checks the download against this before installing it
+      - name: Checksum
+        shell: python
+        run: |
+          import hashlib, pathlib
+          for z in pathlib.Path("dist").glob("Gachashift-*.zip"):
+              digest = hashlib.sha256(z.read_bytes()).hexdigest()
+              pathlib.Path(f"{z}.sha256").write_text(f"{digest}  {z.name}\n", encoding="ascii")
+              print(digest, z.name)
+
       - name: Publish the Release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/Gachashift-*.zip
+          files: |
+            dist/Gachashift-*.zip
+            dist/Gachashift-*.zip.sha256
           generate_release_notes: true

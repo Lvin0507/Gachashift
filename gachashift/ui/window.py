@@ -14,7 +14,7 @@ from PySide6.QtGui import QColor, QPainter, QPixmap
 from PySide6.QtWidgets import (QApplication, QButtonGroup, QFrame, QHBoxLayout, QMessageBox,
                                QScrollArea, QVBoxLayout, QWidget)
 
-from .. import __version__, finder
+from .. import __version__, finder, selfupdate
 from ..config import app_dir, load_config, save_config
 from ..updates import newer_release
 from ..games import ordered
@@ -44,12 +44,15 @@ PAGES = ["home", "games", "run", "schedule", "history", "general", "appearance"]
 
 
 class MainWindow(QWidget):
-    update_found = Signal(str, str)  # version, release page; emitted from the checking thread
+    update_found = Signal(object)     # updates.Release; emitted from the checking thread
+    update_progress = Signal(int)    # percent of the download
+    update_ready = Signal(str)       # the updater script, once the download checks out
+    update_failed = Signal(str)      # why the update couldn't be installed
     tools_found = Signal(object)     # {game id: {setting: value}}; emitted from the search thread
 
     def __init__(self):
         super().__init__()
-        self.update_info = None  # (version, url) once a newer release is known
+        self.update_info = None  # an updates.Release once a newer one is known
         self.cfg = load_config()
         self.saved_cfg = copy.deepcopy(self.cfg)
         self.current_game = ordered(self.cfg)[0].id
@@ -79,6 +82,10 @@ class MainWindow(QWidget):
         self.watch_timer.timeout.connect(self.watch_runs)
         self.watch_timer.start(2000)
         self.update_found.connect(self.on_update_found)
+        self.update_progress.connect(lambda p: self.set_status(self.tr("update.downloading", n=p), "accent"))
+        self.update_ready.connect(self.on_update_ready)
+        self.update_failed.connect(self.on_update_failed)
+        self.updating = False
         self.tools_found.connect(self.on_tools_found)
         self.finding = False
         if self.cfg["options"].get("check_updates", True):
@@ -88,7 +95,7 @@ class MainWindow(QWidget):
     def check_updates(self):
         found = newer_release()
         if found:
-            self.update_found.emit(*found)
+            self.update_found.emit(found)
 
     def find_tools(self):
         """Search for every game's tool in the background (it can take up to 20 seconds)."""
@@ -111,10 +118,44 @@ class MainWindow(QWidget):
         else:
             self.set_status(self.tr("finder.nothing"), "")
 
-    def on_update_found(self, version, url):
-        self.update_info = (version, url)
+    def on_update_found(self, release):
+        self.update_info = release
         if self.page == "home":
             self.show_page("home")
+
+    def install_update(self):
+        """Download and check the new version in the background, then close so the updater
+        can replace the files and open the new version."""
+        if self.updating:
+            return
+        if self.run_handle is not None or self.running_info():
+            self.set_status(self.tr("update.busy"), "fail")
+            return
+        if self.cfg != self.saved_cfg:
+            self.save()  # settings live in config.json, which the update leaves alone
+        self.updating = True
+        self.set_status(self.tr("update.downloading", n=0), "accent")
+        release = self.update_info
+
+        def work():
+            try:
+                self.update_ready.emit(str(selfupdate.prepare(release, self.update_progress.emit)))
+            except Exception as e:  # anything at all: the old version keeps working
+                self.update_failed.emit(str(e))
+
+        threading.Thread(target=work, daemon=True).start()
+
+    def on_update_ready(self, script):
+        if self.run_handle is not None or self.running_info():
+            self.updating = False  # a run started during the download; try again later
+            self.set_status(self.tr("update.busy"), "fail")
+            return
+        selfupdate.start_updater(script)
+        QApplication.instance().quit()
+
+    def on_update_failed(self, reason):
+        self.updating = False
+        self.set_status(self.tr("update.failed", reason=reason), "fail")
 
     # ---------- helpers ----------
     @property

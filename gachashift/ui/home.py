@@ -8,6 +8,7 @@ from PySide6.QtWidgets import QGridLayout, QHBoxLayout, QVBoxLayout, QWidget
 
 from ..games import move, ordered
 from ..runner import load_last_results
+from ..selfupdate import can_self_update
 from ..winutil import DAY_KEYS_EN, DAY_KEYS_ZH, missing_items, plain_name
 from .theme import FAIL
 from .widgets import ImageBox, Toggle, button, label, panel, shadowed
@@ -85,12 +86,13 @@ def setup_card(app, steps):
 
 
 def update_card(app):
-    version, url = app.update_info
+    release = app.update_info
+    one_click = can_self_update() and bool(release.zip_url)
     card, inner = panel("setup", spacing=6)
     row = QHBoxLayout()
     text = QVBoxLayout()
-    text.addWidget(label(app.tr("update.available", version=version), "h2"))
-    text.addWidget(label(app.tr("update.hint"), "hint", wrap=True))
+    text.addWidget(label(app.tr("update.available", version=release.version), "h2"))
+    text.addWidget(label(app.tr("update.hint_install" if one_click else "update.hint"), "hint", wrap=True))
     row.addLayout(text, 1)
 
     def later():
@@ -98,7 +100,11 @@ def update_card(app):
         app.show_page("home")
 
     row.addWidget(button(app.tr("update.later"), None, later))
-    row.addWidget(button(app.tr("update.download"), "primary", lambda: webbrowser.open(url)))
+    if one_click:
+        row.addWidget(button(app.tr("update.notes"), None, lambda: webbrowser.open(release.page)))
+        row.addWidget(button(app.tr("update.install"), "primary", app.install_update))
+    else:
+        row.addWidget(button(app.tr("update.download"), "primary", lambda: webbrowser.open(release.page)))
     inner.addLayout(row)
     return card
 

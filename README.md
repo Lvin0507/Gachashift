@@ -16,7 +16,7 @@
 
 ## Download
 
-Get `Gachashift-x.y.z.zip` from [Releases](../../releases), unzip it to a folder you can write to (not Program Files), and open `Gachashift.exe`. The app walks you through the setup.
+Get `Gachashift-x.y.z.zip` from [Releases](../../releases), unzip it to a folder you can write to (not Program Files), and open `Gachashift.exe`. The app walks you through the setup. When a newer version is out, Home offers it; **Update** downloads it, checks it against the checksum published with the release, installs it over the old one and opens it again, keeping your settings and logs.
 
 Windows may say it "protected your PC", because the exe isn't code-signed: choose **More info → Run anyway**.
 
@@ -146,6 +146,7 @@ gachashift/           The program
   report.py           Structured results, the Telegram and Discord messages
   updates.py          Asks GitHub whether a newer release is out
   finder.py           Finds each game's tool on the PC
+  selfupdate.py       One-click update of the packaged exe
   i18n.py             All English and Chinese text
   games/              One module per game
 tests/                Log-parser tests, run on every push
@@ -195,7 +196,7 @@ python -m unittest discover -s tests
 
 When a report looked wrong, add that day's log to `tests/logs` with a test for what the report should have said, and fix the parser until it passes.
 
-Set the version in `gachashift/__init__.py`, commit and push, then push a matching tag such as `v1.0.1`. GitHub Actions builds `Gachashift.exe` on Windows and publishes the Release with the zip attached; it stops if the tag and the version don't match, or if a test fails.
+Set the version in `gachashift/__init__.py`, commit and push, then push a matching tag such as `v1.0.1`. GitHub Actions builds `Gachashift.exe` on Windows and publishes the Release with the zip attached; it stops if the tag and the version don't match, or if a test fails. A `.sha256` checksum of the zip is published next to it for the app's one-click update.
 
 ## Built on
 
