@@ -99,7 +99,7 @@ Other pages:
 
 - **Run**: run everything now, or test one game; the output appears as it happens
 - **Schedule**: the daily Task Scheduler task (highest privileges, never starts late after a missed time)
-- **History**: past runs, with the report at the end
+- **History**: past runs, with the report at the end. **Pack a problem report** puts the recent logs, screenshots, the end of each tool's log and your settings into one zip on the Desktop, with the Telegram token, Discord webhook, game UIDs and your Windows user name removed, ready to send to whoever helps you
 - **General**: languages, mute / darken the screen / shut down while running, Telegram and Discord with a test message, the update check
 - **Appearance**: a background image, panel opacity, accent colour, and an image for each game. Images are files on your PC; they stay there and are never uploaded or bundled
 
@@ -148,6 +148,7 @@ gachashift/           The program
   finder.py           Finds each game's tool on the PC
   selfupdate.py       One-click update of the packaged exe
   health.py           Windows settings that would stop the morning run
+  bugreport.py        The problem report zip, with private details removed
   i18n.py             All English and Chinese text
   games/              One module per game
 tests/                Log-parser tests, run on every push
