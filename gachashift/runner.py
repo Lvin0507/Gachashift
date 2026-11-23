@@ -114,7 +114,7 @@ def run_games(cfg, only, lang, opts, log, dim=False):
                 reports.append(stopped_report())
                 return reports, True
             # a test run of one game has someone watching it; they can just run it again
-            if (not only and needs_retry(reports[-1])
+            if (not only and game_cfg.get("retry", True) and needs_retry(reports[-1])
                     and reports[-1].seconds < RETRY_MAX_MINUTES * 60):
                 retry.append((len(reports) - 1, game_cls, game_cfg))
 

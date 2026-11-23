@@ -41,7 +41,7 @@ class NeedsRetryTest(unittest.TestCase):
 class RetryRunTest(unittest.TestCase):
     """Run fake games through run_games and look at the reports it returns."""
 
-    def run_with(self, outcomes, only=None, minutes=1):
+    def run_with(self, outcomes, only=None, minutes=1, retry_off=()):
         """outcomes: game id -> list of reports, one per attempt."""
         calls = {gid: 0 for gid in outcomes}
 
@@ -56,7 +56,8 @@ class RetryRunTest(unittest.TestCase):
 
         cfg = copy.deepcopy(DEFAULT_CONFIG)
         for gid in outcomes:
-            cfg["games"][gid] = {"enabled": True, "days": list(range(7))}
+            cfg["games"][gid] = {"enabled": True, "days": list(range(7)),
+                                 "retry": gid not in retry_off}
         clock = iter(range(0, 10 ** 6, minutes * 60))
         with mock.patch.object(runner, "GAMES", [make(g) for g in outcomes]), \
                 mock.patch.object(runner.time, "time", lambda: next(clock)):
@@ -82,6 +83,16 @@ class RetryRunTest(unittest.TestCase):
     def test_single_game_test_run_is_not_repeated(self):
         reports, calls = self.run_with({"zzz": [report(R.FAIL)]}, only="zzz")
         self.assertEqual(calls["zzz"], 1)
+
+    def test_switched_off(self):
+        reports, calls = self.run_with({"wuthering": [report(R.FAIL)]}, retry_off={"wuthering"})
+        self.assertEqual(calls["wuthering"], 1)
+
+    def test_defaults(self):
+        # Endfield's tasks carry over between days, so it isn't retried unless switched on
+        games = DEFAULT_CONFIG["games"]
+        self.assertFalse(games["endfield"]["retry"])
+        self.assertTrue(all(games[g]["retry"] for g in games if g != "endfield"))
 
     def test_long_first_attempt_is_not_repeated(self):
         reports, calls = self.run_with({"bluearchive": [report(R.WARN)]},

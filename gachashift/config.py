@@ -53,6 +53,11 @@ DEFAULT_CONFIG = {
                     "bgi_path": "", "onedragon_config": "默认配置"},
     },
 }
+# Each game's "try once more when nothing got done" switch (see runner.needs_retry). Off for
+# Endfield: its tasks carry over between days (an unfinished delivery blocks the next day's
+# hand-ins), so a second run there is better left to the player.
+for _gid, _game in DEFAULT_CONFIG["games"].items():
+    _game["retry"] = _gid != "endfield"
 
 
 def app_dir():

@@ -54,6 +54,9 @@ FIELDS = {
     "genshin": [("server", "choice", ["asia", "america", "europe"]), ("bgi_path", "exe", None),
                 ("onedragon_config", "text", None), ("wait_for_reset", "bool", None)],
 }
+# every game has the retry switch, last on its page
+for _fields in FIELDS.values():
+    _fields.append(("retry", "bool", None))
 PATH_KINDS = ("exe", "file", "dir")
 
 

@@ -40,7 +40,8 @@
         6
       ],
       "maaend_path": "",
-      "log_dir": ""
+      "log_dir": "",
+      "retry": false
     },
     "arknights": {
       "enabled": false,
@@ -55,7 +56,8 @@
       ],
       "maa_path": "",
       "maa_log": "",
-      "game_exe": "Arknights.exe"
+      "game_exe": "Arknights.exe",
+      "retry": true
     },
     "wuthering": {
       "enabled": false,
@@ -71,7 +73,8 @@
       "start_button": [
         0.85,
         0.86
-      ]
+      ],
+      "retry": true
     },
     "bluearchive": {
       "enabled": false,
@@ -91,7 +94,8 @@
       "start_button": [
         0.852,
         0.859
-      ]
+      ],
+      "retry": true
     },
     "zzz": {
       "enabled": false,
@@ -113,7 +117,8 @@
       "start_button": [
         0.85,
         0.86
-      ]
+      ],
+      "retry": true
     },
     "genshin": {
       "enabled": false,
@@ -129,7 +134,8 @@
       "wait_for_reset": true,
       "server": "asia",
       "bgi_path": "",
-      "onedragon_config": "默认配置"
+      "onedragon_config": "默认配置",
+      "retry": true
     }
   }
 }
