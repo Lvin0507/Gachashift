@@ -12,7 +12,7 @@ from . import report as R
 from .config import app_dir, load_config
 from .games import ordered
 from .i18n import game_name, t
-from .system import (QuietMode, StopRequested, clear_stop, seconds_since_input, shutdown, ts,
+from .system import (KeepAwake, QuietMode, StopRequested, clear_stop, seconds_since_input, shutdown, ts,
                      wait_for_reset, wait_for_unlock)
 
 ACTIVE_SECONDS = 120  # someone used the PC this recently: ask before taking over
@@ -237,8 +237,9 @@ def run_all(cfg=None, only=None, allow_shutdown=True, send=True, ask_first=False
             # only the scheduled run darkens the screen; someone is watching any other run
             # a test run has someone watching, so it takes no pictures
             shots = None if only or not opts.get("screenshots", True) else str(screenshot_folder())
-            reports, stopped = run_games(cfg, only, lang, opts, log, shots=shots,
-                                         dim=ask_first and opts.get("dim_screen", False))
+            with KeepAwake():
+                reports, stopped = run_games(cfg, only, lang, opts, log, shots=shots,
+                                             dim=ask_first and opts.get("dim_screen", False))
     except StopRequested:  # stopped while waiting for the lock screen to clear
         stopped = True
         reports.append(stopped_report())

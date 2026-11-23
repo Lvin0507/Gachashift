@@ -332,6 +332,27 @@ def restore_gamma():
 
 
 # ---------- quiet mode ----------
+class KeepAwake:
+    """Tell Windows the PC is busy for as long as a run lasts: no sleep, no screen saver.
+    Some tools click through window messages rather than the real mouse, which Windows doesn't
+    count as use, so without this it could sleep or lock in the middle of a game."""
+    ES_CONTINUOUS, ES_SYSTEM_REQUIRED, ES_DISPLAY_REQUIRED = 0x80000000, 0x1, 0x2
+
+    def _set(self, flags):
+        try:
+            ctypes.windll.kernel32.SetThreadExecutionState(flags)
+        except AttributeError:  # not Windows
+            pass
+
+    def __enter__(self):
+        self._set(self.ES_CONTINUOUS | self.ES_SYSTEM_REQUIRED | self.ES_DISPLAY_REQUIRED)
+        return self
+
+    def __exit__(self, *exc):
+        self._set(self.ES_CONTINUOUS)  # back to normal
+        return False
+
+
 class QuietMode:
     """Mute the speakers and/or dim the screens for the duration of a run, then restore
     exactly what was there before. Each part fails soft: a missing library or an external

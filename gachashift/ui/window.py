@@ -7,6 +7,7 @@ import json
 import os
 
 import psutil
+import subprocess
 import threading
 
 from PySide6.QtCore import Qt, QTimer, Signal
@@ -14,7 +15,7 @@ from PySide6.QtGui import QColor, QPainter, QPixmap
 from PySide6.QtWidgets import (QApplication, QButtonGroup, QFrame, QHBoxLayout, QMessageBox,
                                QScrollArea, QVBoxLayout, QWidget)
 
-from .. import __version__, finder, selfupdate
+from .. import __version__, finder, health, selfupdate
 from ..config import app_dir, load_config, save_config
 from ..updates import newer_release
 from ..games import ordered
@@ -49,10 +50,12 @@ class MainWindow(QWidget):
     update_ready = Signal(str)       # the updater script, once the download checks out
     update_failed = Signal(str)      # why the update couldn't be installed
     tools_found = Signal(object)     # {game id: {setting: value}}; emitted from the search thread
+    health_checked = Signal(object)  # [health.Problem]; emitted from the checking thread
 
     def __init__(self):
         super().__init__()
         self.update_info = None  # an updates.Release once a newer one is known
+        self.health = []         # health.Problem list, filled in the background
         self.cfg = load_config()
         self.saved_cfg = copy.deepcopy(self.cfg)
         self.current_game = ordered(self.cfg)[0].id
@@ -87,6 +90,8 @@ class MainWindow(QWidget):
         self.update_failed.connect(self.on_update_failed)
         self.updating = False
         self.tools_found.connect(self.on_tools_found)
+        self.health_checked.connect(self.on_health_checked)
+        self.check_health()
         self.finding = False
         if self.cfg["options"].get("check_updates", True):
             # in the background, so a slow or missing connection never delays the window
@@ -96,6 +101,22 @@ class MainWindow(QWidget):
         found = newer_release()
         if found:
             self.update_found.emit(found)
+
+    def check_health(self):
+        """Look for Windows settings that would stop the morning run (takes a moment)."""
+        threading.Thread(target=lambda: self.health_checked.emit(health.check()), daemon=True).start()
+
+    def on_health_checked(self, problems):
+        self.health = problems
+        if self.page == "home":
+            self.show_page("home")
+
+    @staticmethod
+    def open_fix(fix):
+        if fix.startswith("ms-settings:"):
+            os.startfile(fix)
+        else:
+            subprocess.Popen(fix, shell=True)
 
     def find_tools(self):
         """Search for every game's tool in the background (it can take up to 20 seconds)."""

@@ -109,6 +109,23 @@ def update_card(app):
     return card
 
 
+def health_card(app):
+    """Windows settings that would stop the morning run, each with a way to fix it."""
+    card, inner = panel("setup", spacing=10)
+    head = QHBoxLayout()
+    head.addWidget(label(app.tr("health.title"), "h2"), 1)
+    head.addWidget(button(app.tr("health.recheck"), None, app.check_health))
+    inner.addLayout(head)
+    for problem in app.health:
+        row = QHBoxLayout()
+        row.addWidget(label(app.tr(problem.key, **problem.params), "hint", wrap=True), 1)
+        if problem.fix:
+            row.addWidget(button(app.tr("health.open"), None, lambda fix=problem.fix: app.open_fix(fix)),
+                          0, Qt.AlignTop)
+        inner.addLayout(row)
+    return card
+
+
 def order_buttons(app, gid, first, last):
     """Small ▲ ▼ that move the game up or down; games run in this order."""
     col = QVBoxLayout()
@@ -185,6 +202,8 @@ def build(app):
     box.addWidget(shadowed(label(app.tr("home.heading"), "h1")))
     if app.update_info:
         box.addWidget(update_card(app))
+    if app.health:
+        box.addWidget(health_card(app))
 
     steps = app.setup_steps()
     if all(s["done"] for s in steps):

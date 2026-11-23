@@ -62,7 +62,7 @@ The run log under History keeps the full list of every task.
 
 Gachashift doesn't play the games itself. For each game it opens the right tool, waits for it to finish, closes everything it started and then reads the tool's own log. The report comes from fixed rules about each tool's start, success and failure lines, so the same log always gives the same report, and a task the rules don't know yet is shown as a new task instead of being silently ignored.
 
-Around that, it handles the parts the tools leave to you: clicking launcher start buttons, waiting for a server's daily reset, restarting Steam with the right permissions, muting the PC (and optionally dimming the screen) while it runs, and putting everything back afterwards.
+Around that, it handles the parts the tools leave to you: clicking launcher start buttons, waiting for a server's daily reset, restarting Steam with the right permissions, muting the PC (and optionally dimming the screen) while it runs, keeping Windows from sleeping or starting the screen saver in the middle of a game, and putting everything back afterwards.
 
 If nothing in a game got done (the game didn't start, or the tool left no records), it tries that game once more after all the others. That usually happens the first morning after a client update, when the game takes too long to open. A game where some tasks worked and some failed isn't repeated, and neither is one whose first attempt ran past 40 minutes. Each game has its own switch for this; it is off for Endfield, whose tasks carry over between days.
 
@@ -93,7 +93,7 @@ If you are using the PC when the scheduled time comes, it asks first and gives y
    ```
 2. Double-click `Gachashift App.bat`.
 
-The app takes it from there. Home shows a short setup checklist with a button for each step: turn on your games, tell Gachashift where each tool is, do one test run, connect Telegram or Discord (optional), and choose when to run. **Find tools** on the Games page looks for each tool on your PC (running tools first, then your usual folders) and fills in what it finds, without touching settings you already made. Every setting has a one-line hint under it, and each game's page links to its tool's own documentation. When all five steps are done, the checklist goes away. Under each game, Home shows how its last run went. Games run from top to bottom; the ▲ ▼ next to each one change the order.
+The app takes it from there. Home shows a short setup checklist with a button for each step: turn on your games, tell Gachashift where each tool is, do one test run, connect Telegram or Discord (optional), and choose when to run. **Find tools** on the Games page looks for each tool on your PC (running tools first, then your usual folders) and fills in what it finds, without touching settings you already made. Every setting has a one-line hint under it, and each game's page links to its tool's own documentation. When all five steps are done, the checklist goes away. Home also warns about Windows settings that would stop the morning run (sleep with a password on wake, a locking screen saver, closing the lid), each with a button to the right settings page. Under each game, Home shows how its last run went. Games run from top to bottom; the ▲ ▼ next to each one change the order.
 
 Other pages:
 
@@ -147,6 +147,7 @@ gachashift/           The program
   updates.py          Asks GitHub whether a newer release is out
   finder.py           Finds each game's tool on the PC
   selfupdate.py       One-click update of the packaged exe
+  health.py           Windows settings that would stop the morning run
   i18n.py             All English and Chinese text
   games/              One module per game
 tests/                Log-parser tests, run on every push
