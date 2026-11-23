@@ -1,0 +1,8 @@
+2026-11-13 14:36:36,557 INFO ok.core.start_controller TaskExecutor:queued onetime_task 🎡 自动周常乐园
+2026-11-13 14:36:36,569 INFO TaskExecutor TaskExecutor:get queued onetime_task 🎡 自动周常乐园
+2026-11-13 14:36:37,106 INFO TaskExecutor GardenTask:检测到月卡奖励，点击领取
+2026-11-13 14:36:42,993 INFO TaskExecutor GardenTask:按 f2 打开终端
+2026-11-13 14:36:50,507 INFO TaskExecutor GardenTask:left_click gray_book_quest (77, 190) after_sleep 1.5
+2026-11-13 14:36:59,727 INFO TaskExecutor GardenTask:当前乐园进度：[6000_1.00]
+2026-11-13 14:36:59,727 INFO TaskExecutor GardenTask:乐园任务完成, 已达到上限
+2026-11-13 14:36:59,767 WARNING notifications providers:Telegram notification is enabled but token or chat ID is empty

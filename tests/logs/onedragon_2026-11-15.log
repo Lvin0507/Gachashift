@@ -1,0 +1,285 @@
+[08:03:07.902] [application_factory_manager.py 135] [INFO]: 发现 20 个默认组应用, 0 个独立应用, 11 个固定入口应用, 0 个失败
+[08:03:07.912] [onnx_ocr_matcher.py 222] [INFO]: 正在加载OCR模型
+[08:03:08.622] [logger.py 26] [INFO]: [inference_engine] Creating ONNX session: D:\zzzod\assets\models\onnx_ocr\ppocrv6\det.onnx, providers=['CPUExecutionProvider']
+[08:03:08.909] [logger.py 26] [INFO]: [predict_det] Detection model loaded: D:\zzzod\assets\models\onnx_ocr\ppocrv6\det.onnx
+[08:03:09.459] [logger.py 26] [INFO]: [inference_engine] Creating ONNX session: D:\zzzod\assets\models\onnx_ocr\ppocrv6\rec.onnx, providers=['CPUExecutionProvider']
+[08:03:09.636] [logger.py 26] [INFO]: [predict_rec] Recognition model loaded: D:\zzzod\assets\models\onnx_ocr\ppocrv6\rec.onnx
+[08:03:09.658] [logger.py 26] [INFO]: [onnx_paddleocr] OCR model initialized: det=True, cls=False, rec=True
+[08:03:09.658] [onnx_ocr_matcher.py 249] [INFO]: 加载OCR模型完毕
+[08:03:09.783] [one_dragon_context.py 495] [INFO]: 开始加载实例配置 1
+[08:03:10.908] [pc_controller_base.py 183] [INFO]: 已启用前台模式: pyautogui 点击 + 键盘
+[08:03:10.912] [operation.py 451] [INFO]: 指令[ 一条龙 ] 节点 检测游戏窗口 返回状态 Success
+[08:03:12.089] [operation.py 451] [INFO]: 指令[ 执行应用组 one_dragon ] 节点 检测游戏窗口 返回状态 Success
+[08:03:12.455] [operation.py 451] [INFO]: 指令[ 执行应用组 one_dragon ] 节点 检测游戏窗口 -> 获取应用组配置 返回状态 Success
+[08:03:12.478] [operation.py 451] [INFO]: 指令[ 执行应用组 one_dragon ] 节点 获取应用组配置 -> 执行应用 返回状态 应用未启用 零号业绩速刷
+[08:03:12.802] [operation.py 451] [INFO]: 指令[ 执行应用组 one_dragon ] 节点 执行应用 -> 执行应用 返回状态 应用未启用 体力刷本
+[08:03:12.823] [operation.py 451] [INFO]: 指令[ 执行应用组 one_dragon ] 节点 执行应用 -> 执行应用 返回状态 应用未启用 随便观
+[08:03:12.846] [operation.py 451] [INFO]: 指令[ 执行应用组 one_dragon ] 节点 执行应用 -> 执行应用 返回状态 应用未启用 锄大地
+[08:03:12.870] [operation.py 451] [INFO]: 指令[ 执行应用组 one_dragon ] 节点 执行应用 -> 执行应用 返回状态 应用未启用 真·拿命验收[即将移除请转插件]
+[08:03:12.892] [operation.py 451] [INFO]: 指令[ 执行应用组 one_dragon ] 节点 执行应用 -> 执行应用 返回状态 应用未启用 驱动盘拆解
+[08:03:12.914] [operation.py 451] [INFO]: 指令[ 执行应用组 one_dragon ] 节点 执行应用 -> 执行应用 返回状态 应用未启用 通知
+[08:03:12.948] [operation.py 451] [INFO]: 指令[ 兑换码 ] 节点 检测游戏窗口 返回状态 Success
+[08:03:12.967] [operation.py 451] [INFO]: 指令[ 兑换码 ] 节点 检测游戏窗口 -> 检测新兑换码 返回状态 无新的兑换码
+[08:03:12.967] [operation.py 700] [INFO]: 指令[ 兑换码 ] 执行成功 返回状态 无新的兑换码
+[08:03:12.969] [operation.py 451] [INFO]: 指令[ 执行应用组 one_dragon ] 节点 执行应用 -> 执行应用 返回状态 下一个
+[08:03:13.063] [operation.py 451] [INFO]: 指令[ 每日签到 ] 节点 检测游戏窗口 返回状态 Success
+[08:03:13.101] [operation.py 451] [INFO]: 指令[ 刮刮卡 ] 节点 检测游戏窗口 返回状态 Success
+[08:03:13.124] [operation.py 451] [INFO]: 指令[ Teleport 六分街 报刊亭 ] 节点 检测游戏窗口 返回状态 Success
+[08:03:13.665] [operation.py 451] [INFO]: 指令[ Teleport 六分街 报刊亭 ] 节点 检测游戏窗口 -> 画面识别 返回状态 未在地图页面
+[08:03:13.688] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 返回状态 Success
+[08:03:17.718] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 返回
+[08:03:21.308] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 返回
+[08:03:26.138] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 返回
+[08:03:29.683] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 返回
+[08:03:33.488] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 返回
+[08:03:37.411] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 返回
+[08:03:41.700] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 返回
+[08:03:46.307] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 返回
+[08:03:50.298] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 返回
+[08:03:50.446] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 大世界-普通
+[08:03:50.446] [operation.py 700] [INFO]: 指令[ Return to World ] 执行成功 返回状态 大世界-普通
+[08:03:50.449] [operation.py 451] [INFO]: 指令[ Teleport 六分街 报刊亭 ] 节点 画面识别 -> 返回大世界 返回状态 大世界-普通
+[08:03:53.691] [operation.py 451] [INFO]: 指令[ Teleport 六分街 报刊亭 ] 节点 返回大世界 -> 打开地图 返回状态 地图
+[08:03:54.209] [operation.py 451] [INFO]: 指令[ Teleport 六分街 报刊亭 ] 节点 返回大世界 -> 打开地图 返回状态 Success
+[08:03:54.226] [operation.py 451] [INFO]: 指令[ 地图传送 六分街 报刊亭 ] 节点 检测游戏窗口 返回状态 Success
+[08:03:55.867] [operation.py 451] [INFO]: 指令[ 地图传送 六分街 报刊亭 ] 节点 检测游戏窗口 -> 选择区域 返回状态 Success
+[08:03:57.594] [operation.py 451] [INFO]: 指令[ 地图传送 六分街 报刊亭 ] 节点 选择区域 -> 选择传送点 返回状态 Success
+[08:03:59.040] [operation.py 451] [INFO]: 指令[ 地图传送 六分街 报刊亭 ] 节点 选择传送点 -> 点击传送 返回状态 Confirm
+[08:03:59.040] [operation.py 700] [INFO]: 指令[ 地图传送 六分街 报刊亭 ] 执行成功 返回状态 Confirm
+[08:03:59.041] [operation.py 451] [INFO]: 指令[ Teleport 六分街 报刊亭 ] 节点 打开地图 -> 执行传送 返回状态 Confirm
+[08:03:59.056] [operation.py 451] [INFO]: 指令[ Teleport 六分街 报刊亭 ] 节点 执行传送 -> 等待大世界加载 返回状态 不等待大世界加载
+[08:03:59.056] [operation.py 700] [INFO]: 指令[ Teleport 六分街 报刊亭 ] 执行成功 返回状态 不等待大世界加载
+[08:03:59.056] [operation.py 451] [INFO]: 指令[ 刮刮卡 ] 节点 检测游戏窗口 -> 传送 返回状态 不等待大世界加载
+[08:03:59.077] [operation.py 451] [INFO]: 指令[ Wait for World Screen ] 节点 检测游戏窗口 返回状态 Success
+[08:03:59.138] [operation.py 451] [INFO]: 指令[ Wait for World Screen ] 节点 检测游戏窗口 -> 画面识别 返回状态 未到达大世界
+[08:03:59.138] [operation.py 702] [ERROR]: 指令[ Wait for World Screen ] 执行失败 返回状态 未到达大世界
+[08:04:00.153] [operation.py 451] [INFO]: 指令[ 刮刮卡 ] 节点 传送 -> 等待加载 返回状态 未到达大世界
+[08:04:00.178] [operation.py 451] [INFO]: 指令[ Wait for World Screen ] 节点 检测游戏窗口 返回状态 Success
+[08:04:00.216] [operation.py 451] [INFO]: 指令[ Wait for World Screen ] 节点 检测游戏窗口 -> 画面识别 返回状态 大世界-普通
+[08:04:00.216] [operation.py 700] [INFO]: 指令[ Wait for World Screen ] 执行成功 返回状态 大世界-普通
+[08:04:00.217] [operation.py 451] [INFO]: 指令[ 刮刮卡 ] 节点 传送 -> 等待加载 返回状态 大世界-普通
+[08:04:05.440] [operation.py 451] [INFO]: 指令[ 刮刮卡 ] 节点 等待加载 -> 移动交互 返回状态 Success
+[08:04:07.264] [operation.py 451] [INFO]: 指令[ 刮刮卡 ] 节点 移动交互 -> 点击刮刮卡 返回状态 嗷呜标题
+[08:04:09.088] [operation.py 451] [INFO]: 指令[ 刮刮卡 ] 节点 移动交互 -> 点击刮刮卡 返回状态 叫醒他
+[08:04:10.907] [operation.py 451] [INFO]: 指令[ 刮刮卡 ] 节点 移动交互 -> 点击刮刮卡 返回状态 嗷呜标题
+[08:04:12.753] [operation.py 451] [INFO]: 指令[ 刮刮卡 ] 节点 移动交互 -> 点击刮刮卡 返回状态 嗷呜被你叫醒了
+[08:04:14.578] [operation.py 451] [INFO]: 指令[ 刮刮卡 ] 节点 移动交互 -> 点击刮刮卡 返回状态 嗷呜标题
+[08:04:16.091] [operation.py 451] [INFO]: 指令[ 刮刮卡 ] 节点 移动交互 -> 点击刮刮卡 返回状态 刮刮卡
+[08:04:17.146] [operation.py 451] [INFO]: 指令[ 刮刮卡 ] 节点 移动交互 -> 点击刮刮卡 返回状态 每日可刮取一次
+[08:04:25.146] [operation.py 451] [INFO]: 指令[ 刮刮卡 ] 节点 点击刮刮卡 -> 刮刮 返回状态 Success
+[08:04:25.167] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 返回状态 Success
+[08:04:29.070] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 返回
+[08:04:31.547] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 返回
+[08:04:33.904] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 返回
+[08:04:37.817] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 返回
+[08:04:38.069] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 大世界-普通
+[08:04:38.070] [operation.py 700] [INFO]: 指令[ Return to World ] 执行成功 返回状态 大世界-普通
+[08:04:38.071] [operation.py 451] [INFO]: 指令[ 刮刮卡 ] 节点 刮刮 -> 返回大世界 返回状态 大世界-普通
+[08:04:38.072] [operation.py 700] [INFO]: 指令[ 刮刮卡 ] 执行成功 返回状态 大世界-普通
+[08:04:38.090] [operation.py 451] [INFO]: 指令[ 每日签到 ] 节点 检测游戏窗口 -> 运行子应用 返回状态 大世界-普通
+[08:04:38.090] [operation.py 700] [INFO]: 指令[ 每日签到 ] 执行成功 返回状态 大世界-普通
+[08:04:38.115] [operation.py 451] [INFO]: 指令[ 执行应用组 one_dragon ] 节点 执行应用 -> 执行应用 返回状态 下一个
+[08:04:38.154] [operation.py 451] [INFO]: 指令[ 邮件 ] 节点 检测游戏窗口 返回状态 Success
+[08:04:39.797] [operation.py 451] [INFO]: 指令[ 邮件 ] 节点 检测游戏窗口 -> 打开邮件 返回状态 按钮-菜单
+[08:04:41.126] [operation.py 451] [INFO]: 指令[ 邮件 ] 节点 检测游戏窗口 -> 打开邮件 返回状态 未能识别当前画面
+[08:04:42.740] [operation.py 451] [INFO]: 指令[ 邮件 ] 节点 检测游戏窗口 -> 打开邮件 返回状态 底部-邮件
+[08:04:42.812] [operation.py 451] [INFO]: 指令[ 邮件 ] 节点 检测游戏窗口 -> 打开邮件 返回状态 邮件
+[08:04:44.267] [operation.py 451] [INFO]: 指令[ 邮件 ] 节点 打开邮件 -> 全部领取 返回状态 全部领取
+[08:04:45.990] [operation.py 451] [INFO]: 指令[ 邮件 ] 节点 全部领取 -> 确认 返回状态 未匹配到目标文本
+[08:04:47.686] [operation.py 451] [INFO]: 指令[ 邮件 ] 节点 全部领取 -> 确认 返回状态 未匹配到目标文本
+[08:04:49.410] [operation.py 451] [INFO]: 指令[ 邮件 ] 节点 全部领取 -> 确认 返回状态 未匹配到目标文本
+[08:04:51.126] [operation.py 451] [INFO]: 指令[ 邮件 ] 节点 全部领取 -> 确认 返回状态 未匹配到目标文本
+[08:04:52.570] [operation.py 451] [INFO]: 指令[ 邮件 ] 节点 确认 -> 返回菜单 返回状态 返回
+[08:04:52.592] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 返回状态 Success
+[08:04:54.057] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 按钮-返回
+[08:04:54.093] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 大世界-普通
+[08:04:54.093] [operation.py 700] [INFO]: 指令[ Return to World ] 执行成功 返回状态 大世界-普通
+[08:04:54.095] [operation.py 451] [INFO]: 指令[ 邮件 ] 节点 返回菜单 -> 返回大世界 返回状态 大世界-普通
+[08:04:54.095] [operation.py 700] [INFO]: 指令[ 邮件 ] 执行成功 返回状态 大世界-普通
+[08:04:54.096] [operation.py 451] [INFO]: 指令[ 执行应用组 one_dragon ] 节点 执行应用 -> 执行应用 返回状态 下一个
+[08:04:54.129] [operation.py 451] [INFO]: 指令[ 录像店营业 ] 节点 检测游戏窗口 返回状态 Success
+[08:04:54.149] [operation.py 451] [INFO]: 指令[ Teleport 录像店 柜台 ] 节点 检测游戏窗口 返回状态 Success
+[08:04:54.680] [operation.py 451] [INFO]: 指令[ Teleport 录像店 柜台 ] 节点 检测游戏窗口 -> 画面识别 返回状态 未在地图页面
+[08:04:54.701] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 返回状态 Success
+[08:04:54.737] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 大世界-普通
+[08:04:54.737] [operation.py 700] [INFO]: 指令[ Return to World ] 执行成功 返回状态 大世界-普通
+[08:04:54.739] [operation.py 451] [INFO]: 指令[ Teleport 录像店 柜台 ] 节点 画面识别 -> 返回大世界 返回状态 大世界-普通
+[08:04:57.937] [operation.py 451] [INFO]: 指令[ Teleport 录像店 柜台 ] 节点 返回大世界 -> 打开地图 返回状态 地图
+[08:04:58.441] [operation.py 451] [INFO]: 指令[ Teleport 录像店 柜台 ] 节点 返回大世界 -> 打开地图 返回状态 Success
+[08:04:58.458] [operation.py 451] [INFO]: 指令[ 地图传送 录像店 柜台 ] 节点 检测游戏窗口 返回状态 Success
+[08:05:00.047] [operation.py 451] [INFO]: 指令[ 地图传送 录像店 柜台 ] 节点 检测游戏窗口 -> 选择区域 返回状态 Success
+[08:05:01.771] [operation.py 451] [INFO]: 指令[ 地图传送 录像店 柜台 ] 节点 选择区域 -> 选择传送点 返回状态 Success
+[08:05:03.217] [operation.py 451] [INFO]: 指令[ 地图传送 录像店 柜台 ] 节点 选择传送点 -> 点击传送 返回状态 Confirm
+[08:05:03.217] [operation.py 700] [INFO]: 指令[ 地图传送 录像店 柜台 ] 执行成功 返回状态 Confirm
+[08:05:03.218] [operation.py 451] [INFO]: 指令[ Teleport 录像店 柜台 ] 节点 打开地图 -> 执行传送 返回状态 Confirm
+[08:05:03.235] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 返回状态 Success
+[08:05:06.920] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 返回
+[08:05:07.057] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 大世界-普通
+[08:05:07.058] [operation.py 700] [INFO]: 指令[ Return to World ] 执行成功 返回状态 大世界-普通
+[08:05:07.058] [operation.py 451] [INFO]: 指令[ Teleport 录像店 柜台 ] 节点 执行传送 -> 等待大世界加载 返回状态 大世界-普通
+[08:05:07.059] [operation.py 700] [INFO]: 指令[ Teleport 录像店 柜台 ] 执行成功 返回状态 大世界-普通
+[08:05:07.059] [operation.py 451] [INFO]: 指令[ 录像店营业 ] 节点 检测游戏窗口 -> 传送 返回状态 大世界-普通
+[08:05:07.089] [world_patrol_service.py 110] [INFO]: [小地图] 动态匹配小地图坐标: (1534, 183) - (1744, 393)
+[08:05:07.650] [operation.py 451] [INFO]: 指令[ 录像店营业 ] 节点 传送 -> 移动交互 返回状态 转向正东
+[08:05:08.177] [operation.py 451] [INFO]: 指令[ 录像店营业 ] 节点 传送 -> 移动交互 返回状态 转向正东
+[08:05:11.406] [operation.py 451] [INFO]: 指令[ 录像店营业 ] 节点 传送 -> 移动交互 返回状态 Success
+[08:05:11.516] [operation.py 451] [INFO]: 指令[ 录像店营业 ] 节点 移动交互 -> 交互对话 返回状态 Success
+[08:05:13.007] [operation.py 451] [INFO]: 指令[ 录像店营业 ] 节点 交互对话 -> 等待经营画面加载 返回状态 重试
+[08:05:14.480] [operation.py 451] [INFO]: 指令[ 录像店营业 ] 节点 交互对话 -> 等待经营画面加载 返回状态 Success
+[08:05:14.544] [operation.py 451] [INFO]: 指令[ 录像店营业 ] 节点 等待经营画面加载 -> 识别营业状态 返回状态 Success
+[08:05:14.677] [operation.py 451] [INFO]: 指令[ 录像店营业 ] 节点 识别营业状态 -> 点击宣传员入口 返回状态 宣传员入口
+[08:05:15.678] [operation.py 451] [INFO]: 指令[ 录像店营业 ] 节点 点击宣传员入口 -> 选择宣传员 返回状态 未找到 选择宣传员
+[08:05:17.313] [operation.py 451] [INFO]: 指令[ 录像店营业 ] 节点 点击宣传员入口 -> 选择宣传员 返回状态 Confirm
+[08:05:18.349] [operation.py 451] [INFO]: 指令[ 录像店营业 ] 节点 选择宣传员 -> 识别录像带主题 返回状态 未找到 经营状况
+[08:05:18.493] [random_play_app.py 291] [INFO]: 所需主题 ['纪实', '冒险', '灾难']
+[08:05:18.493] [operation.py 451] [INFO]: 指令[ 录像店营业 ] 节点 选择宣传员 -> 识别录像带主题 返回状态 Success
+[08:05:18.633] [operation.py 451] [INFO]: 指令[ 录像店营业 ] 节点 识别录像带主题 -> 点击录像带入口 返回状态 录像带入口
+[08:05:19.993] [operation.py 451] [INFO]: 指令[ 录像店营业 ] 节点 点击录像带入口 -> 识别推荐上架 返回状态 未找到 上架筛选
+[08:05:21.460] [operation.py 451] [INFO]: 指令[ 录像店营业 ] 节点 点击录像带入口 -> 识别推荐上架 返回状态 推荐上架
+[08:05:21.516] [operation.py 451] [INFO]: 指令[ 录像店营业 ] 节点 识别推荐上架 -> 返回 返回状态 Success
+[08:05:21.988] [operation.py 451] [INFO]: 指令[ 录像店营业 ] 节点 返回 -> 开始营业 返回状态 开始营业
+[08:05:23.330] [operation.py 451] [INFO]: 指令[ 录像店营业 ] 节点 开始营业 -> 确认营业 返回状态 未找到 开始营业-确认
+[08:05:23.796] [operation.py 451] [INFO]: 指令[ 录像店营业 ] 节点 开始营业 -> 确认营业 返回状态 开始营业-确认
+[08:05:25.146] [operation.py 451] [INFO]: 指令[ 录像店营业 ] 节点 确认营业 -> 营业后确认 返回状态 未找到 营业后确认
+[08:05:25.616] [operation.py 451] [INFO]: 指令[ 录像店营业 ] 节点 确认营业 -> 营业后确认 返回状态 营业后确认
+[08:05:25.641] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 返回状态 Success
+[08:05:29.586] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 返回
+[08:05:29.790] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 大世界-普通
+[08:05:29.790] [operation.py 700] [INFO]: 指令[ Return to World ] 执行成功 返回状态 大世界-普通
+[08:05:29.792] [operation.py 451] [INFO]: 指令[ 录像店营业 ] 节点 营业后确认 -> 返回大世界 返回状态 大世界-普通
+[08:05:29.792] [operation.py 700] [INFO]: 指令[ 录像店营业 ] 执行成功 返回状态 大世界-普通
+[08:05:29.795] [operation.py 451] [INFO]: 指令[ 执行应用组 one_dragon ] 节点 执行应用 -> 执行应用 返回状态 下一个
+[08:05:29.839] [operation.py 451] [INFO]: 指令[ 咖啡店 ] 节点 检测游戏窗口 返回状态 Success
+[08:05:29.865] [operation.py 451] [INFO]: 指令[ Teleport 六分街 咖啡店 ] 节点 检测游戏窗口 返回状态 Success
+[08:05:30.365] [operation.py 451] [INFO]: 指令[ Teleport 六分街 咖啡店 ] 节点 检测游戏窗口 -> 画面识别 返回状态 未在地图页面
+[08:05:30.385] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 返回状态 Success
+[08:05:30.430] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 大世界-普通
+[08:05:30.430] [operation.py 700] [INFO]: 指令[ Return to World ] 执行成功 返回状态 大世界-普通
+[08:05:30.431] [operation.py 451] [INFO]: 指令[ Teleport 六分街 咖啡店 ] 节点 画面识别 -> 返回大世界 返回状态 大世界-普通
+[08:05:33.564] [operation.py 451] [INFO]: 指令[ Teleport 六分街 咖啡店 ] 节点 返回大世界 -> 打开地图 返回状态 地图
+[08:05:34.029] [operation.py 451] [INFO]: 指令[ Teleport 六分街 咖啡店 ] 节点 返回大世界 -> 打开地图 返回状态 Success
+[08:05:34.048] [operation.py 451] [INFO]: 指令[ 地图传送 六分街 咖啡店 ] 节点 检测游戏窗口 返回状态 Success
+[08:05:35.613] [operation.py 451] [INFO]: 指令[ 地图传送 六分街 咖啡店 ] 节点 检测游戏窗口 -> 选择区域 返回状态 Success
+[08:05:37.336] [operation.py 451] [INFO]: 指令[ 地图传送 六分街 咖啡店 ] 节点 选择区域 -> 选择传送点 返回状态 Success
+[08:05:38.780] [operation.py 451] [INFO]: 指令[ 地图传送 六分街 咖啡店 ] 节点 选择传送点 -> 点击传送 返回状态 Confirm
+[08:05:38.780] [operation.py 700] [INFO]: 指令[ 地图传送 六分街 咖啡店 ] 执行成功 返回状态 Confirm
+[08:05:38.781] [operation.py 451] [INFO]: 指令[ Teleport 六分街 咖啡店 ] 节点 打开地图 -> 执行传送 返回状态 Confirm
+[08:05:38.796] [operation.py 451] [INFO]: 指令[ Teleport 六分街 咖啡店 ] 节点 执行传送 -> 等待大世界加载 返回状态 不等待大世界加载
+[08:05:38.799] [operation.py 700] [INFO]: 指令[ Teleport 六分街 咖啡店 ] 执行成功 返回状态 不等待大世界加载
+[08:05:38.799] [operation.py 451] [INFO]: 指令[ 咖啡店 ] 节点 检测游戏窗口 -> 传送 返回状态 不等待大世界加载
+[08:05:38.852] [operation.py 451] [INFO]: 指令[ Wait for World Screen ] 节点 检测游戏窗口 返回状态 Success
+[08:05:38.889] [operation.py 451] [INFO]: 指令[ Wait for World Screen ] 节点 检测游戏窗口 -> 画面识别 返回状态 未到达大世界
+[08:05:38.889] [operation.py 702] [ERROR]: 指令[ Wait for World Screen ] 执行失败 返回状态 未到达大世界
+[08:05:39.890] [operation.py 451] [INFO]: 指令[ 咖啡店 ] 节点 传送 -> 等待大世界加载 返回状态 未到达大世界
+[08:05:40.641] [operation.py 451] [INFO]: 指令[ Wait for World Screen ] 节点 检测游戏窗口 返回状态 Success
+[08:05:41.851] [operation.py 451] [INFO]: 指令[ Wait for World Screen ] 节点 检测游戏窗口 -> 画面识别 返回状态 未到达大世界
+[08:05:41.851] [operation.py 702] [ERROR]: 指令[ Wait for World Screen ] 执行失败 返回状态 未到达大世界
+[08:05:42.853] [operation.py 451] [INFO]: 指令[ 咖啡店 ] 节点 传送 -> 等待大世界加载 返回状态 未到达大世界
+[08:05:43.008] [operation.py 451] [INFO]: 指令[ Wait for World Screen ] 节点 检测游戏窗口 返回状态 Success
+[08:05:43.041] [operation.py 451] [INFO]: 指令[ Wait for World Screen ] 节点 检测游戏窗口 -> 画面识别 返回状态 未到达大世界
+[08:05:43.041] [operation.py 702] [ERROR]: 指令[ Wait for World Screen ] 执行失败 返回状态 未到达大世界
+[08:05:44.043] [operation.py 451] [INFO]: 指令[ 咖啡店 ] 节点 传送 -> 等待大世界加载 返回状态 未到达大世界
+[08:05:44.086] [operation.py 451] [INFO]: 指令[ Wait for World Screen ] 节点 检测游戏窗口 返回状态 Success
+[08:05:44.118] [operation.py 451] [INFO]: 指令[ Wait for World Screen ] 节点 检测游戏窗口 -> 画面识别 返回状态 未到达大世界
+[08:05:44.119] [operation.py 702] [ERROR]: 指令[ Wait for World Screen ] 执行失败 返回状态 未到达大世界
+[08:05:45.121] [operation.py 451] [INFO]: 指令[ 咖啡店 ] 节点 传送 -> 等待大世界加载 返回状态 未到达大世界
+[08:05:45.153] [operation.py 451] [INFO]: 指令[ Wait for World Screen ] 节点 检测游戏窗口 返回状态 Success
+[08:05:45.187] [operation.py 451] [INFO]: 指令[ Wait for World Screen ] 节点 检测游戏窗口 -> 画面识别 返回状态 大世界-普通
+[08:05:45.187] [operation.py 700] [INFO]: 指令[ Wait for World Screen ] 执行成功 返回状态 大世界-普通
+[08:05:45.188] [operation.py 451] [INFO]: 指令[ 咖啡店 ] 节点 传送 -> 等待大世界加载 返回状态 大世界-普通
+[08:05:47.415] [operation.py 451] [INFO]: 指令[ 咖啡店 ] 节点 等待大世界加载 -> 移动交互 返回状态 Success
+[08:05:48.455] [operation.py 451] [INFO]: 指令[ 咖啡店 ] 节点 移动交互 -> 等待咖啡店加载 返回状态 未找到 点单
+[08:05:49.490] [operation.py 451] [INFO]: 指令[ 咖啡店 ] 节点 移动交互 -> 等待咖啡店加载 返回状态 未找到 点单
+[08:05:50.540] [operation.py 451] [INFO]: 指令[ 咖啡店 ] 节点 移动交互 -> 等待咖啡店加载 返回状态 点单
+[08:05:51.773] [operation.py 451] [INFO]: 指令[ 咖啡店 ] 节点 等待咖啡店加载 -> 选择咖啡 返回状态 汀曼特调
+[08:05:52.736] [operation.py 451] [INFO]: 指令[ 咖啡店 ] 节点 选择咖啡 -> 点单 返回状态 没有增益的咖啡
+[08:05:54.095] [operation.py 451] [INFO]: 指令[ 咖啡店 ] 节点 点单 -> 点单后跳过 返回状态 未找到 不可贪杯确认
+[08:05:55.564] [operation.py 451] [INFO]: 指令[ 咖啡店 ] 节点 点单 -> 点单后跳过 返回状态 点单后跳过
+[08:05:57.027] [operation.py 451] [INFO]: 指令[ 咖啡店 ] 节点 点单后跳过 -> 电量确认 返回状态 Success
+[08:05:57.051] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 返回状态 Success
+[08:06:00.974] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 返回
+[08:06:01.111] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 大世界-普通
+[08:06:01.113] [operation.py 700] [INFO]: 指令[ Return to World ] 执行成功 返回状态 大世界-普通
+[08:06:01.115] [operation.py 451] [INFO]: 指令[ 咖啡店 ] 节点 电量确认 -> 返回大世界 返回状态 大世界-普通
+[08:06:01.139] [operation.py 451] [INFO]: 指令[ 咖啡店 ] 节点 返回大世界 -> 结束后运行体力计划 返回状态 无需运行
+[08:06:01.140] [operation.py 700] [INFO]: 指令[ 咖啡店 ] 执行成功 返回状态 无需运行
+[08:06:01.142] [operation.py 451] [INFO]: 指令[ 执行应用组 one_dragon ] 节点 执行应用 -> 执行应用 返回状态 下一个
+[08:06:01.183] [operation.py 451] [INFO]: 指令[ 活跃度奖励 ] 节点 检测游戏窗口 返回状态 Success
+[08:06:01.204] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 返回状态 Success
+[08:06:01.242] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 大世界-普通
+[08:06:01.242] [operation.py 700] [INFO]: 指令[ Return to World ] 执行成功 返回状态 大世界-普通
+[08:06:01.243] [operation.py 451] [INFO]: 指令[ 活跃度奖励 ] 节点 检测游戏窗口 -> 返回大世界 返回状态 大世界-普通
+[08:06:02.914] [operation.py 451] [INFO]: 指令[ 活跃度奖励 ] 节点 返回大世界 -> 快捷手册-日常 返回状态 快捷手册
+[08:06:02.963] [operation.py 451] [INFO]: 指令[ 活跃度奖励 ] 节点 返回大世界 -> 快捷手册-日常 返回状态 快捷手册-日常
+[08:06:04.427] [operation.py 451] [INFO]: 指令[ 活跃度奖励 ] 节点 快捷手册-日常 -> 点击奖励 返回状态 今日最大活跃度
+[08:06:05.819] [operation.py 451] [INFO]: 指令[ 活跃度奖励 ] 节点 点击奖励 -> 查看奖励结果 返回状态 领取失败重试
+[08:06:07.290] [operation.py 451] [INFO]: 指令[ 活跃度奖励 ] 节点 查看奖励结果 -> 点击奖励 返回状态 今日最大活跃度
+[08:06:08.764] [operation.py 451] [INFO]: 指令[ 活跃度奖励 ] 节点 点击奖励 -> 查看奖励结果 返回状态 日常奖励领取成功
+[08:06:08.806] [operation.py 451] [INFO]: 指令[ 活跃度奖励 ] 节点 查看奖励结果 -> 识别活跃度 返回状态 活跃度已满
+[08:06:08.827] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 返回状态 Success
+[08:06:10.300] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 按钮-关闭
+[08:06:10.335] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 大世界-普通
+[08:06:10.335] [operation.py 700] [INFO]: 指令[ Return to World ] 执行成功 返回状态 大世界-普通
+[08:06:10.337] [operation.py 451] [INFO]: 指令[ 活跃度奖励 ] 节点 识别活跃度 -> 完成后返回大世界 返回状态 Success
+[08:06:10.337] [operation.py 700] [INFO]: 指令[ 活跃度奖励 ] 执行成功 返回状态 Success
+[08:06:10.355] [operation.py 451] [INFO]: 指令[ 执行应用组 one_dragon ] 节点 执行应用 -> 执行应用 返回状态 下一个
+[08:06:10.396] [operation.py 451] [INFO]: 指令[ 丽都城募 ] 节点 检测游戏窗口 返回状态 Success
+[08:06:10.423] [operation.py 451] [INFO]: 指令[ Go to Menu ] 节点 检测游戏窗口 返回状态 Success
+[08:06:12.074] [operation.py 451] [INFO]: 指令[ Go to Menu ] 节点 检测游戏窗口 -> 画面识别 返回状态 按钮-菜单
+[08:06:12.099] [operation.py 451] [INFO]: 指令[ Go to Menu ] 节点 检测游戏窗口 -> 画面识别 返回状态 菜单
+[08:06:12.099] [operation.py 700] [INFO]: 指令[ Go to Menu ] 执行成功 返回状态 菜单
+[08:06:12.099] [operation.py 451] [INFO]: 指令[ 丽都城募 ] 节点 检测游戏窗口 -> 打开菜单 返回状态 菜单
+[08:06:13.683] [operation.py 451] [INFO]: 指令[ 丽都城募 ] 节点 打开菜单 -> 点击丽都城募 返回状态 丽都城募
+[08:06:15.817] [operation.py 451] [INFO]: 指令[ 丽都城募 ] 节点 点击丽都城募 -> 点击成长任务 返回状态 成长任务
+[08:06:17.270] [operation.py 451] [INFO]: 指令[ 丽都城募 ] 节点 点击成长任务 -> 任务全部领取 返回状态 任务-全部领取
+[08:06:18.710] [operation.py 451] [INFO]: 指令[ 丽都城募 ] 节点 任务全部领取 -> 点击等级回馈 返回状态 等级回馈
+[08:06:19.364] [operation.py 451] [INFO]: 指令[ 丽都城募 ] 节点 点击等级回馈 -> 等级全部领取 返回状态 Success
+[08:06:19.381] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 返回状态 Success
+[08:06:21.859] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 返回
+[08:06:23.433] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 按钮-返回
+[08:06:23.465] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 大世界-普通
+[08:06:23.465] [operation.py 700] [INFO]: 指令[ Return to World ] 执行成功 返回状态 大世界-普通
+[08:06:23.466] [operation.py 451] [INFO]: 指令[ 丽都城募 ] 节点 等级全部领取 -> 返回大世界 返回状态 大世界-普通
+[08:06:23.466] [operation.py 700] [INFO]: 指令[ 丽都城募 ] 执行成功 返回状态 大世界-普通
+[08:06:23.474] [operation.py 451] [INFO]: 指令[ 执行应用组 one_dragon ] 节点 执行应用 -> 执行应用 返回状态 下一个
+[08:06:23.503] [operation.py 451] [INFO]: 指令[ 丽都周纪 (领奖励) ] 节点 检测游戏窗口 返回状态 Success
+[08:06:23.526] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 返回状态 Success
+[08:06:23.565] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 大世界-普通
+[08:06:23.565] [operation.py 700] [INFO]: 指令[ Return to World ] 执行成功 返回状态 大世界-普通
+[08:06:23.566] [operation.py 451] [INFO]: 指令[ 丽都周纪 (领奖励) ] 节点 检测游戏窗口 -> 返回大世界 返回状态 大世界-普通
+[08:06:25.227] [operation.py 451] [INFO]: 指令[ 丽都周纪 (领奖励) ] 节点 返回大世界 -> 日常 返回状态 快捷手册
+[08:06:26.765] [operation.py 451] [INFO]: 指令[ 丽都周纪 (领奖励) ] 节点 返回大世界 -> 日常 返回状态 TAB-日常
+[08:06:26.834] [operation.py 451] [INFO]: 指令[ 丽都周纪 (领奖励) ] 节点 返回大世界 -> 日常 返回状态 快捷手册-日常
+[08:06:29.297] [operation.py 451] [INFO]: 指令[ 丽都周纪 (领奖励) ] 节点 日常 -> 丽都周纪 返回状态 丽都周纪
+[08:06:29.891] [operation.py 451] [INFO]: 指令[ 丽都周纪 (领奖励) ] 节点 丽都周纪 -> 领取积分 返回状态 找不到 100
+[08:06:30.497] [operation.py 451] [INFO]: 指令[ 丽都周纪 (领奖励) ] 节点 丽都周纪 -> 领取积分 返回状态 找不到 100
+[08:06:31.095] [operation.py 451] [INFO]: 指令[ 丽都周纪 (领奖励) ] 节点 丽都周纪 -> 领取积分 返回状态 找不到 100
+[08:06:31.691] [operation.py 451] [INFO]: 指令[ 丽都周纪 (领奖励) ] 节点 丽都周纪 -> 领取积分 返回状态 找不到 100
+[08:06:32.823] [operation.py 451] [INFO]: 指令[ 丽都周纪 (领奖励) ] 节点 领取积分 -> 领取奖励 返回状态 领取奖励
+[08:06:32.848] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 返回状态 Success
+[08:06:34.393] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 左上角-区域
+[08:06:38.297] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 返回
+[08:06:38.438] [operation.py 451] [INFO]: 指令[ Return to World ] 节点 检测游戏窗口 -> 画面识别 返回状态 大世界-普通
+[08:06:38.438] [operation.py 700] [INFO]: 指令[ Return to World ] 执行成功 返回状态 大世界-普通
+[08:06:38.439] [operation.py 451] [INFO]: 指令[ 丽都周纪 (领奖励) ] 节点 领取奖励 -> 完成后返回 返回状态 大世界-普通
+[08:06:38.439] [operation.py 700] [INFO]: 指令[ 丽都周纪 (领奖励) ] 执行成功 返回状态 大世界-普通
+[08:06:38.460] [operation.py 451] [INFO]: 指令[ 执行应用组 one_dragon ] 节点 执行应用 -> 执行应用 返回状态 下一个
+[08:06:38.481] [operation.py 451] [INFO]: 指令[ 执行应用组 one_dragon ] 节点 执行应用 -> 执行应用 返回状态 应用未启用 恶名狩猎
+[08:06:38.509] [operation.py 451] [INFO]: 指令[ 执行应用组 one_dragon ] 节点 执行应用 -> 执行应用 返回状态 应用未启用 迷失之地
+[08:06:38.530] [operation.py 451] [INFO]: 指令[ 执行应用组 one_dragon ] 节点 执行应用 -> 执行应用 返回状态 应用未启用 枯萎之都
+[08:06:38.546] [operation.py 451] [INFO]: 指令[ 执行应用组 one_dragon ] 节点 执行应用 -> 执行应用 返回状态 应用未启用 式舆防卫战
+[08:06:38.573] [operation.py 451] [INFO]: 指令[ 执行应用组 one_dragon ] 节点 执行应用 -> 执行应用 返回状态 应用未启用 情报板
+[08:06:38.595] [operation.py 451] [INFO]: 指令[ 执行应用组 one_dragon ] 节点 执行应用 -> 执行应用 返回状态 全部结束
+[08:06:38.614] [operation.py 451] [INFO]: 指令[ 执行应用组 one_dragon ] 节点 执行应用 -> 所有应用完成后 返回状态 全部结束
+[08:06:38.615] [operation.py 700] [INFO]: 指令[ 执行应用组 one_dragon ] 执行成功 返回状态 全部结束
+[08:06:38.616] [operation.py 451] [INFO]: 指令[ 一条龙 ] 节点 检测游戏窗口 -> 运行应用组 返回状态 全部结束
+[08:06:38.620] [one_dragon_context.py 495] [INFO]: 开始加载实例配置 1
+[08:06:38.622] [pc_controller_base.py 183] [INFO]: 已启用前台模式: pyautogui 点击 + 键盘
+[08:06:38.623] [one_dragon_app.py 100] [INFO]: 下一个实例 01
+[08:06:38.623] [operation.py 451] [INFO]: 指令[ 一条龙 ] 节点 运行应用组 -> 切换实例配置 返回状态 Success
+[08:06:38.624] [operation.py 451] [INFO]: 指令[ 一条龙 ] 节点 切换实例配置 -> 切换账号 返回状态 无需切换账号
+[08:06:38.624] [operation.py 451] [INFO]: 指令[ 一条龙 ] 节点 切换账号 -> 切换账号后处理 返回状态 全部结束
+[08:06:38.624] [operation.py 700] [INFO]: 指令[ 一条龙 ] 执行成功 返回状态 全部结束
+[08:06:38.625] [application_run_context.py 435] [INFO]: 暂停运行
+[08:06:38.629] [pc_controller_base.py 161] [INFO]: 关闭游戏成功
+[08:06:40.451] [auto_battle_context.py 1193] [INFO]: 松开所有按键

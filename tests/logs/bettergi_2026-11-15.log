@@ -1,0 +1,137 @@
+[08:06:59.892] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+参数指定的一条龙配置：默认配置
+
+[08:06:59.958] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+启用一条龙配置：默认配置
+
+[08:07:00.001] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+启用一条龙任务的数量: 3
+
+[08:07:12.290] [DBG] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "启用"
+
+[08:08:04.443] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+启用配置组任务的数量: 1
+
+[08:08:04.444] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+一条龙任务执行: 1/3
+
+[08:08:04.450] [DBG] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "停用"
+
+[08:08:07.251] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.GameTask.Common.TaskControl
+邮件："全部领取"
+
+[08:08:10.361] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+配置组任务执行: 1/1
+
+[08:08:10.406] [DBG] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "启用"
+
+[08:08:10.906] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.Service.ScriptService
+配置组 "test" 加载完成，共2个脚本，开始执行
+
+[08:08:10.911] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.Service.ScriptService
+→ 开始执行JS脚本: "自动每日委托"
+
+[08:08:10.942] [DBG] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "停用"
+
+[08:08:17.931] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.GameTask.Common.TaskControl
+"历练点："未找到领取历练点奖励按钮
+
+[08:08:19.065] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.GameTask.Common.TaskControl
+"历练点："未找到领取历练点奖励按钮
+
+[08:08:21.652] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.Core.Script.Dependence.Log
+当前每日委托奖励进度: 0/4
+
+[08:08:50.625] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.Core.Script.Dependence.Log
+委托识别完成，共识别到 4 个委托，其中 4 个受支持
+
+[08:12:23.341] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.Core.Script.Dependence.Log
+委托执行成功：丘丘人的一小步
+
+[08:14:37.416] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.Core.Script.Dependence.Log
+委托执行成功：邪恶的扩张
+
+[08:17:10.944] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.Core.Script.Dependence.Log
+委托执行成功：攀高危险
+
+[08:17:25.317] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.Service.ScriptService
+→ 脚本执行结束: "自动每日委托", 耗时: 9分14.404秒
+
+[08:17:26.325] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.Service.ScriptService
+→ 开始执行JS脚本: "使用历练点完成每日委托"
+
+[08:17:26.428] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.Core.Script.Dependence.Log
+检查是否可以领取历练点奖励
+
+[08:17:34.892] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.Core.Script.Dependence.Log
+可领取历练点奖励
+
+[08:17:34.892] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.Core.Script.Dependence.Log
+不使用好友尘歌壶历练点领取双倍好感，直接使用历练点
+
+[08:17:34.897] [WRN] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.Core.Script.Dependence.Log
+未识别到历练点领取奖励按钮，可能是已领取或未完成
+
+[08:17:38.798] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.Core.Script.Dependence.Log
+可以领取历练点奖励，开始执行
+
+[08:18:00.312] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.Core.Script.Dependence.Log
+开始领取每日委托，若无退出对话，则说明重复领取
+
+[08:18:01.354] [DBG] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "启用"
+
+[08:18:02.531] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.GameTask.AutoSkip.AutoSkipTrigger
+自动剧情："领取「每日委托」奖励"
+
+[08:18:14.237] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.Core.Script.Dependence.Log
+交互或拾取："领取完成"
+
+[08:18:14.252] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.Service.ScriptService
+→ 脚本执行结束: "使用历练点完成每日委托", 耗时: 0分47.927秒
+
+[08:18:15.255] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.Service.ScriptService
+配置组 "test" 执行结束
+
+[08:18:15.311] [DBG] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "启用"
+
+[08:18:16.255] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+一条龙任务执行: 2/3
+
+[08:18:16.258] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.GameTask.Common.TaskControl
+→ "前往冒险家协会领取奖励" 开始
+
+[08:18:16.301] [DBG] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "停用"
+
+[08:18:18.590] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.GameTask.Common.TaskControl
+"历练点："未找到领取历练点奖励按钮
+
+[08:18:19.723] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.GameTask.Common.TaskControl
+"历练点："未找到领取历练点奖励按钮
+
+[08:18:38.372] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.GameTask.Common.TaskControl
+▶ "领取『每日委托』奖励" 未完成或者已领取
+
+[08:18:40.774] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.GameTask.Common.TaskControl
+▶ "探索派遣" 未探索完成或已领取
+
+[08:18:43.756] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.GameTask.Common.TaskControl
+→ "前往冒险家协会领取奖励" 结束
+
+[08:18:45.799] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.GameTask.Common.TaskControl
+纪行："一键领取"
+
+[08:18:51.253] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.GameTask.Common.TaskControl
+纪行："无需领取"
+
+[08:18:57.631] [WRN] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.GameTask.Common.TaskControl
+检查每日奖励结果："未领取"，请手动检查！
+
+[08:18:59.297] [INF] [Primary:S1:P28708:T1794690417817] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+一条龙和配置组任务结束

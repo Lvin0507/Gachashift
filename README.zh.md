@@ -144,6 +144,8 @@ gachashift/           程序本体
   updates.py          向 GitHub 查询有没有新版本
   i18n.py             所有中英文文字
   games/              每款游戏一个模块
+tests/                读日志规则的测试，每次 push 都会跑
+  logs/               测试用的真实日志片段
 Gachashift.py         Gachashift.exe 的入口（打开 App，或用 "run" 执行运行）
 Gachashift App.bat    从源码打开 App
 build.py              用 PyInstaller 打包出 dist/Gachashift 和 zip
@@ -181,7 +183,15 @@ logs/                 运行日志与存档的 MaaEnd 日志（不纳入 git）
 
 ## 发布新版
 
-在 `gachashift/__init__.py` 改好版本号，commit 并 push，再推送一个对应的 tag，例如 `v1.0.1`。GitHub Actions 会在 Windows 上打包 `Gachashift.exe`，并发布附上 zip 的 Release；如果 tag 和版本号对不上，它会停下来不发布。
+先跑一次测试：
+
+```
+python -m unittest discover -s tests
+```
+
+如果某天战报看起来不对，把那天的日志加进 `tests/logs`，写一个测试说明战报“应该”显示什么，再修改读日志的规则直到测试通过。
+
+在 `gachashift/__init__.py` 改好版本号，commit 并 push，再推送一个对应的 tag，例如 `v1.0.1`。GitHub Actions 会在 Windows 上打包 `Gachashift.exe`，并发布附上 zip 的 Release；如果 tag 和版本号对不上，或有测试没通过，它会停下来不发布。
 
 ## 基于以下项目
 

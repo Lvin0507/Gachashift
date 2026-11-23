@@ -26,3 +26,6 @@ gamma.dim
 build/
 dist/
 Gachashift.spec
+# Real log excerpts the tests read
+!tests/logs/
+!tests/logs/*.log

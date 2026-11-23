@@ -1,0 +1,25 @@
+# Runs the log-parser tests on every push and pull request, so a parser change that would
+# break a report shows up here instead of in the next morning's report.
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      # The parsers only need these two; the Windows-only packages aren't imported by tests
+      - name: Install dependencies
+        run: python -m pip install requests psutil
+
+      - name: Run tests
+        run: python -m unittest discover -s tests -v

@@ -42,6 +42,9 @@ jobs:
                                "update gachashift/__init__.py first.")
           print(f"Tag {tag} matches __version__ {version}")
 
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+
       - name: Build
         run: python build.py
 

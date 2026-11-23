@@ -1,0 +1,62 @@
+[13:18:31.161] [INF] [Primary:S1:P38664:T1794536204305] BetterGenshinImpact.Service.ScriptService
+配置组 "test" 加载完成，共2个脚本，开始执行
+
+[13:18:31.177] [INF] [Primary:S1:P38664:T1794536204305] BetterGenshinImpact.Service.ScriptService
+→ 开始执行JS脚本: "自动每日委托"
+
+[13:18:38.997] [INF] [Primary:S1:P38664:T1794536204305] BetterGenshinImpact.Core.Script.Dependence.Log
+当前每日委托奖励进度: 0/4
+
+[13:19:10.979] [INF] [Primary:S1:P38664:T1794536204305] BetterGenshinImpact.Core.Script.Dependence.Log
+委托识别完成，共识别到 4 个委托，其中 4 个受支持
+
+[13:21:19.680] [INF] [Primary:S1:P38664:T1794536204305] BetterGenshinImpact.Core.Script.Dependence.Log
+委托执行成功：冰凉凉的大团危机
+
+[13:22:38.127] [ERR] [Primary:S1:P38664:T1794536204305] BetterGenshinImpact.Core.Script.Dependence.Log
+["processor:自动战斗"] "执行 自动战斗 步骤" 失败: "战斗过程检测到游泳，前往七天神像重试"
+
+[13:24:08.126] [INF] [Primary:S1:P38664:T1794536204305] BetterGenshinImpact.Core.Script.Dependence.Log
+委托执行成功：邪恶的扩张
+
+[13:25:44.646] [INF] [Primary:S1:P38664:T1794536204305] BetterGenshinImpact.Core.Script.Dependence.Log
+委托执行成功：冷冰冰的大麻烦
+
+[13:27:03.391] [INF] [Primary:S1:P38664:T1794536204305] BetterGenshinImpact.Core.Script.Dependence.Log
+委托执行成功：回头客
+
+[13:27:03.391] [INF] [Primary:S1:P38664:T1794536204305] BetterGenshinImpact.Core.Script.Dependence.Log
+委托追踪全部执行完成，共执行 4/4 个委托
+
+[13:27:20.710] [INF] [Primary:S1:P38664:T1794536204305] BetterGenshinImpact.Service.ScriptService
+→ 脚本执行结束: "自动每日委托", 耗时: 8分49.532秒
+
+[13:27:21.727] [INF] [Primary:S1:P38664:T1794536204305] BetterGenshinImpact.Service.ScriptService
+→ 开始执行JS脚本: "使用历练点完成每日委托"
+
+[13:27:58.674] [INF] [Primary:S1:P38664:T1794536204305] BetterGenshinImpact.GameTask.AutoSkip.AutoSkipTrigger
+自动剧情："领取「每日委托」奖励"
+
+[13:27:59.082] [INF] [Primary:S1:P38664:T1794536204305] BetterGenshinImpact.GameTask.AutoSkip.AutoSkipTrigger
+自动剧情："领取「每日委托」奖励"
+
+[13:28:08.499] [INF] [Primary:S1:P38664:T1794536204305] BetterGenshinImpact.Core.Script.Dependence.Log
+交互或拾取："领取完成"
+
+[13:29:54.115] [INF] [Primary:S1:P38664:T1794536204305] BetterGenshinImpact.GameTask.Common.TaskControl
+邮件："全部领取"
+
+[13:30:06.688] [INF] [Primary:S1:P38664:T1794536204305] BetterGenshinImpact.Core.Script.Dependence.Log
+当前每日委托奖励进度: 4/4
+
+[13:30:47.384] [INF] [Primary:S1:P38664:T1794536204305] BetterGenshinImpact.GameTask.Common.TaskControl
+▶ "领取『每日委托』奖励" 未完成或者已领取
+
+[13:30:51.160] [INF] [Primary:S1:P38664:T1794536204305] BetterGenshinImpact.GameTask.Common.TaskControl
+探索派遣："全部领取"
+
+[13:31:07.072] [INF] [Primary:S1:P38664:T1794536204305] BetterGenshinImpact.GameTask.Common.TaskControl
+检查每日奖励结果："今日奖励已领取"
+
+[13:31:08.756] [INF] [Primary:S1:P38664:T1794536204305] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+一条龙和配置组任务结束

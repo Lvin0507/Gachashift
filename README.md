@@ -144,6 +144,8 @@ gachashift/           The program
   updates.py          Asks GitHub whether a newer release is out
   i18n.py             All English and Chinese text
   games/              One module per game
+tests/                Log-parser tests, run on every push
+  logs/               Real log excerpts the tests read
 Gachashift.py         Entry point of Gachashift.exe (opens the app, or "run" does a run)
 Gachashift App.bat    Opens the app from source
 build.py              Builds dist/Gachashift and its zip with PyInstaller
@@ -181,7 +183,15 @@ Problems I hit while building this, and what fixed them:
 
 ## Releasing
 
-Set the version in `gachashift/__init__.py`, commit and push, then push a matching tag such as `v1.0.1`. GitHub Actions builds `Gachashift.exe` on Windows and publishes the Release with the zip attached; it stops if the tag and the version don't match.
+Run the tests first:
+
+```
+python -m unittest discover -s tests
+```
+
+When a report looked wrong, add that day's log to `tests/logs` with a test for what the report should have said, and fix the parser until it passes.
+
+Set the version in `gachashift/__init__.py`, commit and push, then push a matching tag such as `v1.0.1`. GitHub Actions builds `Gachashift.exe` on Windows and publishes the Release with the zip attached; it stops if the tag and the version don't match, or if a test fails.
 
 ## Built on
 

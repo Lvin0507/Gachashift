@@ -1,0 +1,143 @@
+[07:05:06.041] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+参数指定的一条龙配置：默认配置
+
+[07:05:06.443] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+启用一条龙配置：默认配置
+
+[07:05:06.487] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+启用一条龙任务的数量: 3
+
+[07:05:24.624] [DBG] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "启用"
+
+[07:06:39.154] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+启用配置组任务的数量: 1
+
+[07:06:39.155] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+一条龙任务执行: 1/3
+
+[07:06:39.160] [DBG] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "停用"
+
+[07:06:42.001] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.GameTask.Common.TaskControl
+邮件："全部领取"
+
+[07:06:46.118] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+配置组任务执行: 1/1
+
+[07:06:46.165] [DBG] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "启用"
+
+[07:06:46.703] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.Service.ScriptService
+配置组 "test" 加载完成，共2个脚本，开始执行
+
+[07:06:46.709] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.Service.ScriptService
+→ 开始执行JS脚本: "自动每日委托"
+
+[07:06:46.709] [DBG] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "停用"
+
+[07:06:51.743] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.GameTask.Common.TaskControl
+"历练点："未找到领取历练点奖励按钮
+
+[07:06:52.886] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.GameTask.Common.TaskControl
+"历练点："未找到领取历练点奖励按钮
+
+[07:06:55.516] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.Core.Script.Dependence.Log
+当前每日委托奖励进度: 0/4
+
+[07:07:24.583] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.Core.Script.Dependence.Log
+委托识别完成，共识别到 4 个委托，其中 3 个受支持
+
+[07:09:48.602] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.Core.Script.Dependence.Log
+委托执行成功：冰凉凉的大团危机
+
+[07:11:14.514] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.Core.Script.Dependence.Log
+委托执行成功：邪恶的扩张
+
+[07:16:43.772] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.Core.Script.Dependence.Log
+委托执行成功：攀高危险
+
+[07:16:57.882] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.Service.ScriptService
+→ 脚本执行结束: "自动每日委托", 耗时: 10分11.172秒
+
+[07:16:58.885] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.Service.ScriptService
+→ 开始执行JS脚本: "使用历练点完成每日委托"
+
+[07:16:58.967] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.Core.Script.Dependence.Log
+检查是否可以领取历练点奖励
+
+[07:17:07.429] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.Core.Script.Dependence.Log
+可领取历练点奖励
+
+[07:17:07.429] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.Core.Script.Dependence.Log
+不使用好友尘歌壶历练点领取双倍好感，直接使用历练点
+
+[07:17:07.434] [WRN] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.Core.Script.Dependence.Log
+未识别到历练点领取奖励按钮，可能是已领取或未完成
+
+[07:17:11.334] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.Core.Script.Dependence.Log
+可以领取历练点奖励，开始执行
+
+[07:17:32.682] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.Core.Script.Dependence.Log
+开始领取每日委托，若无退出对话，则说明重复领取
+
+[07:17:33.715] [DBG] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "启用"
+
+[07:17:34.949] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.GameTask.AutoSkip.AutoSkipTrigger
+自动剧情："领取「每日委托」奖励"
+
+[07:17:44.710] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.Core.Script.Dependence.Log
+交互或拾取："领取完成"
+
+[07:17:44.737] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.Service.ScriptService
+→ 脚本执行结束: "使用历练点完成每日委托", 耗时: 0分45.851秒
+
+[07:17:45.739] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.Service.ScriptService
+配置组 "test" 执行结束
+
+[07:17:45.770] [DBG] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "启用"
+
+[07:17:46.739] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+一条龙任务执行: 2/3
+
+[07:17:46.742] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.GameTask.Common.TaskControl
+→ "前往冒险家协会领取奖励" 开始
+
+[07:17:46.755] [DBG] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "停用"
+
+[07:17:49.078] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.GameTask.Common.TaskControl
+"历练点："未找到领取历练点奖励按钮
+
+[07:17:50.212] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.GameTask.Common.TaskControl
+"历练点："未找到领取历练点奖励按钮
+
+[07:18:08.720] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.GameTask.Common.TaskControl
+▶ "领取『每日委托』奖励" 未完成或者已领取
+
+[07:18:11.119] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.GameTask.Common.TaskControl
+▶ "探索派遣" 未探索完成或已领取
+
+[07:18:14.132] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.GameTask.Common.TaskControl
+→ "前往冒险家协会领取奖励" 结束
+
+[07:18:16.167] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.GameTask.Common.TaskControl
+纪行："一键领取"
+
+[07:18:21.587] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.GameTask.Common.TaskControl
+纪行："无需领取"
+
+[07:18:23.559] [DBG] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "启用"
+
+[07:18:23.606] [DBG] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "停用"
+
+[07:18:27.829] [WRN] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.GameTask.Common.TaskControl
+检查每日奖励结果："未领取"，请手动检查！
+
+[07:18:29.499] [INF] [Primary:S1:P32016:T1794600303554] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+一条龙和配置组任务结束
