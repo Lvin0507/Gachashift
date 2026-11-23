@@ -14,7 +14,7 @@ from PySide6.QtGui import QColor, QPainter, QPixmap
 from PySide6.QtWidgets import (QApplication, QButtonGroup, QFrame, QHBoxLayout, QMessageBox,
                                QScrollArea, QVBoxLayout, QWidget)
 
-from .. import __version__
+from .. import __version__, finder
 from ..config import app_dir, load_config, save_config
 from ..updates import newer_release
 from ..games import ordered
@@ -45,6 +45,7 @@ PAGES = ["home", "games", "run", "schedule", "history", "general", "appearance"]
 
 class MainWindow(QWidget):
     update_found = Signal(str, str)  # version, release page; emitted from the checking thread
+    tools_found = Signal(object)     # {game id: {setting: value}}; emitted from the search thread
 
     def __init__(self):
         super().__init__()
@@ -78,6 +79,8 @@ class MainWindow(QWidget):
         self.watch_timer.timeout.connect(self.watch_runs)
         self.watch_timer.start(2000)
         self.update_found.connect(self.on_update_found)
+        self.tools_found.connect(self.on_tools_found)
+        self.finding = False
         if self.cfg["options"].get("check_updates", True):
             # in the background, so a slow or missing connection never delays the window
             threading.Thread(target=self.check_updates, daemon=True).start()
@@ -86,6 +89,27 @@ class MainWindow(QWidget):
         found = newer_release()
         if found:
             self.update_found.emit(*found)
+
+    def find_tools(self):
+        """Search for every game's tool in the background (it can take up to 20 seconds)."""
+        if self.finding:
+            return
+        self.finding = True
+        self.set_status(self.tr("finder.searching"), "accent")
+        threading.Thread(target=lambda: self.tools_found.emit(
+            finder.settings_from(finder.search(finder.search_roots()))), daemon=True).start()
+
+    def on_tools_found(self, found):
+        self.finding = False
+        changed = finder.fill_missing(self.cfg["games"], found)
+        if self.page in ("games", "home"):
+            self.show_page(self.page)  # show the filled-in paths
+        if changed:
+            names = "、" if self.lang == "zh" else ", "
+            self.set_status(self.tr("finder.filled", games=names.join(
+                plain_name(gid, self.lang) for gid in changed)), "ok")
+        else:
+            self.set_status(self.tr("finder.nothing"), "")
 
     def on_update_found(self, version, url):
         self.update_info = (version, url)

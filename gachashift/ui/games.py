@@ -24,7 +24,13 @@ def build(app):
     short = SHORT_NAMES.get(app.lang, SHORT_NAMES["en"])
     picker = Choice([(g.id, short[g.id]) for g in ordered(app.cfg)], gid)
     picker.changed.connect(app.open_game)
-    box.addWidget(picker)
+    top = QHBoxLayout()
+    top.addWidget(picker)
+    top.addStretch()
+    find = button(app.tr("finder.button"), None, app.find_tools)
+    find.setToolTip(app.tr("finder.tooltip"))
+    top.addWidget(find)
+    box.addLayout(top)
 
     banner = ImageBox(app.cfg["appearance"].get("game_images", {}).get(gid, ""), height=150, radius=14,
                       fixed=False)
