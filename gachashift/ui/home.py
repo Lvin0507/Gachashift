@@ -6,7 +6,7 @@ import webbrowser
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QGridLayout, QHBoxLayout, QVBoxLayout, QWidget
 
-from ..games import GAMES
+from ..games import move, ordered
 from ..runner import load_last_results
 from ..winutil import DAY_KEYS_EN, DAY_KEYS_ZH, missing_items, plain_name
 from .theme import FAIL
@@ -103,12 +103,31 @@ def update_card(app):
     return card
 
 
-def game_row(app, gid, last=None):
+def order_buttons(app, gid, first, last):
+    """Small ▲ ▼ that move the game up or down; games run in this order."""
+    col = QVBoxLayout()
+    col.setSpacing(0)
+    for text, step, end in (("▲", -1, first), ("▼", 1, last)):
+        arrow = button(text, "move", lambda step=step: shift(app, gid, step))
+        arrow.setToolTip(app.tr("home.move_up" if step < 0 else "home.move_down"))
+        arrow.setEnabled(not end)
+        col.addWidget(arrow)
+    return col
+
+
+def shift(app, gid, step):
+    move(app.cfg, gid, step)
+    app.changed()
+    app.show_page("home")
+
+
+def game_row(app, gid, last=None, first_row=False, last_row=False):
     game_cfg = app.cfg["games"][gid]
     enabled = bool(game_cfg.get("enabled"))
     card, box = panel(margins=(16, 12, 18, 12))
     row = QHBoxLayout()
     row.setSpacing(14)
+    row.addLayout(order_buttons(app, gid, first_row, last_row))
     image = app.cfg["appearance"].get("game_images", {}).get(gid, "")
     thumb = ImageBox(image, 52, 52, 10)
     if thumb.has_image():
@@ -168,7 +187,10 @@ def build(app):
         box.addWidget(setup_card(app, steps))
 
     last = load_last_results()
-    for game_cls in GAMES:
-        box.addWidget(game_row(app, game_cls.id, last.get(game_cls.id)))
+    games = ordered(app.cfg)
+    box.addWidget(label(app.tr("home.order_hint"), "hint"))
+    for i, game_cls in enumerate(games):
+        box.addWidget(game_row(app, game_cls.id, last.get(game_cls.id),
+                               first_row=i == 0, last_row=i == len(games) - 1))
     box.addStretch()
     return page

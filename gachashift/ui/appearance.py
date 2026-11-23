@@ -6,7 +6,7 @@ from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (QButtonGroup, QColorDialog, QHBoxLayout, QSlider, QVBoxLayout,
                                QWidget)
 
-from ..games import GAMES
+from ..games import ordered
 from ..winutil import plain_name
 from . import theme
 from .widgets import ImageBox, button, label, panel, pick_file, shadowed
@@ -110,7 +110,7 @@ def build(app):
     inner.addWidget(label(app.tr("appearance.game_images"), "h2"))
     inner.addWidget(label(app.tr("appearance.game_images_hint"), "hint", wrap=True))
     images = look.setdefault("game_images", {})
-    for game_cls in GAMES:
+    for game_cls in ordered(app.cfg):
         gid = game_cls.id
         row = QHBoxLayout()
         row.setSpacing(12)

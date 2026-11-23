@@ -93,7 +93,7 @@ If you are using the PC when the scheduled time comes, it asks first and gives y
    ```
 2. Double-click `Gachashift App.bat`.
 
-The app takes it from there. Home shows a short setup checklist with a button for each step: turn on your games, tell Gachashift where each tool is, do one test run, connect Telegram or Discord (optional), and choose when to run. Every setting has a one-line hint under it, and each game's page links to its tool's own documentation. When all five steps are done, the checklist goes away. Under each game, Home shows how its last run went.
+The app takes it from there. Home shows a short setup checklist with a button for each step: turn on your games, tell Gachashift where each tool is, do one test run, connect Telegram or Discord (optional), and choose when to run. Every setting has a one-line hint under it, and each game's page links to its tool's own documentation. When all five steps are done, the checklist goes away. Under each game, Home shows how its last run went. Games run from top to bottom; the ▲ ▼ next to each one change the order.
 
 Other pages:
 

@@ -6,7 +6,7 @@ import webbrowser
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import QCheckBox, QDialog, QHBoxLayout, QVBoxLayout, QWidget
 
-from ..games import GAMES
+from ..games import ordered
 from ..winutil import (DAY_KEYS_EN, DAY_KEYS_ZH, FIELDS, PATH_KINDS, SHORT_NAMES, STEAM_ONLY, TOOLS,
                        launcher_of, parse_point, plain_name, window_under_cursor)
 from .widgets import (Choice, DayChips, Field, ImageBox, Toggle, button, label, panel, pick_file,
@@ -22,7 +22,7 @@ def build(app):
     box.setSpacing(12)
 
     short = SHORT_NAMES.get(app.lang, SHORT_NAMES["en"])
-    picker = Choice([(g.id, short[g.id]) for g in GAMES], gid)
+    picker = Choice([(g.id, short[g.id]) for g in ordered(app.cfg)], gid)
     picker.changed.connect(app.open_game)
     box.addWidget(picker)
 

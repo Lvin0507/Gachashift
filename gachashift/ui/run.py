@@ -3,7 +3,7 @@ The run itself lives in the window (it keeps going when you switch pages)."""
 
 from PySide6.QtWidgets import QHBoxLayout, QPlainTextEdit, QVBoxLayout, QWidget
 
-from ..games import GAMES
+from ..games import ordered
 from ..system import read_since
 from ..winutil import SHORT_NAMES
 from .widgets import Choice, button, label, panel, shadowed
@@ -34,7 +34,7 @@ def build(app):
     inner.addWidget(label(app.tr("run.one"), "h2"))
     inner.addWidget(label(app.tr("run.one_explain"), "hint", wrap=True))
     short = SHORT_NAMES.get(app.lang, SHORT_NAMES["en"])
-    picker = Choice([(g.id, short[g.id]) for g in GAMES], app.test_game)
+    picker = Choice([(g.id, short[g.id]) for g in ordered(app.cfg)], app.test_game)
     one = button(app.tr("test.run", game=short[app.test_game]), None,
                  lambda: app.start_run("--only", app.test_game))
     one.setEnabled(not busy)

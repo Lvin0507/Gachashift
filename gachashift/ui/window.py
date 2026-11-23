@@ -17,7 +17,7 @@ from PySide6.QtWidgets import (QApplication, QButtonGroup, QFrame, QHBoxLayout, 
 from .. import __version__
 from ..config import app_dir, load_config, save_config
 from ..updates import newer_release
-from ..games import GAMES
+from ..games import ordered
 from ..i18n import t
 from ..runner import running_file
 from ..system import gamma_marker, log_size, read_since, restore_gamma, stop_file
@@ -51,12 +51,12 @@ class MainWindow(QWidget):
         self.update_info = None  # (version, url) once a newer release is known
         self.cfg = load_config()
         self.saved_cfg = copy.deepcopy(self.cfg)
-        self.current_game = GAMES[0].id
+        self.current_game = ordered(self.cfg)[0].id
         self.page = "home"
         self.schedule = scheduled_time()   # "HH:MM" or None; asking Windows is slow, so cache it
         self._background = (None, None, 0)  # (path, QPixmap, veil alpha) cache
         # a run started from the Run page; it outlives page switches and language changes
-        self.test_game = GAMES[0].id
+        self.test_game = ordered(self.cfg)[0].id
         self.run_handle = None
         self.run_log = None
         self.run_start_offset = self.run_offset = 0
@@ -132,7 +132,7 @@ class MainWindow(QWidget):
 
     def setup_steps(self):
         """The first-run checklist, worked out from the settings themselves."""
-        enabled = [g.id for g in GAMES if self.cfg["games"][g.id].get("enabled")]
+        enabled = [g.id for g in ordered(self.cfg) if self.cfg["games"][g.id].get("enabled")]
         tg = self.cfg["telegram"]
         setup = self.cfg.setdefault("setup", {"test_run_done": False, "skip_telegram": False})
         not_ready = [g for g in enabled if missing_items(g, self.cfg["games"][g])]
@@ -334,7 +334,7 @@ class MainWindow(QWidget):
         save_config(self.cfg)
         self.saved_cfg = copy.deepcopy(self.cfg)
         problems = []
-        for game_cls in GAMES:
+        for game_cls in ordered(self.cfg):
             game_cfg = self.cfg["games"][game_cls.id]
             if game_cfg.get("enabled"):
                 missing = missing_items(game_cls.id, game_cfg)

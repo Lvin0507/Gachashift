@@ -32,6 +32,7 @@ DEFAULT_CONFIG = {
         "game_images": {},       # game id -> image on this PC
     },
     "setup": {"test_run_done": False, "skip_telegram": False},
+    "order": [],                 # game ids in the order they run; empty = the default order
     "games": {
         "endfield": {"enabled": False, "days": ALL_DAYS,
                      "maaend_path": "", "log_dir": ""},

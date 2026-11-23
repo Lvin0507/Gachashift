@@ -59,7 +59,7 @@ class RetryRunTest(unittest.TestCase):
             cfg["games"][gid] = {"enabled": True, "days": list(range(7)),
                                  "retry": gid not in retry_off}
         clock = iter(range(0, 10 ** 6, minutes * 60))
-        with mock.patch.object(runner, "GAMES", [make(g) for g in outcomes]), \
+        with mock.patch.object(runner, "ordered", lambda cfg: [make(g) for g in outcomes]), \
                 mock.patch.object(runner.time, "time", lambda: next(clock)):
             reports, stopped = runner.run_games(cfg, only, "en", {"mute": False}, lambda m: None)
         return reports, calls
@@ -121,3 +121,49 @@ class RetryRunTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class OrderTest(unittest.TestCase):
+    def ids(self, cfg):
+        from gachashift.games import ordered
+        return [g.id for g in ordered(cfg)]
+
+    def test_default(self):
+        self.assertEqual(self.ids({}), ["endfield", "arknights", "wuthering", "bluearchive", "zzz", "genshin"])
+
+    def test_saved_order_with_a_game_it_does_not_know_yet(self):
+        # an order saved before Genshin existed: Genshin follows at the end
+        cfg = {"order": ["zzz", "endfield", "nosuchgame", "zzz", "arknights", "wuthering", "bluearchive"]}
+        self.assertEqual(self.ids(cfg), ["zzz", "endfield", "arknights", "wuthering", "bluearchive", "genshin"])
+
+    def test_move(self):
+        from gachashift.games import move
+        cfg = {}
+        move(cfg, "genshin", -1)
+        self.assertEqual(self.ids(cfg)[-2:], ["genshin", "zzz"])
+        move(cfg, "endfield", -1)  # already first: stays
+        self.assertEqual(self.ids(cfg)[0], "endfield")
+
+    def test_runs_in_that_order(self):
+        ran = []
+
+        def make(gid):
+            class Fake(Game):
+                id = gid
+
+                def run(self):
+                    ran.append(gid)
+                    return report(R.OK)
+            return Fake
+
+        from gachashift.games import GAMES
+        fakes = {g.id: make(g.id) for g in GAMES}
+        cfg = copy.deepcopy(DEFAULT_CONFIG)
+        for gid in fakes:
+            cfg["games"][gid] = {"enabled": True, "days": list(range(7))}
+        cfg["order"] = ["genshin", "zzz"]
+        with mock.patch.dict("gachashift.games.GAMES_BY_ID", fakes), \
+                mock.patch("gachashift.games.GAMES", list(fakes.values())):
+            runner.run_games(cfg, None, "en", {"mute": False}, lambda m: None)
+        self.assertEqual(ran[:2], ["genshin", "zzz"])
+        self.assertEqual(len(ran), 6)

@@ -92,6 +92,9 @@ QPushButton#primary:hover {{ background: {shade(accent, 0.9)}; }}
 QPushButton#danger {{ background: {FAIL}; color: {BG}; font-weight: 700; padding: 8px 22px; }}
 QPushButton#link {{ background: transparent; color: {accent}; padding: 0; text-align: left; }}
 QPushButton#link:hover {{ text-decoration: underline; }}
+QPushButton#move {{ background: transparent; color: {MUTED}; padding: 0 4px; font-size: 13px; }}
+QPushButton#move:hover {{ color: {TEXT}; }}
+QPushButton#move:disabled {{ color: {rgba(MUTED, 0.25)}; }}
 QPushButton#chip {{ background: {rgba(LINE, 0.95)}; border-radius: 11px; padding: 4px 12px; }}
 QPushButton#chip:checked {{ background: {accent}; color: {BG}; font-weight: 600; }}
 QPushButton#seg {{ background: {rgba(LINE, 0.95)}; border-radius: 0; padding: 6px 14px; }}

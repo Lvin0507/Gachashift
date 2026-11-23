@@ -10,7 +10,7 @@ import psutil
 
 from . import report as R
 from .config import app_dir, load_config
-from .games import GAMES
+from .games import ordered
 from .i18n import game_name, t
 from .system import (QuietMode, StopRequested, clear_stop, seconds_since_input, shutdown, ts,
                      wait_for_reset, wait_for_unlock)
@@ -156,7 +156,7 @@ def run_games(cfg, only, lang, opts, log, dim=False, shots=None):
     reports, retry = [], []
     with QuietMode(mute=opts.get("mute", True), dim=dim,
                    dim_level=opts.get("dim_level", 30) / 100):
-        for game_cls in GAMES:
+        for game_cls in ordered(cfg):
             gid = game_cls.id
             game_cfg = cfg["games"].get(gid, {})
             if only:
