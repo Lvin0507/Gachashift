@@ -1,11 +1,13 @@
 """Home: the setup checklist (until everything is done) and the list of games."""
 
+import datetime
 import webbrowser
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QGridLayout, QHBoxLayout, QVBoxLayout, QWidget
 
 from ..games import GAMES
+from ..runner import load_last_results
 from ..winutil import DAY_KEYS_EN, DAY_KEYS_ZH, missing_items, plain_name
 from .theme import FAIL
 from .widgets import ImageBox, Toggle, button, label, panel, shadowed
@@ -20,6 +22,26 @@ def days_summary(app, days):
     if app.lang == "zh":
         return "周" + "、".join(names[d] for d in sorted(days))
     return ", ".join(names[d] for d in sorted(days))
+
+
+def last_result_text(app, entry):
+    """'✅ today 07:38', '⚠️ yesterday 07:12 · 1 failed' or '❌ 11-20 07:05 · nothing got done'."""
+    try:
+        when = datetime.datetime.fromisoformat(entry["time"])
+    except (KeyError, TypeError, ValueError):
+        return None
+    days = (datetime.date.today() - when.date()).days
+    clock = f"{when:%H:%M}"
+    day = (app.tr("last.today", time=clock) if days == 0 else
+           app.tr("last.yesterday", time=clock) if days == 1 else f"{when:%m-%d} {clock}")
+    outcome, failed = entry.get("outcome"), entry.get("failed", 0)
+    if outcome == "ok":
+        return f"✅ {day}", "last_ok"
+    if outcome == "fail":
+        return app.tr("last.fail", when=day), "last_fail"
+    if failed:
+        return app.tr("last.failed", when=day, n=failed), "last_warn"
+    return app.tr("last.check", when=day), "last_warn"
 
 
 def setup_card(app, steps):
@@ -81,7 +103,7 @@ def update_card(app):
     return card
 
 
-def game_row(app, gid):
+def game_row(app, gid, last=None):
     game_cfg = app.cfg["games"][gid]
     enabled = bool(game_cfg.get("enabled"))
     card, box = panel(margins=(16, 12, 18, 12))
@@ -100,6 +122,9 @@ def game_row(app, gid):
     name.setProperty("off", "false" if enabled else "true")
     text.addWidget(name)
     text.addWidget(label(days_summary(app, game_cfg.get("days", [])), "muted"))
+    result = last_result_text(app, last) if last else None
+    if result:
+        text.addWidget(label(*result))
     row.addLayout(text, 1)
 
     if not enabled:
@@ -142,7 +167,8 @@ def build(app):
     else:
         box.addWidget(setup_card(app, steps))
 
+    last = load_last_results()
     for game_cls in GAMES:
-        box.addWidget(game_row(app, game_cls.id))
+        box.addWidget(game_row(app, game_cls.id, last.get(game_cls.id)))
     box.addStretch()
     return page

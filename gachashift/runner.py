@@ -19,12 +19,38 @@ ACTIVE_SECONDS = 120  # someone used the PC this recently: ask before taking ove
 # A game whose first attempt took longer than this isn't retried: it most likely hung until
 # its timeout, and a second hang would hold up the morning for as long again
 RETRY_MAX_MINUTES = 40
-SUCCESS = (R.OK, R.ALREADY, R.NOTHING, R.PARTIAL)
 
 
 def running_file():
     """Present while a run is in progress, so the App can show a Stop button."""
     return app_dir() / "running.json"
+
+
+def last_results_file():
+    """Each game's most recent result, for the App's Home page."""
+    return app_dir() / "last_run.json"
+
+
+def load_last_results():
+    try:
+        return json.loads(last_results_file().read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+
+def save_last_results(reports):
+    """Remember how each game that ran just now went; games that didn't run keep their
+    earlier result."""
+    results = load_last_results()
+    now = datetime.datetime.now().isoformat(timespec="minutes")
+    for rep in reports:
+        if rep.game != "system":
+            results[rep.game] = {"time": now, "outcome": R.outcome(rep),
+                                 "failed": sum(task.status == R.FAIL for task in rep.tasks)}
+    try:
+        last_results_file().write_text(json.dumps(results, indent=2), encoding="utf-8")
+    except OSError as e:
+        print(f"Could not save the results for Home: {e}")
 
 
 def unfinished_run():
@@ -77,9 +103,7 @@ def needs_retry(rep):
     or its only task failed. Those are usually one-off (a client update, a slow first launch)
     and pass on a second try. A run where some tasks worked and some failed isn't repeated:
     the failures there are usually the same every time."""
-    if any(task.status in SUCCESS for task in rep.tasks):
-        return False
-    if any(key in ("note.finished", "note.quick_exit") for key, _ in rep.notes):
+    if not R.nothing_done(rep):
         return False
     # a setting that was never filled in won't fix itself on a second try
     return not any("missing settings" in str(params.get("error", "")) for _, params in rep.notes)
@@ -182,6 +206,7 @@ def run_all(cfg=None, only=None, allow_shutdown=True, send=True, ask_first=False
         clear_stop()
 
     reports = notices + reports  # a note about the last run goes above this run's games
+    save_last_results(reports)
     text = R.render_all(reports, lang)
     log("\n" + text + "\n")
     tg = cfg["telegram"]

@@ -19,12 +19,16 @@ class UnfinishedRunTest(unittest.TestCase):
     def setUp(self):
         self.folder = tempfile.TemporaryDirectory()
         path = pathlib.Path(self.folder.name) / "running.json"
-        self.patch = mock.patch.object(runner, "running_file", lambda: path)
-        self.patch.start()
+        last = pathlib.Path(self.folder.name) / "last_run.json"
+        self.patches = [mock.patch.object(runner, "running_file", lambda: path),
+                        mock.patch.object(runner, "last_results_file", lambda: last)]
+        for patch in self.patches:
+            patch.start()
         self.path = path
 
     def tearDown(self):
-        self.patch.stop()
+        for patch in self.patches:
+            patch.stop()
         self.folder.cleanup()
 
     def test_no_file(self):

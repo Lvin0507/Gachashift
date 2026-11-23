@@ -33,32 +33,30 @@ You also need the automation tool for each game you play (MaaEnd, MAA, ok-ww, BA
 | Zenless Zone Zero (official or Steam) | [OneDragon](https://github.com/OneDragon-Anything/ZenlessZoneZero-OneDragon) | Redeem codes, check-in, mail, video store, coffee, rewards |
 | Genshin Impact | [BetterGI](https://github.com/babalae/better-genshin-impact) | Mail, daily commissions, commission reward, expeditions |
 
-Each game can be turned on or off and given its own weekdays. When everything is done, Gachashift sends a report (English by default, Chinese optional):
+Each game can be turned on or off and given its own weekdays. When everything is done, Gachashift sends a short report to Telegram or Discord (English by default, Chinese optional). Anything you need to do by hand comes first; a game where everything worked takes one line, and only the tasks that need a look are listed:
 
 ```
-🌅 Gachashift report (11-10)
+🌅 Gachashift report (11-15)
 
-『🪐 Arknights: Endfield』
-Launch game: ✅ Done
-Base rewards: ✅ Done
-Environment monitoring: ❌ Failed
-Delivery jobs: ✅ Done (3/3)
-...
+📋 Needs you
+• Genshin Impact: the commission reward wasn't claimed. Claim it from Katheryne with Adventurer Rank points.
 
-『🎯 Arknights』
-Recruitment: ✅ Done (x4)
-Base shifts: ✅ Done
-...
+『🪐 Arknights: Endfield』✅ All 16 done
 
-『📘 Blue Archive』
-BAAS dailies: ✅ Done
-✅ Finished in 14 min
+『🎯 Arknights』✅ All 6 done
 
-『⚡ Zenless Zone Zero』
-Daily check-in: ✅ Done
-Mail: ✅ Done
-✅ Finished in 6 min
+『📘 Blue Archive』BAAS dailies: ✅ Done · 13 min
+
+『⚡ Zenless Zone Zero』✅ All 8 done · 6 min
+
+『✨ Genshin Impact』
+Daily commissions: ⚠️ Partly done (3/4)
+Commission reward: ❌ Failed (未领取)
+✅ The other 2 done
+✅ Finished in 12 min
 ```
+
+The run log under History keeps the full list of every task.
 
 ## How it works
 
@@ -95,7 +93,7 @@ If you are using the PC when the scheduled time comes, it asks first and gives y
    ```
 2. Double-click `Gachashift App.bat`.
 
-The app takes it from there. Home shows a short setup checklist with a button for each step: turn on your games, tell Gachashift where each tool is, do one test run, connect Telegram or Discord (optional), and choose when to run. Every setting has a one-line hint under it, and each game's page links to its tool's own documentation. When all five steps are done, the checklist goes away.
+The app takes it from there. Home shows a short setup checklist with a button for each step: turn on your games, tell Gachashift where each tool is, do one test run, connect Telegram or Discord (optional), and choose when to run. Every setting has a one-line hint under it, and each game's page links to its tool's own documentation. When all five steps are done, the checklist goes away. Under each game, Home shows how its last run went.
 
 Other pages:
 

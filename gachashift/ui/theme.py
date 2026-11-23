@@ -13,6 +13,7 @@ TEXT = "#E9E7F2"
 MUTED = "#98A1BE"
 OK = "#7BD3A0"
 FAIL = "#EF7D7D"
+WARN = "#E8C27C"
 
 ACCENTS = ["#F4B860", "#7AA2F7", "#9ECE6A", "#F7768E", "#BB9AF7", "#73DACA"]
 
@@ -72,6 +73,9 @@ QLabel#hint {{ color: {MUTED}; font-size: 12px; }}
 QLabel#error {{ color: {FAIL}; font-size: 12px; }}
 QLabel#ok {{ color: {OK}; font-weight: 600; }}
 QLabel#fail {{ color: {FAIL}; font-weight: 600; }}
+QLabel#last_ok {{ color: {OK}; font-size: 13px; }}
+QLabel#last_warn {{ color: {WARN}; font-size: 13px; }}
+QLabel#last_fail {{ color: {FAIL}; font-size: 13px; }}
 QLabel#off {{ color: {MUTED}; font-weight: 600; }}
 QLabel#status {{ color: {MUTED}; font-size: 13px; }}
 QLabel#status[kind="ok"] {{ color: {OK}; }}
