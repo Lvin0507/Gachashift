@@ -6,6 +6,8 @@ import json
 import os
 import time
 
+import psutil
+
 from . import report as R
 from .config import app_dir, load_config
 from .games import GAMES
@@ -23,6 +25,20 @@ SUCCESS = (R.OK, R.ALREADY, R.NOTHING, R.PARTIAL)
 def running_file():
     """Present while a run is in progress, so the App can show a Stop button."""
     return app_dir() / "running.json"
+
+
+def unfinished_run():
+    """When the last run was cut off (power loss, crash, the process killed), its running.json
+    is still there and its process is gone. Returns when it started ("11-20 07:00"), or None."""
+    path = running_file()
+    try:
+        info = json.loads(path.read_text())
+        started = datetime.datetime.fromtimestamp(path.stat().st_mtime)
+    except (OSError, ValueError):
+        return None
+    if psutil.pid_exists(info.get("pid", -1)):
+        return None  # still running (the App checks this before starting another run)
+    return started.strftime("%m-%d %H:%M")
 
 
 def due_today(game_cfg):
@@ -138,7 +154,12 @@ def run_all(cfg=None, only=None, allow_shutdown=True, send=True, ask_first=False
             log(f"[{ts()}] " + t(lang, "log.skipped_by_user"))
             return []
 
-    reports, stopped = [], False
+    reports, stopped, notices = [], False, []
+    cut_off = None if only else unfinished_run()
+    if cut_off:
+        rep = R.GameReport("system")
+        rep.note("note.previous_unfinished", started=cut_off)
+        notices.append(rep)
     running_file().write_text(json.dumps({"pid": os.getpid(), "started": ts(), "only": only}))
     try:
         # On the lock screen no tool can see or click anything, so report it instead of hanging
@@ -160,6 +181,7 @@ def run_all(cfg=None, only=None, allow_shutdown=True, send=True, ask_first=False
             pass
         clear_stop()
 
+    reports = notices + reports  # a note about the last run goes above this run's games
     text = R.render_all(reports, lang)
     log("\n" + text + "\n")
     tg = cfg["telegram"]

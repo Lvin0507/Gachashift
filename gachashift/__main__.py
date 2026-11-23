@@ -10,10 +10,12 @@ import argparse
 import datetime
 import sys
 import time
+import traceback
 
 from .config import app_dir, load_config
 from .games import GAMES_BY_ID
-from .report import render_game
+from .i18n import t
+from .report import render_game, send_text
 from .runner import run_all
 from .system import read_since
 
@@ -70,12 +72,22 @@ def main():
         print(render_game(rep, cfg["report_language"]))
         return
 
-    if args.only:
-        run_all(cfg, only=args.only, allow_shutdown=False, send=False)
-    elif args.no_shutdown:
-        run_all(cfg, allow_shutdown=False)  # started by hand, so no need to ask
-    else:
-        run_all(cfg, ask_first=True)        # the scheduled morning run
+    try:
+        if args.only:
+            run_all(cfg, only=args.only, allow_shutdown=False, send=False)
+        elif args.no_shutdown:
+            run_all(cfg, allow_shutdown=False)  # started by hand, so no need to ask
+        else:
+            run_all(cfg, ask_first=True)        # the scheduled morning run
+    except Exception as e:
+        # Gachashift itself failed: without this the morning would bring no message at all,
+        # which looks the same as a PC that never woke up
+        traceback.print_exc()
+        if not args.only:
+            send_text(cfg, t(cfg.get("report_language", "en"), "crash.message",
+                             error=f"{type(e).__name__}: {e}",
+                             log=f"logs/gachashift_{datetime.date.today():%Y-%m-%d}.log"))
+        sys.exit(1)
 
 
 if __name__ == "__main__":

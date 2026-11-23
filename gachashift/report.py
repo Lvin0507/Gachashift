@@ -74,6 +74,20 @@ def send_telegram(token, chat_id, reports, lang):
         return False
 
 
+def send_text(cfg, text):
+    """Send one plain message to every channel that is turned on (used when there is no
+    report to send, e.g. after a crash). Never raises: it may run while handling an error."""
+    tg, dc = cfg.get("telegram", {}), cfg.get("discord", {})
+    try:
+        if tg.get("enabled") and tg.get("bot_token") and tg.get("chat_id"):
+            requests.post(f"https://api.telegram.org/bot{tg['bot_token']}/sendMessage",
+                          json={"chat_id": tg["chat_id"], "text": text}, timeout=15)
+        if dc.get("enabled") and dc.get("webhook_url"):
+            requests.post(dc["webhook_url"], json={"content": text[:2000]}, timeout=15)
+    except Exception as e:
+        print(f"Could not send the message: {type(e).__name__}")
+
+
 def send_discord(webhook_url, reports, lang):
     """Send the report to a Discord channel through a webhook. Discord caps a message at 2000
     characters, so a long report goes out in several messages, split between lines."""
