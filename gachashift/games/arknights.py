@@ -41,8 +41,12 @@ class Arknights(Game):
             print(f"[{ts()}] starting {path}")
             subprocess.Popen([path], cwd=os.path.dirname(path))
             start = time.time()
+            watch = self.watch(log)
             while time.time() - start < timeout:
                 pause(15)
+                if self.stuck(watch):
+                    reason = "stalled"
+                    break
                 if any(m in read_since(log, offset) for m in DONE_MARKERS):
                     reason = "done"
                     break

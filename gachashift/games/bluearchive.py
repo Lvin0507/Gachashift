@@ -75,8 +75,12 @@ class BlueArchive(Game):
             print(f"[{ts()}] starting {baas_exe}")
             # its own console: redirecting its output crashes it on a cp932 system
             subprocess.Popen([baas_exe], cwd=baas_dir, creationflags=subprocess.CREATE_NEW_CONSOLE)
+            watch = self.watch()  # BAAS keeps no log, so only the screen tells
             while time.time() - start < timeout:
                 pause(15)
+                if saw_baas and self.stuck(watch):
+                    reason = "stalled"
+                    break
                 procs = processes_in(baas_dir)
                 baas_running = any((p.info.get("name") or "").lower() == "pythonw.exe" for p in procs)
                 if baas_running:

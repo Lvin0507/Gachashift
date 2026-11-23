@@ -70,9 +70,11 @@ class WutheringWaves(Game):
             print(f"[{ts()}] starting {path}")
             subprocess.Popen([path, "-t", self.cfg.get("task") or "GardenTask", "-e"], cwd=folder)
             pause(15)
-            ended_at = None
+            ended_at, watch = None, self.watch(log)
             while processes_in(folder) and time.time() - start < timeout:
                 pause(10)
+                if self.stuck(watch):
+                    break
                 text = read_since(log, offset)
                 if ended_at is None and (DONE in text or FAILED in text):
                     ended_at = time.time()

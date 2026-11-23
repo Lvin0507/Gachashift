@@ -5,7 +5,7 @@ import os
 import time
 
 from ..report import GameReport
-from ..system import capture_screen, process_running, processes_in
+from ..system import StallWatch, capture_screen, process_running, processes_in, ts
 
 
 class Game:
@@ -19,6 +19,19 @@ class Game:
         self.cfg = cfg
         self.shot_dir = None  # set by the runner when failure screenshots are on
         self.shot = None      # the screenshot taken before cleanup, if any
+        self.stalled = 0      # minutes without progress, if the game was ended for that
+
+    def watch(self, log=None):
+        """A StallWatch for this game's wait loop."""
+        return StallWatch(log)
+
+    def stuck(self, watch):
+        """True (and remembered for the report) once nothing has moved for watch.minutes."""
+        if watch.stuck():
+            self.stalled = watch.minutes
+            print(f"[{ts()}] {self.id}: no progress for {watch.minutes} min; ending it")
+            return True
+        return False
 
     def capture(self, exe_names=(), folder=None):
         """Called first in each game's cleanup, before anything is closed: if the game, its

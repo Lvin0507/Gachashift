@@ -118,6 +118,62 @@ def capture_screen(path, quality=70):
     return None
 
 
+def fingerprint_of(image, width=64, height=36):
+    """A tiny grey copy of a QImage, one byte per pixel; None when it is (nearly) all black."""
+    from PySide6.QtCore import Qt
+    from PySide6.QtGui import QImage
+    grey = image.scaled(width, height, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
+    grey = grey.convertToFormat(QImage.Format_Grayscale8)
+    pixels = b"".join(bytes(grey.constScanLine(y))[:width] for y in range(height))
+    return pixels if pixels and max(pixels) > 8 else None
+
+
+def screen_fingerprint():
+    """A fingerprint of the screen, for telling whether anything on it is moving; None when
+    the screen can't be seen (locked, switched off: the picture comes back black)."""
+    global _QT_APP
+    try:
+        from PySide6.QtWidgets import QApplication
+        _QT_APP = QApplication.instance() or QApplication([])
+        screen = _QT_APP.primaryScreen()
+        if screen is None:
+            return None
+        return fingerprint_of(screen.grabWindow(0).toImage())
+    except Exception:
+        return None
+
+
+def looks_different(a, b, threshold=2.0):
+    """True when two fingerprints differ by more than a flicker (mean change per pixel)."""
+    return sum(abs(x - y) for x, y in zip(a, b)) / max(1, len(a)) > threshold
+
+
+class StallWatch:
+    """Notices a tool that has stopped making progress: its log hasn't grown and nothing on
+    the screen has moved for `minutes`. A quiet log alone isn't enough (a long fight can be
+    quiet), and a screen that can't be seen never counts as still."""
+
+    def __init__(self, log=None, minutes=15, clock=time.time, look=screen_fingerprint):
+        self.log, self.limit, self.clock, self.look = log, minutes * 60, clock, look
+        self.minutes = minutes
+        self.last_change = clock()
+        self.size = self.screen = None
+
+    def stuck(self):
+        now = self.clock()
+        size = log_size(self.log) if self.log else None
+        log_moved, self.size = size != self.size, size
+        shot = self.look()
+        if shot is None:
+            screen_moved = True  # can't see the screen: never call it still
+        else:
+            screen_moved = self.screen is None or looks_different(shot, self.screen)
+            self.screen = shot
+        if log_moved or screen_moved:
+            self.last_change = now
+        return now - self.last_change >= self.limit
+
+
 # ---------- logs ----------
 # The first bytes of each log at the time its size was taken. Some tools (OneDragon) start
 # a new log file on every launch; once the new file grows past the old size, a size check

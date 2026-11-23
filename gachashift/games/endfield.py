@@ -125,8 +125,11 @@ class Endfield(Game):
             subprocess.Popen([path], cwd=os.path.dirname(path))
             pause(15)
             start = time.time()
+            watch = self.watch(log)
             while process_running("MaaEnd.exe") and time.time() - start < timeout:
                 pause(10)
+                if self.stuck(watch):
+                    break
                 # MaaEnd stays open after its launch step fails; don't wait out the whole timeout
                 if "failed to run launcher pipeline" in read_since(log, 0):
                     print(f"[{ts()}] MaaEnd could not start the game; stopping it")

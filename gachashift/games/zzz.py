@@ -100,8 +100,12 @@ class ZenlessZoneZero(Game):
             print(f"[{ts()}] starting {od_exe} -o -c")
             subprocess.Popen([od_exe, "-o", "-c"], cwd=od_dir,
                              creationflags=subprocess.CREATE_NEW_CONSOLE)
+            watch = self.watch(log)
             while time.time() - start < timeout:
                 pause(15)
+                if self.stuck(watch):
+                    reason = "stalled"
+                    break
                 procs = processes_in(od_dir)
                 saw_od = saw_od or bool(procs)
                 if process_running(GAME_EXE):

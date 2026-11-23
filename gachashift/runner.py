@@ -98,6 +98,8 @@ def run_game(game_cls, game_cfg, lang, wait_reset=True, shots=None):
         finally:
             rep.seconds = time.time() - started
             rep.screenshot = game.shot or ""
+        if game.stalled:
+            rep.note("note.stalled", minutes=game.stalled)
         return rep
     except StopRequested:
         raise  # not an error: the whole run stops

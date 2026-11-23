@@ -101,8 +101,12 @@ class Genshin(Game):
         try:
             print(f"[{ts()}] starting {exe} startOneDragon {config}")
             subprocess.Popen([exe, "startOneDragon", config], cwd=folder)
+            watch = self.watch(log)
             while time.time() - start < timeout:
                 pause(15)
+                if self.stuck(watch):
+                    reason = "stalled"
+                    break
                 if process_running(TOOL_EXE):
                     saw_bgi = True
                 elif saw_bgi:
