@@ -26,7 +26,7 @@
 
 | 游戏 | 工具 | 运行内容 |
 |---|---|---|
-| 终末地 | [MaaEnd](https://github.com/MaaXYZ/MaaEnd) | 启动游戏，执行所有日常任务 |
+| 终末地 | [MaaEnd](https://github.com/MaaEnd/MaaEnd) | 启动游戏，执行所有日常任务 |
 | 明日方舟（PC 客户端） | [MAA](https://github.com/MaaAssistantArknights/MaaAssistantArknights) | 公招、基建换班、信用商店、领取奖励 |
 | 鸣潮（官方或 Steam） | [ok-ww](https://github.com/ok-oldking/ok-wuthering-waves) | 每周乐园，默认每周一 |
 | 蔚蓝档案（日服 PC 客户端） | [BAAS](https://github.com/pur1fying/blue_archive_auto_script) | 咖啡厅、课程表、竞技场、扫荡、制造、领取奖励 |
@@ -202,7 +202,7 @@ python -m unittest discover -s tests
 
 Gachashift 只负责调度这些工具并读取它们的日志，所有实际的游戏自动化都是它们的成果：
 
-- [MaaEnd](https://github.com/MaaXYZ/MaaEnd)：终末地
+- [MaaEnd](https://github.com/MaaEnd/MaaEnd)：终末地
 - [MaaAssistantArknights](https://github.com/MaaAssistantArknights/MaaAssistantArknights)：明日方舟
 - [ok-wuthering-waves](https://github.com/ok-oldking/ok-wuthering-waves)：鸣潮
 - [BAAS](https://github.com/pur1fying/blue_archive_auto_script)：蔚蓝档案

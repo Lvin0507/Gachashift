@@ -26,7 +26,7 @@ You also need the automation tool for each game you play (MaaEnd, MAA, ok-ww, BA
 
 | Game | Tool | What runs |
 |---|---|---|
-| Arknights: Endfield | [MaaEnd](https://github.com/MaaXYZ/MaaEnd) | Launches the game and runs all daily tasks |
+| Arknights: Endfield | [MaaEnd](https://github.com/MaaEnd/MaaEnd) | Launches the game and runs all daily tasks |
 | Arknights (PC client) | [MAA](https://github.com/MaaAssistantArknights/MaaAssistantArknights) | Recruitment, base shifts, credit store, rewards |
 | Wuthering Waves (official or Steam) | [ok-ww](https://github.com/ok-oldking/ok-wuthering-waves) | Weekly garden task, Mondays by default |
 | Blue Archive (JP PC client) | [BAAS](https://github.com/pur1fying/blue_archive_auto_script) | Cafe, lessons, arena, sweeps, crafting, rewards |
@@ -202,7 +202,7 @@ Set the version in `gachashift/__init__.py`, commit and push, then push a matchi
 
 Gachashift only orchestrates these tools and reads their logs — all the actual game automation is their work:
 
-- [MaaEnd](https://github.com/MaaXYZ/MaaEnd) — Arknights: Endfield
+- [MaaEnd](https://github.com/MaaEnd/MaaEnd) — Arknights: Endfield
 - [MaaAssistantArknights](https://github.com/MaaAssistantArknights/MaaAssistantArknights) — Arknights
 - [ok-wuthering-waves](https://github.com/ok-oldking/ok-wuthering-waves) — Wuthering Waves
 - [BAAS](https://github.com/pur1fying/blue_archive_auto_script) — Blue Archive

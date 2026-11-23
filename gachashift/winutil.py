@@ -29,7 +29,7 @@ DAY_KEYS_EN = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 DAY_KEYS_ZH = ["一", "二", "三", "四", "五", "六", "日"]
 
 TOOLS = {
-    "endfield": ("MaaEnd", "https://github.com/MaaXYZ/MaaEnd"),
+    "endfield": ("MaaEnd", "https://github.com/MaaEnd/MaaEnd"),
     "arknights": ("MAA", "https://github.com/MaaAssistantArknights/MaaAssistantArknights"),
     "wuthering": ("ok-ww", "https://github.com/ok-oldking/ok-wuthering-waves"),
     "bluearchive": ("BAAS", "https://github.com/pur1fying/blue_archive_auto_script"),

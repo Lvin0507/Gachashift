@@ -77,9 +77,10 @@ def unpack(zip_path, staging):
                 raise UpdateError(f"unsafe path in the zip: {name}")
         z.extractall(staging)
     for folder in (staging / "Gachashift", staging):
-        if (folder / "Gachashift.exe").exists():
+        # the updater mirrors _internal, so it must be there and complete
+        if (folder / "Gachashift.exe").exists() and (folder / "_internal").is_dir():
             return folder
-    raise UpdateError("Gachashift.exe isn't in the download")
+    raise UpdateError("the download doesn't contain a complete Gachashift")
 
 
 def updater_script(new_files, install_dir, pid, log, staging):

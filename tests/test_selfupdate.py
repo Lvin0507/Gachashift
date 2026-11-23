@@ -124,6 +124,13 @@ class UnpackTest(unittest.TestCase):
         with self.assertRaises(selfupdate.UpdateError):
             self.unpack(release_zip({"../../evil.exe": b"x"}))
 
+    def test_refuses_a_zip_without_its_libraries(self):
+        buf = io.BytesIO()
+        with zipfile.ZipFile(buf, "w") as z:
+            z.writestr("Gachashift/Gachashift.exe", b"exe")
+        with self.assertRaises(selfupdate.UpdateError):
+            self.unpack(buf.getvalue())
+
     def test_refuses_a_zip_without_the_program(self):
         buf = io.BytesIO()
         with zipfile.ZipFile(buf, "w") as z:
