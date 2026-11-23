@@ -5,6 +5,7 @@ from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import (QCheckBox, QGridLayout, QHBoxLayout, QLineEdit, QSlider, QVBoxLayout,
                                QWidget)
 
+from ..report import CARD_OK
 from ..system import dim_gamma, restore_gamma
 from ..winutil import allow_darker, darker_allowed
 
@@ -247,7 +248,9 @@ def discord_card(app):
             result.setText(app.tr("discord.incomplete"))
             return
         try:
-            ok = requests.post(dc["webhook_url"], json={"content": app.tr("telegram.test_text")},
+            # the same kind of card the report arrives in, so the test shows what to expect
+            ok = requests.post(dc["webhook_url"], json={"embeds": [{
+                "title": "Gachashift", "description": app.tr("telegram.test_text"), "color": CARD_OK}]},
                                timeout=15).ok
         except requests.exceptions.RequestException:
             ok = False

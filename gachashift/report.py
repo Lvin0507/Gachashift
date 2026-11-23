@@ -192,23 +192,47 @@ def send_photos(cfg, photos):
             print(f"Could not send the screenshot: {type(e).__name__}")
 
 
-def send_discord(webhook_url, reports, lang):
-    """Send the report to a Discord channel through a webhook. Discord caps a message at 2000
-    characters, so a long report goes out in several messages, split between lines."""
+# Discord card colours: everything fine, something to look at, something didn't get done
+CARD_OK, CARD_WARN, CARD_FAIL = 0x7BD3A0, 0xE8C27C, 0xEF7D7D
+
+
+def card_colour(reports):
+    """The colour of the worst result: red if any game got nothing done, yellow for anything
+    else worth a look (including notes such as a stop or the lock screen), green otherwise."""
+    games = [r for r in reports if r.game != "system"]
+    if any(outcome(r) == "fail" for r in games):
+        return CARD_FAIL
+    if any(outcome(r) != "ok" for r in games) or any(r.notes for r in reports if r.game == "system"):
+        return CARD_WARN
+    return CARD_OK
+
+
+def discord_cards(reports, lang, limit=4000):
+    """The report as Discord embeds (one per message), coloured by card_colour. A card holds
+    up to 4096 characters, so a long report is split between lines over several cards."""
     title = t(lang, "report.title", date=datetime.datetime.now().strftime("%m-%d"))
+    colour = card_colour(reports)
     chunks, current = [], ""
-    for line in f"**{title}**\n\n{render_all(reports, lang, compact=True)}".splitlines():
-        line = line[:1900]
-        if current and len(current) + len(line) + 1 > 1900:
+    for line in render_all(reports, lang, compact=True).splitlines():
+        line = line[:limit]
+        if current and len(current) + len(line) + 1 > limit:
             chunks.append(current)
             current = line
         else:
             current = f"{current}\n{line}" if current else line
     if current.strip():
         chunks.append(current)
+    cards = [{"description": chunk, "color": colour} for chunk in chunks]
+    if cards:
+        cards[0]["title"] = title
+    return cards
+
+
+def send_discord(webhook_url, reports, lang):
+    """Send the report to a Discord channel through a webhook, as coloured cards."""
     try:
-        for chunk in chunks:
-            r = requests.post(webhook_url, json={"content": chunk[:2000]}, timeout=15)
+        for card in discord_cards(reports, lang):
+            r = requests.post(webhook_url, json={"embeds": [card]}, timeout=15)
             if not r.ok:
                 print(f"Discord failed: HTTP {r.status_code}")
                 return False
