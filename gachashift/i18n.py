@@ -26,6 +26,7 @@ STRINGS = {
         "note.no_task_lines": "⚠️ Couldn't read which tasks ran from the log",
         "note.interrupted": "❌ Interrupted ({reason})",
         "note.error": "⚠️ Unexpected error: {error}",
+        "note.retried": "🔁 Second attempt: nothing got done the first time, so it ran again after the other games",
         "note.stopped": "⏹️ Stopped by you. Everything Gachashift had opened was closed, and the PC was left on.",
         "log.skipped_by_user": "Skipped: you chose not to run now.",
         "prompt.title": "Gachashift is about to start",
@@ -41,6 +42,7 @@ STRINGS = {
         "log.skip_day": "{game}: not scheduled today, skipped.",
         "log.skip_off": "{game}: turned off, skipped.",
         "log.wait_reset": "{game}: waiting {minutes} min for the daily reset...",
+        "log.retry": "{game}: nothing got done the first time; trying once more.",
     },
     "zh": {
         "report.title": "🌅 Gachashift 战报 ({date})",
@@ -60,6 +62,7 @@ STRINGS = {
         "note.no_task_lines": "⚠️ 日志里读不到各项任务的结果",
         "note.interrupted": "❌ 中断（{reason}）",
         "note.error": "⚠️ 意外错误: {error}",
+        "note.retried": "🔁 第二次尝试：第一次什么都没完成，所以在其他游戏跑完后重跑了一次",
         "note.stopped": "⏹️ 已由你停止。Gachashift 打开的程序都已关闭，电脑保持开机。",
         "log.skipped_by_user": "已跳过：你选择这次不运行。",
         "prompt.title": "Gachashift 即将开始",
@@ -75,6 +78,7 @@ STRINGS = {
         "log.skip_day": "{game}：今天不在排程内，跳过。",
         "log.skip_off": "{game}：已关闭，跳过。",
         "log.wait_reset": "{game}：等待每日刷新（约 {minutes} 分钟）...",
+        "log.retry": "{game}：第一次什么都没完成，再试一次。",
     },
 }
 

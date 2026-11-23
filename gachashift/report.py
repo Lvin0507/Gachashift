@@ -26,6 +26,7 @@ class GameReport:
     game: str
     tasks: list = field(default_factory=list)
     notes: list = field(default_factory=list)   # (string key, params) pairs
+    seconds: float = 0                          # how long the tool ran, not counting waits
 
     def add(self, key, status, detail="", new=False):
         self.tasks.append(TaskResult(key, status, detail, new))

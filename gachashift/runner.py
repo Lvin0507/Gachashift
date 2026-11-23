@@ -4,6 +4,7 @@ Used by both the command line (python -m gachashift) and the App."""
 import datetime
 import json
 import os
+import time
 
 from . import report as R
 from .config import app_dir, load_config
@@ -13,6 +14,10 @@ from .system import (QuietMode, StopRequested, clear_stop, seconds_since_input, 
                      wait_for_reset, wait_for_unlock)
 
 ACTIVE_SECONDS = 120  # someone used the PC this recently: ask before taking over
+# A game whose first attempt took longer than this isn't retried: it most likely hung until
+# its timeout, and a second hang would hold up the morning for as long again
+RETRY_MAX_MINUTES = 40
+SUCCESS = (R.OK, R.ALREADY, R.NOTHING, R.PARTIAL)
 
 
 def running_file():
@@ -37,7 +42,12 @@ def run_game(game_cls, game_cfg, lang, wait_reset=True):
             offset, hour = game.reset
             wait_for_reset(offset, hour, on_wait=lambda m: print(
                 f"[{ts()}] " + t(lang, "log.wait_reset", game=game_name(game.id, lang), minutes=m)))
-        return game.run()
+        started = time.time()
+        try:
+            rep = game.run()
+        finally:
+            rep.seconds = time.time() - started
+        return rep
     except StopRequested:
         raise  # not an error: the whole run stops
     except Exception as e:
@@ -46,9 +56,23 @@ def run_game(game_cls, game_cfg, lang, wait_reset=True):
         return rep
 
 
+def needs_retry(rep):
+    """True when nothing in the game got done: the game didn't start, the tool left no records,
+    or its only task failed. Those are usually one-off (a client update, a slow first launch)
+    and pass on a second try. A run where some tasks worked and some failed isn't repeated:
+    the failures there are usually the same every time."""
+    if any(task.status in SUCCESS for task in rep.tasks):
+        return False
+    if any(key in ("note.finished", "note.quick_exit") for key, _ in rep.notes):
+        return False
+    # a setting that was never filled in won't fix itself on a second try
+    return not any("missing settings" in str(params.get("error", "")) for _, params in rep.notes)
+
+
 def run_games(cfg, only, lang, opts, log, dim=False):
-    """Run every game that is enabled and due today (or just `only`) and return their reports."""
-    reports = []
+    """Run every game that is enabled and due today (or just `only`) and return their reports.
+    In a full run, a game where nothing got done is tried once more after all the others."""
+    reports, retry = [], []
     with QuietMode(mute=opts.get("mute", True), dim=dim,
                    dim_level=opts.get("dim_level", 30) / 100):
         for game_cls in GAMES:
@@ -73,6 +97,24 @@ def run_games(cfg, only, lang, opts, log, dim=False):
                     reports.append(stop.report)
                 reports.append(stopped_report())
                 return reports, True
+            # a test run of one game has someone watching it; they can just run it again
+            if (not only and needs_retry(reports[-1])
+                    and reports[-1].seconds < RETRY_MAX_MINUTES * 60):
+                retry.append((len(reports) - 1, game_cls, game_cfg))
+
+        for index, game_cls, game_cfg in retry:
+            log(f"[{ts()}] " + t(lang, "log.retry", game=game_name(game_cls.id, lang)))
+            try:
+                rep = run_game(game_cls, game_cfg, lang, wait_reset=False)
+            except StopRequested as stop:
+                if getattr(stop, "report", None):
+                    stop.report.note("note.retried")
+                    reports[index] = stop.report
+                reports.append(stopped_report())
+                return reports, True
+            # the second attempt is what the game is in now, so it replaces the first
+            rep.note("note.retried")
+            reports[index] = rep
     return reports, False
 
 

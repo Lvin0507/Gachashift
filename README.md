@@ -66,6 +66,8 @@ Gachashift doesn't play the games itself. For each game it opens the right tool,
 
 Around that, it handles the parts the tools leave to you: clicking launcher start buttons, waiting for a server's daily reset, restarting Steam with the right permissions, muting the PC (and optionally dimming the screen) while it runs, and putting everything back afterwards.
 
+If nothing in a game got done (the game didn't start, or the tool left no records), it tries that game once more after all the others. That usually happens the first morning after a client update, when the game takes too long to open. A game where some tasks worked and some failed isn't repeated, and neither is one whose first attempt ran past 40 minutes.
+
 If you are using the PC when the scheduled time comes, it asks first and gives you 60 seconds to skip. A run can be stopped from the app at any time: the game in progress closes its tool and game, sound and brightness are restored, the PC stays on, and the report lists what was finished before the stop.
 
 ## Requirements
