@@ -66,7 +66,7 @@ Around that, it handles the parts the tools leave to you: clicking launcher star
 
 If nothing in a game got done (the game didn't start, or the tool left no records), it tries that game once more after all the others. That usually happens the first morning after a client update, when the game takes too long to open. A game where some tasks worked and some failed isn't repeated, and neither is one whose first attempt ran past 40 minutes. Each game has its own switch for this; it is off for Endfield, whose tasks carry over between days.
 
-If Gachashift itself fails, it still sends a short message with the error and where the log is, so a silent morning means the PC didn't run at all. If a run was cut off before it could send anything (a power cut, the PC switched off), the next report starts with a line saying so.
+If Gachashift itself fails, it still sends a short message with the error and where the log is, so a silent morning means the PC didn't run at all. When a game doesn't go well, a screenshot taken just before Gachashift closed it follows the report, so you can often see the cause (a launcher asking for an update, a game stuck on a pop-up) without going back to the PC. If a run was cut off before it could send anything (a power cut, the PC switched off), the next report starts with a line saying so.
 
 If you are using the PC when the scheduled time comes, it asks first and gives you 60 seconds to skip. A run can be stopped from the app at any time: the game in progress closes its tool and game, sound and brightness are restored, the PC stays on, and the report lists what was finished before the stop.
 
@@ -122,6 +122,7 @@ Add `--lang zh` for a Chinese report.
 
 - `logs/gachashift_<date>.log`: everything Gachashift printed during a run, kept for 14 days. Scheduled runs have no visible console, so this is the first place to look when a report looks wrong. The app's **History** page shows the same files.
 - `logs/go-service_<date>.log`: archived MaaEnd logs, kept for 14 days (MaaEnd overwrites its own log on every launch).
+- `logs/screens/`: screenshots of games that didn't go well, kept for 14 days. Turn them off under General.
 
 ## Known limitations
 

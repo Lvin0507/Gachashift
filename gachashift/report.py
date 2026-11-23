@@ -2,6 +2,8 @@
 
 import datetime
 import html
+import json
+import os
 import re
 from dataclasses import dataclass, field
 
@@ -30,6 +32,7 @@ class GameReport:
     tasks: list = field(default_factory=list)
     notes: list = field(default_factory=list)   # (string key, params) pairs
     seconds: float = 0                          # how long the tool ran, not counting waits
+    screenshot: str = ""                        # the screen before cleanup, kept if it went badly
 
     def add(self, key, status, detail="", new=False):
         self.tasks.append(TaskResult(key, status, detail, new))
@@ -168,6 +171,25 @@ def send_text(cfg, text):
             requests.post(dc["webhook_url"], json={"content": text[:2000]}, timeout=15)
     except Exception as e:
         print(f"Could not send the message: {type(e).__name__}")
+
+
+def send_photos(cfg, photos):
+    """Send (caption, image path) pairs to every channel that is turned on, after the report.
+    Never raises: a picture that can't be sent mustn't stop the run from finishing."""
+    tg, dc = cfg.get("telegram", {}), cfg.get("discord", {})
+    for caption, path in photos:
+        try:
+            if tg.get("enabled") and tg.get("bot_token") and tg.get("chat_id"):
+                with open(path, "rb") as f:
+                    requests.post(f"https://api.telegram.org/bot{tg['bot_token']}/sendPhoto",
+                                  data={"chat_id": tg["chat_id"], "caption": caption},
+                                  files={"photo": f}, timeout=60)
+            if dc.get("enabled") and dc.get("webhook_url"):
+                with open(path, "rb") as f:
+                    requests.post(dc["webhook_url"], data={"payload_json": json.dumps({"content": caption})},
+                                  files={"file": (os.path.basename(path), f, "image/jpeg")}, timeout=60)
+        except Exception as e:
+            print(f"Could not send the screenshot: {type(e).__name__}")
 
 
 def send_discord(webhook_url, reports, lang):

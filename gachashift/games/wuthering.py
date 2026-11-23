@@ -83,8 +83,10 @@ class WutheringWaves(Game):
             stop = e
         finally:
             # ok-ww stays open after a failure; never leave it running for the next game
+            leftovers = [GAME_EXE, self.cfg.get("launcher_exe") if self.cfg.get("steam_client") else None]
+            self.capture(leftovers, folder)
             kill_processes(processes_in(folder))
-            kill([GAME_EXE, self.cfg.get("launcher_exe") if self.cfg.get("steam_client") else None])
+            kill(leftovers)
             time.sleep(5)
         text = read_since(log, offset)
         rep = parse_ww_log(text, self.new_report())

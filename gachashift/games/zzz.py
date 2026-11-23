@@ -117,8 +117,10 @@ class ZenlessZoneZero(Game):
         except StopRequested as e:
             stop, reason = e, "stopped"
         finally:
+            leftovers = [GAME_EXE, self.cfg.get("launcher_exe") if steam else None]
+            self.capture(leftovers, od_dir)
             kill_processes(processes_in(od_dir))
-            kill([GAME_EXE, self.cfg.get("launcher_exe") if steam else None])
+            kill(leftovers)
             time.sleep(3)
         print(f"[{ts()}] ZZZ ended: {reason}, OneDragon seen={saw_od}, game seen={saw_game}")
         rep = parse_od_log(read_since(log, offset), rep, minutes_since(start), stopped=bool(stop))

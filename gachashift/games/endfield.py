@@ -134,6 +134,7 @@ class Endfield(Game):
         except StopRequested as e:
             stop = e
         finally:
+            self.capture(["MaaEnd.exe", "Endfield.exe", "Gryphlink.exe"])
             kill(["MaaEnd.exe", "Endfield.exe", "Gryphlink.exe"])
             time.sleep(5)
             archive_log(self.cfg["log_dir"])

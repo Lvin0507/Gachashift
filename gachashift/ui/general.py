@@ -141,12 +141,14 @@ def build(app):
     inner.addWidget(label(app.tr("general.while_running"), "h2"))
     options = app.cfg["options"]
     for key, text in (("mute", "general.mute"), ("dim_screen", "general.dim"),
-                      ("shutdown", "general.shutdown")):
-        inner.addLayout(switch_row(app.tr(text), bool(options.get(key)),
+                      ("shutdown", "general.shutdown"), ("screenshots", "general.screenshots")):
+        inner.addLayout(switch_row(app.tr(text), bool(options.get(key, True)),
                                    lambda on, key=key: app.set_option(key, on)))
         if key == "dim_screen":
             inner.addWidget(label(app.tr("general.dim_hint"), "hint", wrap=True))
             inner.addWidget(dim_controls(app, options))
+        if key == "screenshots":
+            inner.addWidget(label(app.tr("general.screenshots_hint"), "hint", wrap=True))
     box.addWidget(card)
 
     # updates

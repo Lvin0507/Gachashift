@@ -98,6 +98,7 @@ class BlueArchive(Game):
             stop.report = rep
             raise
         finally:
+            self.capture([GAME_EXE, launcher_exe], baas_dir)
             kill_processes(processes_in(baas_dir))
             kill([GAME_EXE, launcher_exe])
             time.sleep(3)

@@ -56,7 +56,9 @@ class Arknights(Game):
             stop, reason = e, "stopped"
         finally:
             # the Arknights PC client can bring up GRYPHLINK too
-            kill(["MAA.exe", self.cfg.get("game_exe") or "Arknights.exe", "Gryphlink.exe"])
+            leftovers = ["MAA.exe", self.cfg.get("game_exe") or "Arknights.exe", "Gryphlink.exe"]
+            self.capture(leftovers)
+            kill(leftovers)
             time.sleep(3)
         rep = parse_maa_log(read_since(log, offset), reason, self.new_report())
         if stop:

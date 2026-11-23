@@ -96,6 +96,28 @@ def kill_processes(procs):
             pass
 
 
+# ---------- screenshots ----------
+_QT_APP = None  # kept alive for the whole run; Qt allows only one application object
+
+
+def capture_screen(path, quality=70):
+    """Save the main screen as a JPEG and return its path, or None if that wasn't possible
+    (e.g. on the lock screen). Uses Qt, which the program already ships."""
+    global _QT_APP
+    try:
+        from PySide6.QtWidgets import QApplication
+        _QT_APP = QApplication.instance() or QApplication([])
+        screen = _QT_APP.primaryScreen()
+        if screen is None:
+            return None
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        if screen.grabWindow(0).save(str(path), "JPG", quality):
+            return str(path)
+    except Exception as e:
+        print(f"[{ts()}] screenshot failed: {e}")
+    return None
+
+
 # ---------- logs ----------
 # The first bytes of each log at the time its size was taken. Some tools (OneDragon) start
 # a new log file on every launch; once the new file grows past the old size, a size check

@@ -120,6 +120,7 @@ class Genshin(Game):
         except StopRequested as e:
             stop, reason = e, "stopped"
         finally:
+            self.capture([TOOL_EXE, *GAME_EXES])
             kill([TOOL_EXE, *GAME_EXES])
             time.sleep(3)
         print(f"[{ts()}] Genshin ended: {reason}")

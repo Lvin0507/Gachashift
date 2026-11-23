@@ -15,7 +15,8 @@
     "dim_screen": false,
     "dim_level": 30,
     "shutdown": true,
-    "check_updates": true
+    "check_updates": true,
+    "screenshots": true
   },
   "appearance": {
     "accent": "#F4B860",

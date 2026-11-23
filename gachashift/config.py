@@ -23,6 +23,7 @@ DEFAULT_CONFIG = {
         "dim_level": 30,         # screen brightness (%) while darkened
         "shutdown": True,        # shut the PC down when everything is done
         "check_updates": True,   # ask GitHub for a newer release when the app opens
+        "screenshots": True,     # send a screenshot of a game that didn't go well
     },
     "appearance": {
         "accent": "#F4B860",

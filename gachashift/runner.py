@@ -16,6 +16,8 @@ from .system import (QuietMode, StopRequested, clear_stop, seconds_since_input, 
                      wait_for_reset, wait_for_unlock)
 
 ACTIVE_SECONDS = 120  # someone used the PC this recently: ask before taking over
+SCREENSHOT_DAYS = 14  # failure screenshots are kept this long under logs/screens
+
 # A game whose first attempt took longer than this isn't retried: it most likely hung until
 # its timeout, and a second hang would hold up the morning for as long again
 RETRY_MAX_MINUTES = 40
@@ -71,9 +73,15 @@ def due_today(game_cfg):
     return game_cfg.get("enabled") and datetime.datetime.today().weekday() in game_cfg.get("days", [])
 
 
-def run_game(game_cls, game_cfg, lang, wait_reset=True):
-    """Run one game, turning any unexpected error into a report instead of a crash."""
+def screenshot_folder():
+    return app_dir() / "logs" / "screens"
+
+
+def run_game(game_cls, game_cfg, lang, wait_reset=True, shots=None):
+    """Run one game, turning any unexpected error into a report instead of a crash.
+    shots: folder for the screenshot taken before cleanup, or None for no screenshot."""
     game = game_cls(game_cfg)
+    game.shot_dir = shots
     rep = R.GameReport(game.id)
     missing = game.missing_settings()
     if missing:
@@ -89,13 +97,46 @@ def run_game(game_cls, game_cfg, lang, wait_reset=True):
             rep = game.run()
         finally:
             rep.seconds = time.time() - started
+            rep.screenshot = game.shot or ""
         return rep
     except StopRequested:
         raise  # not an error: the whole run stops
     except Exception as e:
         print(f"[{ts()}] {game.id} failed: {e}")
         rep.note("note.error", error=f"{type(e).__name__}: {e}")
+        rep.screenshot = game.shot or ""
         return rep
+
+
+def remove_file(path):
+    if path:
+        try:
+            os.remove(path)
+        except OSError:
+            pass
+
+
+def screenshots_to_send(reports, stopped, lang):
+    """(caption, path) for each game that didn't go well. Pictures of games that went fine,
+    and every picture of a run the user stopped, are deleted."""
+    photos = []
+    for rep in reports:
+        if not rep.screenshot:
+            continue
+        if stopped or R.outcome(rep) == "ok":
+            remove_file(rep.screenshot)
+            rep.screenshot = ""
+        else:
+            photos.append((t(lang, "photo.caption", game=R.short_name(rep.game, lang)), rep.screenshot))
+    return photos
+
+
+def prune_screenshots(keep_days=SCREENSHOT_DAYS):
+    folder = screenshot_folder()
+    cutoff = time.time() - keep_days * 86400
+    for old in folder.glob("*.jpg") if folder.exists() else []:
+        if old.stat().st_mtime < cutoff:
+            remove_file(old)
 
 
 def needs_retry(rep):
@@ -109,7 +150,7 @@ def needs_retry(rep):
     return not any("missing settings" in str(params.get("error", "")) for _, params in rep.notes)
 
 
-def run_games(cfg, only, lang, opts, log, dim=False):
+def run_games(cfg, only, lang, opts, log, dim=False, shots=None):
     """Run every game that is enabled and due today (or just `only`) and return their reports.
     In a full run, a game where nothing got done is tried once more after all the others."""
     reports, retry = [], []
@@ -129,7 +170,7 @@ def run_games(cfg, only, lang, opts, log, dim=False):
                 continue
             # a single-game test run shouldn't sit waiting for a reset
             try:
-                reports.append(run_game(game_cls, game_cfg, lang, wait_reset=not only))
+                reports.append(run_game(game_cls, game_cfg, lang, wait_reset=not only, shots=shots))
             except StopRequested as stop:
                 # the game closed its own tool and game on the way out and, where it could,
                 # attached what it finished before the stop; keep that and earlier reports
@@ -145,7 +186,7 @@ def run_games(cfg, only, lang, opts, log, dim=False):
         for index, game_cls, game_cfg in retry:
             log(f"[{ts()}] " + t(lang, "log.retry", game=game_name(game_cls.id, lang)))
             try:
-                rep = run_game(game_cls, game_cfg, lang, wait_reset=False)
+                rep = run_game(game_cls, game_cfg, lang, wait_reset=False, shots=shots)
             except StopRequested as stop:
                 if getattr(stop, "report", None):
                     stop.report.note("note.retried")
@@ -154,6 +195,7 @@ def run_games(cfg, only, lang, opts, log, dim=False):
                 return reports, True
             # the second attempt is what the game is in now, so it replaces the first
             rep.note("note.retried")
+            remove_file(reports[index].screenshot)
             reports[index] = rep
     return reports, False
 
@@ -193,7 +235,9 @@ def run_all(cfg=None, only=None, allow_shutdown=True, send=True, ask_first=False
             reports.append(rep)
         else:
             # only the scheduled run darkens the screen; someone is watching any other run
-            reports, stopped = run_games(cfg, only, lang, opts, log,
+            # a test run has someone watching, so it takes no pictures
+            shots = None if only or not opts.get("screenshots", True) else str(screenshot_folder())
+            reports, stopped = run_games(cfg, only, lang, opts, log, shots=shots,
                                          dim=ask_first and opts.get("dim_screen", False))
     except StopRequested:  # stopped while waiting for the lock screen to clear
         stopped = True
@@ -215,6 +259,10 @@ def run_all(cfg=None, only=None, allow_shutdown=True, send=True, ask_first=False
     dc = cfg.get("discord", {})
     if send and dc.get("enabled") and dc.get("webhook_url") and reports:
         R.send_discord(dc["webhook_url"], reports, lang)
+    photos = screenshots_to_send(reports, stopped, lang)
+    if send and photos:
+        R.send_photos(cfg, photos)
+    prune_screenshots()
     if allow_shutdown and opts.get("shutdown", True) and not stopped:
         shutdown()
     return reports
