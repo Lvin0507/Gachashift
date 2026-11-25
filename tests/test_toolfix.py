@@ -91,6 +91,18 @@ class MaaEndFixTest(Base):
         self.assertEqual(json.loads(read(file))["settings"]["autoStartInstanceId"], "a1")
         self.assertEqual(toolcheck.check_game("endfield", cfg), [])
 
+    def test_main_config_not_first(self):
+        # the morning config is second in the list and opens the game with a pre-action
+        cfg, file = self.setup_maaend([{"enabled": True, "taskName": "DailyRewards"}], autorun=True)
+        data = json.loads(read(file))
+        data["settings"]["autoStartInstanceId"] = None
+        data["instances"].append({"id": "main", "preActions": [{"enabled": True, "program": self.game}],
+                                  "tasks": [{"enabled": True, "taskName": "DailyRewards"},
+                                            {"enabled": True, "taskName": "__MXU_KILLPROC__"}]})
+        write(file, dump(data))
+        self.assertIsNone(self.fix("endfield", "tool.maaend_autorun", cfg))
+        self.assertEqual(json.loads(read(file))["settings"]["autoStartInstanceId"], "main")
+
     def test_two_full_configs_is_a_choice(self):
         full = [{"enabled": True, "taskName": "__MXU_PRETASK__LaunchGamePC"},
                 {"enabled": True, "taskName": "__MXU_KILLPROC__"}]

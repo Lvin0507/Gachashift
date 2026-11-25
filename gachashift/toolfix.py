@@ -80,10 +80,12 @@ def _task_id():
 
 
 def _full_run(instance):
-    """True for a config that opens the game first and closes it last (a whole morning)."""
+    """True for a config that opens the game first and closes it last (a whole morning).
+    Its place in MaaEnd's list doesn't matter, and the game may be opened by a pre-action."""
     tasks = [t for t in instance.get("tasks") or [] if t.get("enabled", True)]
-    return bool(tasks) and "LaunchGame" in tasks[0].get("taskName", "") \
-        and tasks[-1].get("taskName") == "__MXU_KILLPROC__"
+    opens = any(a.get("enabled", True) and a.get("program") for a in instance.get("preActions") or []) \
+        or (bool(tasks) and "LaunchGame" in tasks[0].get("taskName", ""))
+    return opens and bool(tasks) and tasks[-1].get("taskName") == "__MXU_KILLPROC__"
 
 
 def maaend_autorun(data, game_cfg):
