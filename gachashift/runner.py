@@ -9,6 +9,7 @@ import time
 import psutil
 
 from . import report as R
+from . import toolcheck
 from .config import app_dir, load_config
 from .games import ordered
 from .i18n import game_name, t
@@ -100,14 +101,22 @@ def run_game(game_cls, game_cfg, lang, wait_reset=True, shots=None):
             rep.screenshot = game.shot or ""
         if game.stalled:
             rep.note("note.stalled", minutes=game.stalled)
-        return rep
+        return explain(rep, game_cfg)
     except StopRequested:
         raise  # not an error: the whole run stops
     except Exception as e:
         print(f"[{ts()}] {game.id} failed: {e}")
         rep.note("note.error", error=f"{type(e).__name__}: {e}")
         rep.screenshot = game.shot or ""
-        return rep
+        return explain(rep, game_cfg)
+
+
+def explain(rep, game_cfg):
+    """When a game didn't go well, add any of its tool's settings that would explain it."""
+    if R.outcome(rep) != "ok":
+        for key in toolcheck.check_game(rep.game, game_cfg):
+            rep.note(key)
+    return rep
 
 
 def remove_file(path):

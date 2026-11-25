@@ -15,7 +15,7 @@ from PySide6.QtGui import QColor, QPainter, QPixmap
 from PySide6.QtWidgets import (QApplication, QButtonGroup, QFrame, QHBoxLayout, QMessageBox,
                                QScrollArea, QVBoxLayout, QWidget)
 
-from .. import __version__, finder, health, selfupdate
+from .. import __version__, finder, health, selfupdate, toolcheck
 from ..config import app_dir, load_config, save_config
 from ..updates import newer_release
 from ..games import ordered
@@ -103,8 +103,14 @@ class MainWindow(QWidget):
             self.update_found.emit(found)
 
     def check_health(self):
-        """Look for Windows settings that would stop the morning run (takes a moment)."""
-        threading.Thread(target=lambda: self.health_checked.emit(health.check()), daemon=True).start()
+        """Look for Windows and tool settings that would stop the morning run (takes a moment)."""
+        cfg = copy.deepcopy(self.cfg)  # the settings page may change it meanwhile
+
+        def work():
+            problems = health.check()
+            problems += toolcheck.check(cfg)
+            self.health_checked.emit(problems)
+        threading.Thread(target=work, daemon=True).start()
 
     def on_health_checked(self, problems):
         self.health = problems

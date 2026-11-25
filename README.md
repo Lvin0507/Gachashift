@@ -93,7 +93,7 @@ If you are using the PC when the scheduled time comes, it asks first and gives y
    ```
 2. Double-click `Gachashift App.bat`.
 
-The app takes it from there. Home shows a short setup checklist with a button for each step: turn on your games, tell Gachashift where each tool is, do one test run, connect Telegram or Discord (optional), and choose when to run. **Find tools** on the Games page looks for each tool on your PC (running tools first, then your usual folders) and fills in what it finds, without touching settings you already made. Every setting has a one-line hint under it, and each game's page links to its tool's own documentation. When all five steps are done, the checklist goes away. Home also warns about Windows settings that would stop the morning run (sleep with a password on wake, a locking screen saver, closing the lid), each with a button to the right settings page. Under each game, Home shows how its last run went. Games run from top to bottom; the ▲ ▼ next to each one change the order.
+The app takes it from there. Home shows a short setup checklist with a button for each step: turn on your games, tell Gachashift where each tool is, do one test run, connect Telegram or Discord (optional), and choose when to run. **Find tools** on the Games page looks for each tool on your PC (running tools first, then your usual folders) and fills in what it finds, without touching settings you already made. Every setting has a one-line hint under it, and each game's page links to its tool's own documentation. When all five steps are done, the checklist goes away. Home also warns about Windows settings that would stop the morning run (sleep with a password on wake, a locking screen saver, closing the lid), each with a button to the right settings page, and about tool settings that differ from the list above (it reads each tool's own config file), since a tool that never starts, never exits or puts the PC to sleep takes the next games down with it. When a game goes badly, the report adds any of these that would explain it. Under each game, Home shows how its last run went. Games run from top to bottom; the ▲ ▼ next to each one change the order.
 
 Other pages:
 
@@ -148,6 +148,7 @@ gachashift/           The program
   finder.py           Finds each game's tool on the PC
   selfupdate.py       One-click update of the packaged exe
   health.py           Windows settings that would stop the morning run
+  toolcheck.py        the tools' own settings Gachashift relies on, read from their config files
   bugreport.py        The problem report zip, with private details removed
   i18n.py             All English and Chinese text
   games/              One module per game

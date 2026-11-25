@@ -110,7 +110,8 @@ def update_card(app):
 
 
 def health_card(app):
-    """Windows settings that would stop the morning run, each with a way to fix it."""
+    """Windows and tool settings that would stop the morning run, each with a way to fix it
+    where Windows has a page for it (a tool's settings are changed in the tool itself)."""
     card, inner = panel("setup", spacing=10)
     head = QHBoxLayout()
     head.addWidget(label(app.tr("health.title"), "h2"), 1)
@@ -118,7 +119,10 @@ def health_card(app):
     inner.addLayout(head)
     for problem in app.health:
         row = QHBoxLayout()
-        row.addWidget(label(app.tr(problem.key, **problem.params), "hint", wrap=True), 1)
+        text = app.tr(problem.key, **problem.params)
+        if problem.game:
+            text = app.tr("health.tool_prefix", game=plain_name(problem.game, app.lang)) + text
+        row.addWidget(label(text, "hint", wrap=True), 1)
         if problem.fix:
             row.addWidget(button(app.tr("health.open"), None, lambda fix=problem.fix: app.open_fix(fix)),
                           0, Qt.AlignTop)

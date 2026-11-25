@@ -19,6 +19,7 @@ class Problem:
     key: str                                   # health.<name> in i18n
     params: dict = field(default_factory=dict)
     fix: str = ""                              # what opens the right Windows settings
+    game: str = ""                             # set when it is about a game's tool
 
 
 def setting_values(output):
