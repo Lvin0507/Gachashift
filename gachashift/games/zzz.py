@@ -72,6 +72,12 @@ class ZenlessZoneZero(Game):
     def reset(self):
         return (SERVER_UTC.get(self.cfg.get("server"), 8), 4)
 
+    def game_exes(self):
+        return (GAME_EXE,)
+
+    def launcher_exes(self):
+        return (self.cfg.get("launcher_exe"),) if self.cfg.get("client") == "steam" else ()
+
     def _open_through_steam(self):
         restart_steam_if_running()
         return launch_and_click(

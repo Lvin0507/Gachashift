@@ -15,7 +15,7 @@ from PySide6.QtGui import QColor, QPainter, QPixmap
 from PySide6.QtWidgets import (QApplication, QButtonGroup, QFrame, QHBoxLayout, QMessageBox,
                                QScrollArea, QVBoxLayout, QWidget)
 
-from .. import __version__, finder, health, selfupdate, toolcheck
+from .. import __version__, finder, health, preflight, selfupdate, toolcheck
 from ..config import app_dir, load_config, save_config
 from ..updates import newer_release
 from ..games import ordered
@@ -51,11 +51,13 @@ class MainWindow(QWidget):
     update_failed = Signal(str)      # why the update couldn't be installed
     tools_found = Signal(object)     # {game id: {setting: value}}; emitted from the search thread
     health_checked = Signal(object)  # [health.Problem]; emitted from the checking thread
+    preflight_done = Signal(object)  # (problems, channels reached); from the checking thread
 
     def __init__(self):
         super().__init__()
         self.update_info = None  # an updates.Release once a newer one is known
         self.health = []         # health.Problem list, filled in the background
+        self.preflight = None    # None, "busy", or (problems, channels reached)
         self.cfg = load_config()
         self.saved_cfg = copy.deepcopy(self.cfg)
         self.current_game = ordered(self.cfg)[0].id
@@ -91,6 +93,7 @@ class MainWindow(QWidget):
         self.updating = False
         self.tools_found.connect(self.on_tools_found)
         self.health_checked.connect(self.on_health_checked)
+        self.preflight_done.connect(self.on_preflight_done)
         self.check_health()
         self.finding = False
         if self.cfg["options"].get("check_updates", True):
@@ -111,6 +114,32 @@ class MainWindow(QWidget):
             problems += toolcheck.check(cfg)
             self.health_checked.emit(problems)
         threading.Thread(target=work, daemon=True).start()
+
+    def start_preflight(self):
+        """Every check at once, plus a test message (a few seconds, in the background)."""
+        if self.preflight == "busy":
+            return
+        self.preflight = "busy"
+        cfg = copy.deepcopy(self.saved_cfg)  # what the morning run will actually use
+        text = self.tr("preflight.message")
+
+        def work():
+            try:
+                result = preflight.check(cfg, text)
+            except Exception as e:  # never leave the button stuck on "checking"
+                result = ([health.Problem("preflight.error", {"error": f"{type(e).__name__}: {e}"})], [])
+            self.preflight_done.emit(result)
+        threading.Thread(target=work, daemon=True).start()
+        if self.page == "run":
+            self.show_page("run")
+
+    def on_preflight_done(self, result):
+        self.preflight = result
+        problems, _ = result
+        # the Windows and tool findings are what Home's check shows too
+        self.health = [p for p in problems if p.key.startswith(("health.", "tool."))]
+        if self.page in ("run", "home"):
+            self.show_page(self.page)
 
     def on_health_checked(self, problems):
         self.health = problems

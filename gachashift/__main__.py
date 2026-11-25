@@ -74,11 +74,11 @@ def main():
 
     try:
         if args.only:
-            run_all(cfg, only=args.only, allow_shutdown=False, send=False)
+            run_all(cfg, only=args.only, allow_shutdown=False, send=False, tray=True)
         elif args.no_shutdown:
-            run_all(cfg, allow_shutdown=False)  # started by hand, so no need to ask
+            run_all(cfg, allow_shutdown=False, tray=True)  # started by hand, so no need to ask
         else:
-            run_all(cfg, ask_first=True)        # the scheduled morning run
+            run_all(cfg, ask_first=True, tray=True)        # the scheduled morning run
     except Exception as e:
         # Gachashift itself failed: without this the morning would bring no message at all,
         # which looks the same as a PC that never woke up

@@ -20,6 +20,21 @@ class Game:
         self.shot_dir = None  # set by the runner when failure screenshots are on
         self.shot = None      # the screenshot taken before cleanup, if any
         self.stalled = 0      # minutes without progress, if the game was ended for that
+        self.launcher_left = False  # its launcher was open but the game wasn't, at cleanup
+
+    def game_exes(self):
+        """The game's own process names."""
+        return ()
+
+    def launcher_exes(self):
+        """Launchers that open the game. One still open without the game usually means it is
+        showing an update instead of a start button."""
+        return ()
+
+    def check_launcher(self):
+        launchers = [n for n in self.launcher_exes() if n]
+        if launchers and any(process_running(n) for n in launchers):
+            self.launcher_left = not any(process_running(n) for n in self.game_exes() if n)
 
     def watch(self, log=None):
         """A StallWatch for this game's wait loop."""
@@ -38,6 +53,7 @@ class Game:
         launcher or its tool is still open, keep a picture of the screen. The runner sends it
         only if the game didn't go well, and deletes it otherwise. When everything was already
         closed (the tool shut down by itself), the picture would only show the desktop."""
+        self.check_launcher()
         if not self.shot_dir:
             return
         if not (any(process_running(n) for n in exe_names if n) or (folder and processes_in(folder))):

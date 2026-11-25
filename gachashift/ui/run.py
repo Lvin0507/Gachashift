@@ -1,11 +1,12 @@
 """Run: run everything now, or test one game, and watch the output as it happens.
 The run itself lives in the window (it keeps going when you switch pages)."""
 
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QHBoxLayout, QPlainTextEdit, QVBoxLayout, QWidget
 
 from ..games import ordered
 from ..system import read_since
-from ..winutil import SHORT_NAMES
+from ..winutil import SHORT_NAMES, plain_name
 from .widgets import Choice, button, label, panel, shadowed
 
 
@@ -53,6 +54,7 @@ def build(app):
     inner.addLayout(row)
     box.addWidget(card)
     app.run_buttons = [run_all, one]
+    box.addWidget(preflight_card(app))
 
     app.run_status = shadowed(label(app.tr("test.running") if busy else "", "muted"))
     box.addWidget(app.run_status)
@@ -65,3 +67,47 @@ def build(app):
     app.run_output = output
     box.addWidget(output, 1)
     return page
+
+
+def preflight_card(app):
+    """Will tomorrow morning's run work? Every check at once, plus a test message."""
+    card, inner = panel(spacing=6)
+    inner.addWidget(label(app.tr("preflight.title"), "h2"))
+    inner.addWidget(label(app.tr("preflight.explain"), "hint", wrap=True))
+    if app.cfg != app.saved_cfg:
+        inner.addWidget(label(app.tr("preflight.unsaved"), "muted", wrap=True))
+    busy = app.preflight == "busy"
+    start = button(app.tr("preflight.checking") if busy else app.tr("preflight.start"), None,
+                   app.start_preflight)
+    start.setEnabled(not busy)
+    row = QHBoxLayout()
+    row.addWidget(start)
+    row.addStretch()
+    inner.addSpacing(6)
+    inner.addLayout(row)
+    if isinstance(app.preflight, tuple):
+        problems, reached = app.preflight
+        inner.addSpacing(6)
+        if not problems:
+            inner.addWidget(label(app.tr("preflight.all_good"), "ok", wrap=True))
+        for problem in problems:
+            line = QHBoxLayout()
+            line.addWidget(label("• " + problem_text(app, problem), "hint", wrap=True), 1)
+            if problem.fix:
+                line.addWidget(button(app.tr("health.open"), None,
+                                      lambda fix=problem.fix: app.open_fix(fix)), 0, Qt.AlignTop)
+            inner.addLayout(line)
+        if reached:
+            inner.addWidget(label(app.tr("preflight.sent", channels=" / ".join(reached)), "muted", wrap=True))
+    return card
+
+
+def problem_text(app, problem):
+    params = dict(problem.params)
+    if problem.key == "preflight.missing":
+        sep = "、" if app.lang == "zh" else ", "
+        params["items"] = sep.join(app.tr(f"f.{key}") for key in params.get("items", []))
+    text = app.tr(problem.key, **params)
+    if problem.game:
+        text = app.tr("health.tool_prefix", game=plain_name(problem.game, app.lang)) + text
+    return text

@@ -86,6 +86,8 @@ def actions(report, lang):
     if report.game == "system":
         return []  # these notes speak for themselves at the top of the report
     game = short_name(report.game, lang)
+    if outcome(report) != "ok" and any(key == "note.maybe_update" for key, _ in report.notes):
+        return [t(lang, "action.update_client", game=game)]
     if outcome(report) == "fail":
         missing = any("missing settings" in str(p.get("error", "")) for _, p in report.notes)
         return [t(lang, "action.setup" if missing else "action.nothing_done", game=game)]

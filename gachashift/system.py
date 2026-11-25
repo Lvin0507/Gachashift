@@ -38,11 +38,24 @@ def clear_stop():
         pass
 
 
+_PUMP = None  # called about once a second while a run waits (the tray icon's events)
+
+
+def set_pump(pump):
+    global _PUMP
+    _PUMP = pump
+
+
 def pause(seconds):
     """Sleep, but give up at once with StopRequested if the user asked to stop. Every wait in a
     run goes through here, so a stop takes effect within a second wherever the run is."""
     end = time.time() + seconds
     while True:
+        if _PUMP is not None:
+            try:
+                _PUMP()
+            except Exception:
+                pass
         if stop_requested():
             raise StopRequested()
         left = end - time.time()

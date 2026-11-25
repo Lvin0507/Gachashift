@@ -33,6 +33,12 @@ class Arknights(Game):
     id = "arknights"
     required = ("maa_path", "maa_log")
 
+    def game_exes(self):
+        return (self.cfg.get("game_exe") or "Arknights.exe",)
+
+    def launcher_exes(self):
+        return ("Gryphlink.exe",)
+
     def run(self, timeout=1800):
         path, log = self.cfg["maa_path"], self.cfg["maa_log"]
         offset = log_size(log)

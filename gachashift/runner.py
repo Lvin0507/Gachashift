@@ -13,6 +13,7 @@ from . import toolcheck
 from .config import app_dir, load_config
 from .games import ordered
 from .i18n import game_name, t
+from .report import short_name as plain
 from .system import (KeepAwake, QuietMode, StopRequested, clear_stop, seconds_since_input, shutdown, ts,
                      wait_for_reset, wait_for_unlock)
 
@@ -101,19 +102,22 @@ def run_game(game_cls, game_cfg, lang, wait_reset=True, shots=None):
             rep.screenshot = game.shot or ""
         if game.stalled:
             rep.note("note.stalled", minutes=game.stalled)
-        return explain(rep, game_cfg)
+        return explain(rep, game_cfg, game)
     except StopRequested:
         raise  # not an error: the whole run stops
     except Exception as e:
         print(f"[{ts()}] {game.id} failed: {e}")
         rep.note("note.error", error=f"{type(e).__name__}: {e}")
         rep.screenshot = game.shot or ""
-        return explain(rep, game_cfg)
+        return explain(rep, game_cfg, game)
 
 
-def explain(rep, game_cfg):
-    """When a game didn't go well, add any of its tool's settings that would explain it."""
+def explain(rep, game_cfg, game=None):
+    """When a game didn't go well, add what would explain it: a launcher left open without
+    its game (usually a client update), and the tool's settings that differ from ours."""
     if R.outcome(rep) != "ok":
+        if game is not None and game.launcher_left:
+            rep.note("note.maybe_update")
         for key in toolcheck.check_game(rep.game, game_cfg):
             rep.note(key)
     return rep
@@ -161,24 +165,37 @@ def needs_retry(rep):
     return not any("missing settings" in str(params.get("error", "")) for _, params in rep.notes)
 
 
-def run_games(cfg, only, lang, opts, log, dim=False, shots=None):
+def games_to_run(cfg, only, lang, log):
+    """The game classes this run will play, in order, logging why the others are skipped."""
+    todo = []
+    for game_cls in ordered(cfg):
+        gid = game_cls.id
+        game_cfg = cfg["games"].get(gid, {})
+        if only:
+            if gid == only:
+                todo.append(game_cls)
+        elif not game_cfg.get("enabled"):
+            log(t(lang, "log.skip_off", game=game_name(gid, lang)))
+        elif not due_today(game_cfg):
+            log(t(lang, "log.skip_day", game=game_name(gid, lang)))
+        else:
+            todo.append(game_cls)
+    return todo
+
+
+def run_games(cfg, only, lang, opts, log, dim=False, shots=None, status=None):
     """Run every game that is enabled and due today (or just `only`) and return their reports.
-    In a full run, a game where nothing got done is tried once more after all the others."""
+    In a full run, a game where nothing got done is tried once more after all the others.
+    status: called with a short line about what is running now (the tray icon)."""
+    status = status or (lambda text: None)
     reports, retry = [], []
     with QuietMode(mute=opts.get("mute", True), dim=dim,
                    dim_level=opts.get("dim_level", 30) / 100):
-        for game_cls in ordered(cfg):
+        todo = games_to_run(cfg, only, lang, log)
+        for number, game_cls in enumerate(todo, 1):
             gid = game_cls.id
             game_cfg = cfg["games"].get(gid, {})
-            if only:
-                if gid != only:
-                    continue
-            elif not game_cfg.get("enabled"):
-                log(t(lang, "log.skip_off", game=game_name(gid, lang)))
-                continue
-            elif not due_today(game_cfg):
-                log(t(lang, "log.skip_day", game=game_name(gid, lang)))
-                continue
+            status(t(lang, "tray.running", game=plain(gid, lang), n=number, total=len(todo)))
             # a single-game test run shouldn't sit waiting for a reset
             try:
                 reports.append(run_game(game_cls, game_cfg, lang, wait_reset=not only, shots=shots))
@@ -196,6 +213,7 @@ def run_games(cfg, only, lang, opts, log, dim=False, shots=None):
 
         for index, game_cls, game_cfg in retry:
             log(f"[{ts()}] " + t(lang, "log.retry", game=game_name(game_cls.id, lang)))
+            status(t(lang, "tray.retrying", game=plain(game_cls.id, lang)))
             try:
                 rep = run_game(game_cls, game_cfg, lang, wait_reset=False, shots=shots)
             except StopRequested as stop:
@@ -217,9 +235,11 @@ def stopped_report():
     return rep
 
 
-def run_all(cfg=None, only=None, allow_shutdown=True, send=True, ask_first=False, log=print):
+def run_all(cfg=None, only=None, allow_shutdown=True, send=True, ask_first=False, log=print,
+            tray=False):
     """Run the games, then send the report and (optionally) shut down.
-    ask_first: for scheduled runs, ask before starting if someone is using the PC."""
+    ask_first: for scheduled runs, ask before starting if someone is using the PC.
+    tray: show a tray icon with the game that is running and a way to stop."""
     cfg = cfg or load_config()
     lang = cfg.get("report_language", "en")
     opts = cfg["options"]
@@ -238,6 +258,10 @@ def run_all(cfg=None, only=None, allow_shutdown=True, send=True, ask_first=False
         rep.note("note.previous_unfinished", started=cut_off)
         notices.append(rep)
     running_file().write_text(json.dumps({"pid": os.getpid(), "started": ts(), "only": only}))
+    icon = None
+    if tray:
+        from .tray import RunTray
+        icon = RunTray(lang)
     try:
         # On the lock screen no tool can see or click anything, so report it instead of hanging
         if not only and not wait_for_unlock():
@@ -250,11 +274,14 @@ def run_all(cfg=None, only=None, allow_shutdown=True, send=True, ask_first=False
             shots = None if only or not opts.get("screenshots", True) else str(screenshot_folder())
             with KeepAwake():
                 reports, stopped = run_games(cfg, only, lang, opts, log, shots=shots,
-                                             dim=ask_first and opts.get("dim_screen", False))
+                                             dim=ask_first and opts.get("dim_screen", False),
+                                             status=icon.status if icon else None)
     except StopRequested:  # stopped while waiting for the lock screen to clear
         stopped = True
         reports.append(stopped_report())
     finally:
+        if icon:
+            icon.close()
         try:
             running_file().unlink()
         except FileNotFoundError:

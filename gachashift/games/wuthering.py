@@ -49,6 +49,12 @@ class WutheringWaves(Game):
     id = "wuthering"
     required = ("okww_path", "log_path")
 
+    def game_exes(self):
+        return (GAME_EXE,)
+
+    def launcher_exes(self):
+        return (self.cfg.get("launcher_exe") or "launcher_main.exe",)
+
     def _open_through_steam(self):
         restart_steam_if_running()  # so the game inherits our admin rights
         return launch_and_click(

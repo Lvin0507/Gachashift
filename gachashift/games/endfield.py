@@ -116,6 +116,12 @@ class Endfield(Game):
     id = "endfield"
     required = ("maaend_path", "log_dir")
 
+    def game_exes(self):
+        return ("Endfield.exe",)
+
+    def launcher_exes(self):
+        return ("Gryphlink.exe",)
+
     def run(self, timeout=5400):
         path = self.cfg["maaend_path"]
         log = os.path.join(self.cfg["log_dir"], "go-service.log")

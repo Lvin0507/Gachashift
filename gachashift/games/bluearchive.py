@@ -50,6 +50,12 @@ class BlueArchive(Game):
     reset = (9, 4)  # 04:00 JST
     required = ("baas_dir", "launcher_path")
 
+    def game_exes(self):
+        return (GAME_EXE,)
+
+    def launcher_exes(self):
+        return (os.path.basename(self.cfg.get("launcher_path") or ""),)
+
     def run(self, start_timeout=300, timeout=3600):
         baas_dir = self.cfg["baas_dir"]
         baas_exe = self.cfg.get("baas_exe") or os.path.join(baas_dir, "BlueArchiveAutoScript.exe")
