@@ -125,10 +125,10 @@ def health_card(app):
             text = app.tr("health.tool_prefix", game=plain_name(problem.game, app.lang)) + text
         row.addWidget(label(text, "hint", wrap=True), 1)
         if problem.game and can_fix(problem.game, problem.key):
-            row.addWidget(button(app.tr("fix.button"), None, lambda p=problem: app.fix_tool(p)),
+            row.addWidget(button(app.tr("fix.button"), None, lambda _=False, p=problem: app.fix_tool(p)),
                           0, Qt.AlignTop)
         if problem.fix:
-            row.addWidget(button(app.tr("health.open"), None, lambda fix=problem.fix: app.open_fix(fix)),
+            row.addWidget(button(app.tr("health.open"), None, lambda _=False, fix=problem.fix: app.open_fix(fix)),
                           0, Qt.AlignTop)
         inner.addLayout(row)
     return card
@@ -139,7 +139,7 @@ def order_buttons(app, gid, first, last):
     col = QVBoxLayout()
     col.setSpacing(0)
     for text, step, end in (("▲", -1, first), ("▼", 1, last)):
-        arrow = button(text, "move", lambda step=step: shift(app, gid, step))
+        arrow = button(text, "move", lambda _=False, step=step: shift(app, gid, step))
         arrow.setToolTip(app.tr("home.move_up" if step < 0 else "home.move_down"))
         arrow.setEnabled(not end)
         col.addWidget(arrow)

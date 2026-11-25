@@ -7,6 +7,7 @@ from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import QCheckBox, QDialog, QHBoxLayout, QVBoxLayout, QWidget
 
 from .. import buttonfind
+from ..config import app_dir
 from ..games import ordered
 from ..system import bring_to_front, main_window_of, move_mouse_to
 from ..winutil import (DAY_KEYS_EN, DAY_KEYS_ZH, FIELDS, PATH_KINDS, SHORT_NAMES, STEAM_ONLY, TOOLS,
@@ -202,10 +203,18 @@ def calibrate(app, gid, edit):
         if not hwnd:
             message.setText(app.tr("calib.no_window", launcher=expected))
             return
-        point = buttonfind.find_in_window(hwnd) if bring_to_front(hwnd) else None
+        picture = buttonfind.grab_client(hwnd) if bring_to_front(hwnd) else None
+        point = buttonfind.find_button(*picture) if picture else None
         dialog.raise_()
         if not point:
-            message.setText(app.tr("calib.auto_none"))
+            # keep what was looked at, so a launcher it can't read can be worked out later
+            path = app_dir() / "logs" / f"buttonfind_{os.path.splitext(expected)[0]}.png"
+            try:
+                path.parent.mkdir(exist_ok=True)
+                saved = picture and buttonfind.save_picture(picture, path)
+            except Exception:
+                saved = False
+            message.setText(app.tr("calib.auto_none") + ("\n" + app.tr("calib.auto_saved", path=path) if saved else ""))
             return
         found.update(x=point[0], y=point[1])
         move_mouse_to(hwnd, *point)

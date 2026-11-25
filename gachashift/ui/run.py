@@ -95,11 +95,11 @@ def preflight_card(app):
             line = QHBoxLayout()
             line.addWidget(label("• " + problem_text(app, problem), "hint", wrap=True), 1)
             if problem.game and can_fix(problem.game, problem.key):
-                line.addWidget(button(app.tr("fix.button"), None, lambda p=problem: app.fix_tool(p)),
+                line.addWidget(button(app.tr("fix.button"), None, lambda _=False, p=problem: app.fix_tool(p)),
                                0, Qt.AlignTop)
             if problem.fix:
                 line.addWidget(button(app.tr("health.open"), None,
-                                      lambda fix=problem.fix: app.open_fix(fix)), 0, Qt.AlignTop)
+                                      lambda _=False, fix=problem.fix: app.open_fix(fix)), 0, Qt.AlignTop)
             inner.addLayout(line)
         if reached:
             inner.addWidget(label(app.tr("preflight.sent", channels=" / ".join(reached)), "muted", wrap=True))

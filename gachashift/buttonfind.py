@@ -153,6 +153,17 @@ def grab_client(hwnd, max_width=192):
     return pixels, sw, sh
 
 
+def save_picture(picture, path):
+    """Save what the search looked at as a PNG (for working out why nothing was found)."""
+    from PySide6.QtGui import QColor, QImage
+    pixels, width, height = picture
+    image = QImage(width, height, QImage.Format_RGB32)
+    for y in range(height):
+        for x in range(width):
+            image.setPixelColor(x, y, QColor(*pixels[y * width + x]))
+    return image.save(str(path))
+
+
 def find_in_window(hwnd):
     """The start button of a launcher window that is in front, or None."""
     try:
