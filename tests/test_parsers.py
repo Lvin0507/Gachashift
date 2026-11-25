@@ -89,9 +89,11 @@ class ZenlessTest(unittest.TestCase):
     def test_appended_log(self):
         with tempfile.TemporaryDirectory() as folder:
             path = os.path.join(folder, "log.txt")
-            pathlib.Path(path).write_text("earlier run\n", encoding="utf-8")
+            # newline="": write "\n" as it is, also on Windows, where text files get "\r\n"
+            with open(path, "w", encoding="utf-8", newline="") as f:
+                f.write("earlier run\n")
             offset = log_size(path)
-            with open(path, "a", encoding="utf-8") as f:
+            with open(path, "a", encoding="utf-8", newline="") as f:
                 f.write("this run\n")
             self.assertEqual(read_since(path, offset), "this run\n")
 

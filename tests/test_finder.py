@@ -31,7 +31,8 @@ class FinderTest(unittest.TestCase):
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(b"")
             os.utime(path, (mtime, mtime))
-        self.roots = finder.search_roots(home=self.root / "home", drives=[str(self.root / "D")])
+        # steam=[]: on Windows the real Steam libraries would be searched too
+        self.roots = finder.search_roots(home=self.root / "home", drives=[str(self.root / "D")], steam=[])
 
     def tearDown(self):
         self.tmp.cleanup()
