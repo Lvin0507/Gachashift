@@ -59,11 +59,20 @@ class MaaEndTest(unittest.TestCase):
         self.assertEqual(toolcheck.check_maaend(maaend([LAUNCH, DAILY, KILL, POWER], autorun=False)),
                          ["tool.maaend_autorun", "tool.maaend_close", "tool.power"])
 
-    def test_unknown_instance_is_skipped(self):
+    def test_no_config_chosen_to_run(self):
+        # what MaaEnd writes when "run on launch" is set to nothing (seen 25 Nov)
+        data = maaend([LAUNCH, DAILY, KILL])
+        data["settings"]["autoStartInstanceId"] = None
+        self.assertEqual(toolcheck.check_maaend(data), ["tool.maaend_autorun"])
+        del data["settings"]["autoStartInstanceId"]
+        self.assertEqual(toolcheck.check_maaend(data), ["tool.maaend_autorun"])
+
+    def test_deleted_config_chosen_to_run(self):
+        # the tasks of a config that no longer exists aren't checked, but nothing would run
         data = maaend([DAILY])
         data["settings"]["autoStartInstanceId"] = "gone"
         data["lastActiveInstanceId"] = "gone"
-        self.assertEqual(toolcheck.check_maaend(data), [])
+        self.assertEqual(toolcheck.check_maaend(data), ["tool.maaend_autorun"])
 
     def test_not_a_config(self):
         self.assertEqual(toolcheck.check_maaend(None), [])

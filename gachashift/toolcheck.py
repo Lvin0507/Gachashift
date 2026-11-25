@@ -70,7 +70,11 @@ def check_maaend(data):
         return []
     problems = []
     settings = data.get("settings") or {}
-    if settings.get("autoRunOnLaunch") is False:
+    # MaaEnd's "run on launch" is two settings: the switch, and which config to run. Choosing
+    # not to run anything clears the config (autoStartInstanceId) and leaves the switch on.
+    ids = {i.get("id") for i in data.get("instances") or []}
+    if settings.get("autoRunOnLaunch") is False or (
+            "autoRunOnLaunch" in settings and settings.get("autoStartInstanceId") not in ids):
         problems.append("tool.maaend_autorun")
     instance = maaend_instance(data)
     if instance is None:

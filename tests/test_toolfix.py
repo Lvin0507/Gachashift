@@ -77,6 +77,30 @@ class MaaEndFixTest(Base):
                          ["__MXU_PRETASK__LaunchGamePC", "DailyRewards", "__MXU_POWER__", "__MXU_KILLPROC__"])
         self.assertTrue(os.path.exists(file + toolfix.BACKUP))
 
+    def test_choose_the_config_to_run(self):
+        full = [{"enabled": True, "taskName": "__MXU_PRETASK__LaunchGamePC"}, dict(KILL_SELF_OFF)]
+        full[1]["optionValues"]["__MXU_KILLPROC_SELF_OPTION__"] = {"type": "switch", "value": True}
+        cfg, file = self.setup_maaend(full, autorun=True)
+        data = json.loads(read(file))
+        data["settings"]["autoStartInstanceId"] = None  # "run nothing on launch"
+        data["instances"].append({"id": "t2", "name": "test", "tasks": [{"enabled": True, "taskName": "DailyRewards"}]})
+        write(file, dump(data))
+        self.assertEqual(toolcheck.check_game("endfield", cfg), ["tool.maaend_autorun"])
+        self.assertIsNone(self.fix("endfield", "tool.maaend_autorun", cfg))
+        # the one config that opens and closes the game is the morning run
+        self.assertEqual(json.loads(read(file))["settings"]["autoStartInstanceId"], "a1")
+        self.assertEqual(toolcheck.check_game("endfield", cfg), [])
+
+    def test_two_full_configs_is_a_choice(self):
+        full = [{"enabled": True, "taskName": "__MXU_PRETASK__LaunchGamePC"},
+                {"enabled": True, "taskName": "__MXU_KILLPROC__"}]
+        cfg, file = self.setup_maaend(full, autorun=True)
+        data = json.loads(read(file))
+        data["settings"]["autoStartInstanceId"] = None
+        data["instances"].append({"id": "t2", "tasks": list(full)})
+        write(file, dump(data))
+        self.assertEqual(self.fix("endfield", "tool.maaend_autorun", cfg), "fix.choose_in_tool")
+
     def test_adds_a_kill_task(self):
         cfg, file = self.setup_maaend([{"enabled": True, "taskName": "__MXU_PRETASK__LaunchGamePC"}], autorun=True)
         self.assertIsNone(self.fix("endfield", "tool.maaend_close", cfg))

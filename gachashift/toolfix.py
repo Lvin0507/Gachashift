@@ -79,8 +79,27 @@ def _task_id():
     return "".join(random.choice(string.ascii_lowercase + string.digits) for _ in range(7))
 
 
+def _full_run(instance):
+    """True for a config that opens the game first and closes it last (a whole morning)."""
+    tasks = [t for t in instance.get("tasks") or [] if t.get("enabled", True)]
+    return bool(tasks) and "LaunchGame" in tasks[0].get("taskName", "") \
+        and tasks[-1].get("taskName") == "__MXU_KILLPROC__"
+
+
 def maaend_autorun(data, game_cfg):
-    data.setdefault("settings", {})["autoRunOnLaunch"] = True
+    settings = data.setdefault("settings", {})
+    instances = data.get("instances") or []
+    ids = [i.get("id") for i in instances]
+    if settings.get("autoStartInstanceId") not in ids:
+        # which config runs is the player's choice; pick one only when it is clear
+        full = [i.get("id") for i in instances if _full_run(i)]
+        if len(full) == 1:
+            settings["autoStartInstanceId"] = full[0]
+        elif len(ids) == 1:
+            settings["autoStartInstanceId"] = ids[0]
+        else:
+            raise FixError("fix.choose_in_tool")
+    settings["autoRunOnLaunch"] = True
 
 
 def maaend_close(data, game_cfg):
