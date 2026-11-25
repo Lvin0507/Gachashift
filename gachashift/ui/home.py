@@ -9,6 +9,7 @@ from PySide6.QtWidgets import QGridLayout, QHBoxLayout, QVBoxLayout, QWidget
 from ..games import move, ordered
 from ..runner import load_last_results
 from ..selfupdate import can_self_update
+from ..toolfix import can_fix
 from ..winutil import DAY_KEYS_EN, DAY_KEYS_ZH, missing_items, plain_name
 from .theme import FAIL
 from .widgets import ImageBox, Toggle, button, label, panel, shadowed
@@ -123,6 +124,9 @@ def health_card(app):
         if problem.game:
             text = app.tr("health.tool_prefix", game=plain_name(problem.game, app.lang)) + text
         row.addWidget(label(text, "hint", wrap=True), 1)
+        if problem.game and can_fix(problem.game, problem.key):
+            row.addWidget(button(app.tr("fix.button"), None, lambda p=problem: app.fix_tool(p)),
+                          0, Qt.AlignTop)
         if problem.fix:
             row.addWidget(button(app.tr("health.open"), None, lambda fix=problem.fix: app.open_fix(fix)),
                           0, Qt.AlignTop)

@@ -6,6 +6,7 @@ from PySide6.QtWidgets import QHBoxLayout, QPlainTextEdit, QVBoxLayout, QWidget
 
 from ..games import ordered
 from ..system import read_since
+from ..toolfix import can_fix
 from ..winutil import SHORT_NAMES, plain_name
 from .widgets import Choice, button, label, panel, shadowed
 
@@ -93,6 +94,9 @@ def preflight_card(app):
         for problem in problems:
             line = QHBoxLayout()
             line.addWidget(label("• " + problem_text(app, problem), "hint", wrap=True), 1)
+            if problem.game and can_fix(problem.game, problem.key):
+                line.addWidget(button(app.tr("fix.button"), None, lambda p=problem: app.fix_tool(p)),
+                               0, Qt.AlignTop)
             if problem.fix:
                 line.addWidget(button(app.tr("health.open"), None,
                                       lambda fix=problem.fix: app.open_fix(fix)), 0, Qt.AlignTop)

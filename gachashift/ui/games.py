@@ -6,7 +6,9 @@ import webbrowser
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import QCheckBox, QDialog, QHBoxLayout, QVBoxLayout, QWidget
 
+from .. import buttonfind
 from ..games import ordered
+from ..system import bring_to_front, main_window_of, move_mouse_to
 from ..winutil import (DAY_KEYS_EN, DAY_KEYS_ZH, FIELDS, PATH_KINDS, SHORT_NAMES, STEAM_ONLY, TOOLS,
                        launcher_of, parse_point, plain_name, window_under_cursor)
 from .widgets import (Choice, DayChips, Field, ImageBox, Toggle, button, label, panel, pick_file,
@@ -158,9 +160,11 @@ def calibrate(app, gid, edit):
     col.addWidget(message)
     row = QHBoxLayout()
     start = button(app.tr("calib.start"))
+    auto = button(app.tr("calib.auto"))
     use = button(app.tr("calib.use"), "primary")
     use.hide()
     row.addWidget(start)
+    row.addWidget(auto)
     row.addStretch()
     row.addWidget(use)
     col.addLayout(row)
@@ -191,8 +195,26 @@ def calibrate(app, gid, edit):
         tick()
         timer.start(1000)
 
+    def look():
+        """Find the button in the launcher's window, and put the mouse on it to show where."""
+        use.hide()
+        hwnd = main_window_of(expected)
+        if not hwnd:
+            message.setText(app.tr("calib.no_window", launcher=expected))
+            return
+        point = buttonfind.find_in_window(hwnd) if bring_to_front(hwnd) else None
+        dialog.raise_()
+        if not point:
+            message.setText(app.tr("calib.auto_none"))
+            return
+        found.update(x=point[0], y=point[1])
+        move_mouse_to(hwnd, *point)
+        message.setText(app.tr("calib.auto_found", x=point[0], y=point[1]))
+        use.show()
+
     timer.timeout.connect(tick)
     start.clicked.connect(begin)
+    auto.clicked.connect(look)
     use.clicked.connect(lambda: (edit.setText(f"{found['x']}, {found['y']}"), dialog.accept()))
     dialog.move(40, 40)
     dialog.resize(420, 180)

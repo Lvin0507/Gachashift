@@ -35,24 +35,24 @@ DEFAULT_CONFIG = {
     "order": [],                 # game ids in the order they run; empty = the default order
     "games": {
         "endfield": {"enabled": False, "days": ALL_DAYS,
-                     "maaend_path": "", "log_dir": ""},
+                     "maaend_path": "", "log_dir": "", "game_path": ""},
         "arknights": {"enabled": False, "days": ALL_DAYS,
-                      "maa_path": "", "maa_log": "", "game_exe": "Arknights.exe"},
+                      "maa_path": "", "maa_log": "", "game_exe": "Arknights.exe", "game_path": ""},
         "wuthering": {"enabled": False, "days": [0], "steam_client": False,
-                      "okww_path": "", "log_path": "", "task": "GardenTask",
+                      "okww_path": "", "log_path": "", "task": "GardenTask", "game_path": "",
                       "steam_appid": "3513350", "launcher_exe": "launcher_main.exe",
                       "start_button": [0.85, 0.86]},
         "bluearchive": {"enabled": False, "days": ALL_DAYS, "wait_for_reset": True,
-                        "baas_dir": "", "baas_exe": "", "launcher_path": "",
+                        "baas_dir": "", "baas_exe": "", "launcher_path": "", "game_path": "",
                         "start_button": [0.852, 0.859]},
         "zzz": {"enabled": False, "days": ALL_DAYS, "wait_for_reset": True,
                 "server": "asia",          # asia / america / europe
                 "client": "official",      # official / steam
-                "od_dir": "", "steam_appid": "4162040",
+                "od_dir": "", "game_path": "", "steam_appid": "4162040",
                 "launcher_exe": "HYP.exe", "start_button": [0.85, 0.86]},
         "genshin": {"enabled": False, "days": ALL_DAYS, "wait_for_reset": True,
                     "server": "asia",          # asia / america / europe
-                    "bgi_path": "", "onedragon_config": "默认配置"},
+                    "bgi_path": "", "onedragon_config": "默认配置", "game_path": ""},
     },
 }
 # Each game's "try once more when nothing got done" switch (see runner.needs_retry). Off for

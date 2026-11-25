@@ -39,19 +39,19 @@ TOOLS = {
 
 # Per-game form: (config key, kind, extra). Kinds: exe, file, dir, text, bool, choice, point
 FIELDS = {
-    "endfield": [("maaend_path", "exe", None), ("log_dir", "dir", None)],
-    "arknights": [("maa_path", "exe", None), ("maa_log", "file", None), ("game_exe", "text", None)],
-    "wuthering": [("okww_path", "exe", None), ("log_path", "file", None),
+    "endfield": [("maaend_path", "exe", None), ("game_path", "exe", None), ("log_dir", "dir", None)],
+    "arknights": [("maa_path", "exe", None), ("game_path", "exe", None), ("maa_log", "file", None), ("game_exe", "text", None)],
+    "wuthering": [("okww_path", "exe", None), ("game_path", "exe", None), ("log_path", "file", None),
                   ("steam_client", "bool", None), ("steam_appid", "text", None),
                   ("launcher_exe", "text", None), ("start_button", "point", None),
                   ("task", "text", None)],
     "bluearchive": [("launcher_path", "exe", None), ("baas_dir", "dir", None),
-                    ("baas_exe", "exe", None), ("start_button", "point", None),
+                    ("baas_exe", "exe", None), ("game_path", "exe", None), ("start_button", "point", None),
                     ("wait_for_reset", "bool", None)],
     "zzz": [("client", "choice", ["official", "steam"]), ("server", "choice", ["asia", "america", "europe"]),
-            ("od_dir", "dir", None), ("steam_appid", "text", None), ("launcher_exe", "text", None),
+            ("od_dir", "dir", None), ("game_path", "exe", None), ("steam_appid", "text", None), ("launcher_exe", "text", None),
             ("start_button", "point", None), ("wait_for_reset", "bool", None)],
-    "genshin": [("server", "choice", ["asia", "america", "europe"]), ("bgi_path", "exe", None),
+    "genshin": [("server", "choice", ["asia", "america", "europe"]), ("bgi_path", "exe", None), ("game_path", "exe", None),
                 ("onedragon_config", "text", None), ("wait_for_reset", "bool", None)],
 }
 # every game has the retry switch, last on its page

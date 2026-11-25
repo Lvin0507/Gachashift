@@ -15,7 +15,7 @@ from PySide6.QtGui import QColor, QPainter, QPixmap
 from PySide6.QtWidgets import (QApplication, QButtonGroup, QFrame, QHBoxLayout, QMessageBox,
                                QScrollArea, QVBoxLayout, QWidget)
 
-from .. import __version__, finder, health, preflight, selfupdate, toolcheck
+from .. import __version__, finder, health, preflight, selfupdate, toolcheck, toolfix
 from ..config import app_dir, load_config, save_config
 from ..updates import newer_release
 from ..games import ordered
@@ -141,6 +141,20 @@ class MainWindow(QWidget):
         if self.page in ("run", "home"):
             self.show_page(self.page)
 
+    def fix_tool(self, problem):
+        """Change the tool's own setting behind a problem, then check again."""
+        error = toolfix.fix(problem.game, problem.key, self.cfg["games"].get(problem.game, {}))
+        if error:
+            self.set_status(self.tr(error), "fail")
+            return
+        self.set_status(self.tr("fix.done"), "ok")
+        if isinstance(self.preflight, tuple):
+            problems, reached = self.preflight
+            self.preflight = ([p for p in problems if p is not problem], reached)
+        self.health = [p for p in self.health if not (p.game == problem.game and p.key == problem.key)]
+        self.show_page(self.page)
+        self.check_health()
+
     def on_health_checked(self, problems):
         self.health = problems
         if self.page == "home":
@@ -159,8 +173,16 @@ class MainWindow(QWidget):
             return
         self.finding = True
         self.set_status(self.tr("finder.searching"), "accent")
-        threading.Thread(target=lambda: self.tools_found.emit(
-            finder.settings_from(finder.search(finder.search_roots()))), daemon=True).start()
+        games_cfg = copy.deepcopy(self.cfg["games"])
+
+        def work():
+            found = finder.settings_from(finder.search(finder.search_roots()))
+            # where each tool already starts its game beats a file found on the disk
+            finder.fill_missing(games_cfg, found)
+            for gid, path in toolfix.game_paths_from_tools(games_cfg).items():
+                found.setdefault(gid, {})["game_path"] = path
+            self.tools_found.emit(found)
+        threading.Thread(target=work, daemon=True).start()
 
     def on_tools_found(self, found):
         self.finding = False

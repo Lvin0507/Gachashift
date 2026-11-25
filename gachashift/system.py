@@ -265,10 +265,8 @@ def main_window_of(exe_name):
     return best
 
 
-def click_in_window(hwnd, fx, fy):
-    """Bring the window to the front and click with the real mouse at a fraction of its client
-    area. Skips the click if the window won't come to the front, so a click never lands on
-    some other window that happens to be on top. Returns True if it clicked."""
+def bring_to_front(hwnd):
+    """Restore a window and make it the foreground window. Returns True if it is in front."""
     user32 = _user32()
     user32.ShowWindow(hwnd, 9)  # SW_RESTORE
     user32.SetForegroundWindow(hwnd)
@@ -280,7 +278,25 @@ def click_in_window(hwnd, fx, fy):
         user32.ShowWindow(hwnd, 9)
         user32.SetForegroundWindow(hwnd)
         time.sleep(0.5)
-    if user32.GetForegroundWindow() != hwnd:
+    return user32.GetForegroundWindow() == hwnd
+
+
+def move_mouse_to(hwnd, fx, fy):
+    """Put the mouse at a fraction of a window's client area (to show a spot, not click it)."""
+    user32 = _user32()
+    rect = wintypes.RECT()
+    user32.GetClientRect(hwnd, ctypes.byref(rect))
+    point = wintypes.POINT(int(rect.right * fx), int(rect.bottom * fy))
+    user32.ClientToScreen(hwnd, ctypes.byref(point))
+    user32.SetCursorPos(point.x, point.y)
+
+
+def click_in_window(hwnd, fx, fy):
+    """Bring the window to the front and click with the real mouse at a fraction of its client
+    area. Skips the click if the window won't come to the front, so a click never lands on
+    some other window that happens to be on top. Returns True if it clicked."""
+    user32 = _user32()
+    if not bring_to_front(hwnd):
         print(f"[{ts()}] launcher window is not in front; not clicking this time")
         return False
     rect = wintypes.RECT()
@@ -295,12 +311,19 @@ def click_in_window(hwnd, fx, fy):
     return True
 
 
-def launch_and_click(open_launcher, launcher_exe, button, game_exe, wait_after=30, timeout=600):
+def launch_and_click(open_launcher, launcher_exe, button, game_exe, wait_after=30, timeout=600,
+                     look_after=3, find=None):
     """Open a game launcher, then keep clicking its start button until the game process appears.
-    Clicking repeats because the launcher may still be checking for updates at first."""
+    Clicking repeats because the launcher may still be checking for updates at first.
+    With no calibrated position, or after look_after clicks there did nothing (a new screen,
+    a redesigned launcher), the button is looked for in the window instead."""
+    from . import buttonfind
+    find = find or buttonfind.find_in_window
     make_dpi_aware()
     open_launcher()
     start = time.time()
+    position = tuple(button) if button else None
+    clicks, looked = 0, False
     while time.time() - start < timeout:
         pause(10)
         if process_running(game_exe):
@@ -308,9 +331,19 @@ def launch_and_click(open_launcher, launcher_exe, button, game_exe, wait_after=3
             pause(wait_after)
             return True
         hwnd = main_window_of(launcher_exe)
-        if hwnd:
-            print(f"[{ts()}] clicking the start button in {launcher_exe}")
-            click_in_window(hwnd, *button)
+        if not hwnd:
+            continue
+        if position is None or (clicks >= look_after and not looked):
+            looked = position is not None  # with nothing calibrated, keep looking until found
+            found = find(hwnd) if bring_to_front(hwnd) else None
+            if found and (position is None or buttonfind.far_apart(found, position)):
+                print(f"[{ts()}] found the start button at {found[0]}, {found[1]}; clicking there now")
+                position = found
+            if position is None:
+                continue
+        print(f"[{ts()}] clicking the start button in {launcher_exe}")
+        if click_in_window(hwnd, *position):
+            clicks += 1
     return False
 
 

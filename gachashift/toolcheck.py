@@ -35,14 +35,29 @@ def first(paths):
 
 # --- Endfield (MaaEnd) --------------------------------------------------------------------
 
-def maaend_config(cfg):
+def maaend_config_path(cfg):
     folder = os.path.dirname(cfg.get("maaend_path") or "")
     if not folder:
         return None
-    path = first([os.path.join(folder, "config", "mxu-MaaEnd.json"),
+    return first([os.path.join(folder, "config", "mxu-MaaEnd.json"),
                   os.path.join(folder, "mxu-MaaEnd.json")]
                  + sorted(glob.glob(os.path.join(folder, "config", "mxu-*.json"))))
+
+
+def maaend_config(cfg):
+    path = maaend_config_path(cfg)
     return read_json(path) if path else None
+
+
+def maaend_instance(data):
+    """The instance MaaEnd runs when it starts by itself, or None if that isn't clear."""
+    settings = data.get("settings") or {}
+    instances = data.get("instances") or []
+    wanted = settings.get("autoStartInstanceId") or data.get("lastActiveInstanceId")
+    instance = next((i for i in instances if i.get("id") == wanted), None)
+    if instance is None and len(instances) == 1:
+        instance = instances[0]
+    return instance
 
 
 def _switch_on(task, option):
@@ -57,11 +72,7 @@ def check_maaend(data):
     settings = data.get("settings") or {}
     if settings.get("autoRunOnLaunch") is False:
         problems.append("tool.maaend_autorun")
-    instances = data.get("instances") or []
-    wanted = settings.get("autoStartInstanceId") or data.get("lastActiveInstanceId")
-    instance = next((i for i in instances if i.get("id") == wanted), None)
-    if instance is None:
-        instance = instances[0] if len(instances) == 1 else None
+    instance = maaend_instance(data)
     if instance is None:
         return problems
     tasks = [t for t in instance.get("tasks") or [] if t.get("enabled", True)]
@@ -80,18 +91,28 @@ def check_maaend(data):
 
 # --- Arknights (MAA) ----------------------------------------------------------------------
 
-def maa_config(cfg):
+def maa_config_path(cfg):
     folder = os.path.dirname(cfg.get("maa_path") or "")
     path = os.path.join(folder, "config", "gui.new.json") if folder else ""
-    return read_json(path) if os.path.isfile(path) else None
+    return path if os.path.isfile(path) else None
+
+
+def maa_config(cfg):
+    path = maa_config_path(cfg)
+    return read_json(path) if path else None
+
+
+def maa_current(data):
+    current = (data.get("Configurations") or {}).get(data.get("Current") or "Default")
+    return current if isinstance(current, dict) else None
 
 
 def check_maa(data, exists=_exists):
     """Only MAA's newer config format (gui.new.json) is read."""
     if not isinstance(data, dict):
         return []
-    current = (data.get("Configurations") or {}).get(data.get("Current") or "Default")
-    if not isinstance(current, dict):
+    current = maa_current(data)
+    if current is None:
         return []
     gui = current.get("Gui") or {}
     problems = []
@@ -115,11 +136,16 @@ def check_maa(data, exists=_exists):
 
 # --- Wuthering Waves (ok-ww) --------------------------------------------------------------
 
-def okww_configs(cfg):
+def okww_config_dir(cfg):
     """ok-ww keeps its settings next to its logs: working/configs beside working/logs."""
     log = cfg.get("log_path") or ""
     folder = os.path.join(os.path.dirname(os.path.dirname(log)), "configs") if log else ""
-    if not os.path.isdir(folder):
+    return folder if os.path.isdir(folder) else None
+
+
+def okww_configs(cfg):
+    folder = okww_config_dir(cfg)
+    if not folder:
         return None
     return {name: read_json(os.path.join(folder, name))
             for name in ("devices.json", "Basic Options.json")}
@@ -142,13 +168,17 @@ def check_okww(files, steam_client=False, exists=_exists):
 
 # --- Blue Archive (BAAS) ------------------------------------------------------------------
 
-def baas_configs(cfg):
+def baas_config_paths(cfg):
+    """{path: config} for each BAAS server config (the ones with an "autostart" setting)."""
     folder = cfg.get("baas_dir") or ""
     if not folder:
-        return None
-    found = [read_json(p) for p in sorted(glob.glob(os.path.join(folder, "config", "*", "config.json")))]
-    found = [d for d in found if isinstance(d, dict) and "autostart" in d]
-    return found or None
+        return {}
+    found = {p: read_json(p) for p in sorted(glob.glob(os.path.join(folder, "config", "*", "config.json")))}
+    return {p: d for p, d in found.items() if isinstance(d, dict) and "autostart" in d}
+
+
+def baas_configs(cfg):
+    return list(baas_config_paths(cfg).values()) or None
 
 
 def _exits_baas(then):
@@ -175,9 +205,13 @@ def check_baas(configs):
 
 # --- Zenless Zone Zero (OneDragon) --------------------------------------------------------
 
-def onedragon_file(cfg):
+def onedragon_path(cfg):
     folder = cfg.get("od_dir") or ""
-    path = os.path.join(folder, "config", "one_dragon.yml") if folder else ""
+    return os.path.join(folder, "config", "one_dragon.yml") if folder else ""
+
+
+def onedragon_file(cfg):
+    path = onedragon_path(cfg)
     try:
         with open(path, encoding="utf-8-sig") as f:
             return f.read()
@@ -196,16 +230,23 @@ def check_onedragon(text):
 
 # --- Genshin (BetterGI) -------------------------------------------------------------------
 
-def bgi_files(cfg):
+def bgi_paths(cfg):
+    """(BetterGI's config.json, the one-dragon folder, this config's file), or None."""
     folder = os.path.dirname(cfg.get("bgi_path") or "")
     if not folder:
         return None
     user = os.path.join(folder, "User")
     flows = os.path.join(user, "OneDragon")
     name = cfg.get("onedragon_config") or "默认配置"
-    return {"config": read_json(os.path.join(user, "config.json")),
-            "flows": os.path.isdir(flows),
-            "flow": read_json(os.path.join(flows, name + ".json"))}
+    return os.path.join(user, "config.json"), flows, os.path.join(flows, name + ".json")
+
+
+def bgi_files(cfg):
+    paths = bgi_paths(cfg)
+    if not paths:
+        return None
+    config, flows, flow = paths
+    return {"config": read_json(config), "flows": os.path.isdir(flows), "flow": read_json(flow)}
 
 
 def _find_key(data, wanted):
