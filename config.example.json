@@ -28,6 +28,7 @@
     "test_run_done": false,
     "skip_telegram": false
   },
+  "order": [],
   "games": {
     "endfield": {
       "enabled": false,
@@ -42,6 +43,7 @@
       ],
       "maaend_path": "",
       "log_dir": "",
+      "game_path": "",
       "retry": false
     },
     "arknights": {
@@ -58,6 +60,7 @@
       "maa_path": "",
       "maa_log": "",
       "game_exe": "Arknights.exe",
+      "game_path": "",
       "retry": true
     },
     "wuthering": {
@@ -69,6 +72,7 @@
       "okww_path": "",
       "log_path": "",
       "task": "GardenTask",
+      "game_path": "",
       "steam_appid": "3513350",
       "launcher_exe": "launcher_main.exe",
       "start_button": [
@@ -92,6 +96,7 @@
       "baas_dir": "",
       "baas_exe": "",
       "launcher_path": "",
+      "game_path": "",
       "start_button": [
         0.852,
         0.859
@@ -113,6 +118,7 @@
       "server": "asia",
       "client": "official",
       "od_dir": "",
+      "game_path": "",
       "steam_appid": "4162040",
       "launcher_exe": "HYP.exe",
       "start_button": [
@@ -136,6 +142,7 @@
       "server": "asia",
       "bgi_path": "",
       "onedragon_config": "默认配置",
+      "game_path": "",
       "retry": true
     }
   }
