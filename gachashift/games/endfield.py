@@ -11,7 +11,7 @@ import time
 from .. import report as R
 from ..config import app_dir
 from ..system import (StopRequested, gryphlink_processes, kill, kill_processes, pause, process_running,
-                      read_since, ts)
+                      read_since, start_steam_elevated, ts)
 from .base import Game
 
 TASKS = ["LaunchGamePC", "StashBackpackMain", "DijiangRewards", "OutpostTradingSchedule",
@@ -128,6 +128,10 @@ class Endfield(Game):
         log = os.path.join(self.cfg["log_dir"], "go-service.log")
         stop = None
         try:
+            if self.cfg.get("via_steam"):
+                # MaaEnd starts the game through Steam; a Steam without admin rights would make
+                # the game ask for them, a prompt nobody is there to answer
+                start_steam_elevated()
             print(f"[{ts()}] starting {path}")
             subprocess.Popen([path], cwd=os.path.dirname(path))
             pause(15)

@@ -75,7 +75,7 @@ Gachashift 本身不玩游戏。每款游戏它都会打开对应的工具，等
 - Windows
 - 想在手机收到战报的话，需要一个 Telegram bot 或 Discord webhook（可选）
 - 你玩的游戏对应的工具，先装好并确认它自己能跑。依照各工具自己的说明设置后，再确认以下几项 Gachashift 依赖的设置：
-  - **MaaEnd**：第一个任务是“启动游戏（PC）”，最后一个是“结束进程”
+  - **MaaEnd**：第一个任务是“启动游戏（PC）”，最后一个是“结束进程”。如果它启动的是 Steam 版，请在 Gachashift 勾选“MaaEnd 通过 Steam 打开游戏”，Gachashift 会先用管理员权限重开 Steam
   - **MAA**：连接设置为 PC 客户端，填好“启动游戏”的路径，开启“启动后直接运行”
   - **ok-ww**：设好游戏路径，配置好 GardenTask
   - **BAAS**：开启“启动时运行”，**关闭**“启动时启动模拟器”（Gachashift 会自己打开日服启动器并点击スタート），选择“完成后退出 BAAS”

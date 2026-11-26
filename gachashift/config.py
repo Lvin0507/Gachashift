@@ -35,7 +35,7 @@ DEFAULT_CONFIG = {
     "order": [],                 # game ids in the order they run; empty = the default order
     "games": {
         "endfield": {"enabled": False, "days": ALL_DAYS,
-                     "maaend_path": "", "log_dir": "", "game_path": ""},
+                     "maaend_path": "", "log_dir": "", "game_path": "", "via_steam": False},
         "arknights": {"enabled": False, "days": ALL_DAYS,
                       "maa_path": "", "maa_log": "", "game_exe": "Arknights.exe", "game_path": ""},
         "wuthering": {"enabled": False, "days": [0], "steam_client": False,

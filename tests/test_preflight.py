@@ -141,6 +141,30 @@ class GryphlinkTest(unittest.TestCase):
         self.assertTrue(game.launcher_left)
 
 
+class EndfieldSteamTest(unittest.TestCase):
+    def run_endfield(self, via_steam):
+        from gachashift.games import endfield
+        calls = []
+        game = endfield.Endfield({"maaend_path": "C:/MaaEnd/MaaEnd.exe", "log_dir": "C:/MaaEnd/debug",
+                                  "via_steam": via_steam})
+        with mock.patch.multiple(endfield, start_steam_elevated=lambda: calls.append("steam"),
+                                 pause=lambda s: None, process_running=lambda n: False,
+                                 kill=lambda names: None, kill_processes=lambda p: None,
+                                 gryphlink_processes=lambda: [], read_since=lambda *a: "",
+                                 archive_log=lambda d: None), \
+                mock.patch.object(endfield.subprocess, "Popen", lambda *a, **k: calls.append("maaend")), \
+                mock.patch.object(endfield.time, "sleep", lambda s: None), \
+                mock.patch.object(Game, "capture", lambda self, *a: None):
+            game.run()
+        return calls
+
+    def test_steam_restarted_first(self):
+        self.assertEqual(self.run_endfield(True), ["steam", "maaend"])
+
+    def test_without_steam(self):
+        self.assertEqual(self.run_endfield(False), ["maaend"])
+
+
 class StatusTest(unittest.TestCase):
     def test_status_lines(self):
         def make(gid, status):

@@ -75,7 +75,7 @@ If you are using the PC when the scheduled time comes, it asks first and gives y
 - Windows
 - A Telegram bot or a Discord webhook, if you want the report on your phone (optional)
 - The tools for your games, installed and working on their own first. Follow each tool's own documentation, then check these settings Gachashift relies on:
-  - **MaaEnd**: "Launch Game (PC)" as the first task and "kill process" as the last
+  - **MaaEnd**: "Launch Game (PC)" as the first task and "kill process" as the last. If it opens the Steam version, tick "MaaEnd opens the game through Steam" in Gachashift so Steam is restarted with admin rights first
   - **MAA**: connection set to PC client, "start game" path set, "run on startup" enabled
   - **ok-ww**: game path set; GardenTask configured
   - **BAAS**: "run on startup" enabled, "start emulator on startup" **disabled** (Gachashift opens the JP launcher and clicks スタート itself), "exit BAAS when done" selected

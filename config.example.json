@@ -44,6 +44,7 @@
       "maaend_path": "",
       "log_dir": "",
       "game_path": "",
+      "via_steam": false,
       "retry": false
     },
     "arknights": {

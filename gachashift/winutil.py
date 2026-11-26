@@ -39,7 +39,8 @@ TOOLS = {
 
 # Per-game form: (config key, kind, extra). Kinds: exe, file, dir, text, bool, choice, point
 FIELDS = {
-    "endfield": [("maaend_path", "exe", None), ("game_path", "exe", None), ("log_dir", "dir", None)],
+    "endfield": [("maaend_path", "exe", None), ("game_path", "exe", None), ("log_dir", "dir", None),
+                 ("via_steam", "bool", None)],
     "arknights": [("maa_path", "exe", None), ("game_path", "exe", None), ("maa_log", "file", None), ("game_exe", "text", None)],
     "wuthering": [("okww_path", "exe", None), ("game_path", "exe", None), ("log_path", "file", None),
                   ("steam_client", "bool", None), ("steam_appid", "text", None),
