@@ -1,0 +1,59 @@
+# Every day, checks that the log text Gachashift's parsers look for still exists in each tool's
+# latest source (tools/check_upstream.py). When a tool rewords a line, this opens one issue
+# labelled "upstream-change", updates it while things stay missing, and closes it once the
+# parsers and the watch list are fixed. Run it by hand from the Actions tab after a fix.
+name: Upstream watch
+
+on:
+  schedule:
+    - cron: "23 2 * * *"   # daily, 02:23 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: upstream-watch
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Check the tools' latest source and report
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          python tools/check_upstream.py --out report.md
+          code=$?
+          set -e
+          open=$(gh issue list --label upstream-change --state open --json number --jq '.[0].number // empty')
+
+          if [ "$code" -eq 0 ]; then
+            if [ -n "$open" ]; then
+              gh issue close "$open" --comment "Every watched string is found again. 全部找到了，自动关闭。"
+            fi
+            exit 0
+          fi
+
+          # The script crashed instead of reporting: fail the run so GitHub emails the owner
+          if [ ! -f report.md ]; then
+            exit "$code"
+          fi
+
+          gh label create upstream-change --color D93F0B \
+            --description "A tool changed text that Gachashift reads in its log" --force
+          if [ -z "$open" ]; then
+            gh issue create --title "A tool changed its log text / 工具改了日志文字" \
+              --label upstream-change --body-file report.md
+          elif [ "$(gh issue view "$open" --json body --jq .body | tr -d '\r')" != "$(cat report.md)" ]; then
+            gh issue edit "$open" --body-file report.md
+            gh issue comment "$open" --body "The list changed; see the updated description. 列表有变化，请看更新后的内容。"
+          fi

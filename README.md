@@ -157,12 +157,13 @@ gachashift/           The program
   i18n.py             All English and Chinese text
   games/              One module per game
 tests/                Log-parser tests, run on every push
+tools/check_upstream.py  The log text Gachashift reads, checked against each tool's latest source
   logs/               Real log excerpts the tests read
 Gachashift.py         Entry point of Gachashift.exe (opens the app, or "run" does a run)
 Gachashift App.bat    Opens the app from source
 build.py              Builds dist/Gachashift and its zip with PyInstaller
 assets/               The app icon
-.github/workflows/    Builds and publishes a Release when a version tag is pushed
+.github/workflows/    Tests, the Release build, and the daily upstream watch
 config.example.json   Template for config.json
 logs/                 Run logs and archived MaaEnd logs (git-ignored)
 ```
@@ -193,6 +194,7 @@ Problems I hit while building this, and what fixed them:
 - **The lock screen blinds every tool.** Testing wake-from-sleep, Windows woke up on the lock screen, where screen capture fails, so MaaEnd sat there unable to start the game. Waking without a password would have fixed it at the cost of security, so the PC stays on with the screen off instead, and Gachashift checks for the lock screen first: if it is up, the report says so rather than hanging for hours.
 - **A run that starts while you're at the PC.** The first time the schedule fired while I was using the computer, games and tools kept opening and had to be closed one by one. Scheduled runs now ask first if the mouse or keyboard was used in the last two minutes, and every wait in a run checks for a stop request, so a stop takes effect within a second and still cleans up after itself.
 - **A tool renamed a task, and the report said it hadn't run.** MaaEnd's stash task started logging as `StashBackpackEntry` instead of `StashBackpackMain`, so the report showed it as not run next to a "new task" that was the same thing. Endfield's task list now comes from MaaEnd itself: its `interface.json` (which task logs under which name) and the config it runs on launch. Renames line up by themselves, and a task you turned off in MaaEnd isn't shown as not run. Only when those files can't be read does Gachashift fall back to its own list.
+- **Waiting for a wrong report to notice a reworded log line is too late.** Gachashift reads each tool's log, so every line it looks for is a promise the tool's author never made. `tools/check_upstream.py` lists each of those lines and the repo it comes from, and the *Upstream watch* workflow looks for them in every tool's latest source each day. When one is gone, it opens an issue the same day, usually before the change reaches a release. The same research found that MAA and ok-ww write their logs in the language their window is set to, which the parsers now read in all of them.
 
 ## Releasing
 
@@ -201,6 +203,8 @@ Run the tests first:
 ```
 python -m unittest discover -s tests
 ```
+
+When the *Upstream watch* workflow opens an issue, a tool changed a line Gachashift reads: find the new wording in that tool's repo, update the parser and `tools/check_upstream.py`, then run the workflow again from the Actions tab; it closes the issue once everything is found. GitHub pauses scheduled workflows in a repo with no activity for 60 days, so re-enable it there after a quiet spell.
 
 When a report looked wrong, add that day's log to `tests/logs` with a test for what the report should have said, and fix the parser until it passes.
 

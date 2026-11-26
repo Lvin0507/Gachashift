@@ -110,6 +110,18 @@ class WutheringTest(unittest.TestCase):
         rep = parse_ww_log(text, R.GameReport("wuthering"))
         self.assertEqual(tasks(rep), {"garden": (R.FAIL, "请在大世界并在队伍中开始!")})
 
+    def test_english_ui(self):
+        # ok-ww writes its log in its UI language
+        text = ("2026-11-20 06:00:01,000 INFO TaskExecutor GardenTask:Garden current: [6000_1.00]\n"
+                "2026-11-20 06:00:01,000 INFO TaskExecutor GardenTask:Garden task completed; limit reached\n")
+        rep = parse_ww_log(text, R.GameReport("wuthering"))
+        self.assertEqual(tasks(rep), {"garden": (R.OK, "max")})
+
+    def test_traditional_chinese_ui(self):
+        text = "GardenTask:當前樂園進度：[]\nGardenTask:樂園任務完成, 已達到上限\n"
+        rep = parse_ww_log(text, R.GameReport("wuthering"))
+        self.assertEqual(tasks(rep), {"garden": (R.OK, "")})
+
 
 class EndfieldTest(unittest.TestCase):
     """Format samples of MaaEnd's go-service.log (one JSON object per line)."""
@@ -173,6 +185,24 @@ class ArknightsTest(unittest.TestCase):
         text = "开始任务: 开始唤醒\n完成任务: 开始唤醒\n开始任务: 自动公招\n已确认招募\n完成任务: 自动公招\n"
         rep = parse_maa_log(text, "done", R.GameReport("arknights"))
         self.assertEqual(tasks(rep), {"开始唤醒": (R.OK, ""), "自动公招": (R.OK, "x1")})
+
+    def test_english_ui(self):
+        # MAA writes gui.log in its UI language; English task names have spaces and a
+        # no-break space follows the colon
+        text = ("[2026-11-20 05:00:00][INF] Start task:\u00a0Wake Up\n"
+                "[2026-11-20 05:01:00][INF] Complete task:\u00a0Wake Up\n(in 0h 1m 0s)\n"
+                "[2026-11-20 05:01:00][INF] Start task:\u00a0Auto Recruit\n"
+                "Recruit confirm\nRecruit confirm\n"
+                "[2026-11-20 05:03:00][INF] Complete task:\u00a0Auto Recruit\n"
+                "[2026-11-20 05:03:00][INF] Start task:\u00a0Combat\n")
+        rep = parse_maa_log(text, "timeout", R.GameReport("arknights"))
+        self.assertEqual(tasks(rep), {"Wake Up": (R.OK, ""), "Auto Recruit": (R.OK, "x2"),
+                                      "Combat": (R.FAIL, "")})
+
+    def test_japanese_ui(self):
+        text = "タスク開始: 公開求人\n募集を行いました\nタスク完了: 公開求人\nすべてのタスクが完了しました！\n"
+        rep = parse_maa_log(text, "done", R.GameReport("arknights"))
+        self.assertEqual(tasks(rep), {"公開求人": (R.OK, "x1")})
 
     def test_nothing_logged(self):
         # 16 Nov: the client needed an update, so MAA never got to a task

@@ -157,12 +157,13 @@ gachashift/           程序本体
   i18n.py             所有中英文文字
   games/              每款游戏一个模块
 tests/                读日志规则的测试，每次 push 都会跑
+tools/check_upstream.py  Gachashift 读的日志文字，对照各工具最新源码检查
   logs/               测试用的真实日志片段
 Gachashift.py         Gachashift.exe 的入口（打开 App，或用 "run" 执行运行）
 Gachashift App.bat    从源码打开 App
 build.py              用 PyInstaller 打包出 dist/Gachashift 和 zip
 assets/               App 图标
-.github/workflows/    推送版本 tag 时自动打包并发布 Release
+.github/workflows/    测试、打包发布 Release、每天的上游检查
 config.example.json   config.json 的范本
 logs/                 运行日志与存档的 MaaEnd 日志（不纳入 git）
 ```
@@ -193,6 +194,7 @@ logs/                 运行日志与存档的 MaaEnd 日志（不纳入 git）
 - **锁定画面让所有工具都变成瞎子。** 测试从睡眠唤醒时，Windows 醒来停在锁定画面，截图在那里会失败，所以 MaaEnd 卡在那里启动不了游戏。设成唤醒不需要密码可以解决，但会牺牲安全性，所以改成让电脑开着、只关屏幕，并让 Gachashift 先检查锁定画面：如果停在锁定画面，战报会直接说明，而不是卡上几个小时。
 - **在你用电脑时启动的运行。** 第一次排程在我用电脑时启动，游戏和工具一个接一个打开，只能一个一个手动关掉。现在排程运行如果发现最近两分钟内有人用过鼠标或键盘，会先询问；运行中的每个等待都会检查停止请求，所以停止会在一秒内生效，而且照样会收拾干净。
 - **工具改了任务名，战报就说任务没跑。** MaaEnd 把“存放背包”在日志里的名字从 `StashBackpackMain` 改成 `StashBackpackEntry` 后，战报显示它没运行，旁边又多了一个“新任务”，其实就是它。现在终末地要做哪些任务，是直接从 MaaEnd 自己的 `interface.json`（任务名称对应日志里的名字）和它启动时运行的配置读出来的，所以 MaaEnd 怎么改名都对得上，你在 MaaEnd 关掉的任务也不会显示成“没运行”。读不到这些文件时，才退回内建的清单。
+- **等战报出错才发现日志改了写法，已经太晚。** Gachashift 靠读各工具的日志判断结果，所以它找的每一句话，都是工具作者从没承诺过不改的。`tools/check_upstream.py` 列出了这些句子和它们来自哪个仓库，*Upstream watch* 工作流每天在各工具最新的源码里找一遍。找不到时，当天就会开一个 issue，通常比这个改动进到正式版还早。查这些句子时也发现，MAA 和鸣潮的 ok-ww 会用视窗设定的语言写日志，现在读日志的规则所有语言都看得懂。
 
 ## 发布新版
 
@@ -201,6 +203,8 @@ logs/                 运行日志与存档的 MaaEnd 日志（不纳入 git）
 ```
 python -m unittest discover -s tests
 ```
+
+*Upstream watch* 开了 issue，代表某个工具改了 Gachashift 读的那句话：到那个工具的仓库找到新写法，同时改读日志的规则和 `tools/check_upstream.py`，再到 Actions 页手动运行一次，全部找到后会自动关闭 issue。仓库 60 天没有动静时，GitHub 会暂停定时工作流，到时在 Actions 页重新启用即可。
 
 如果某天战报看起来不对，把那天的日志加进 `tests/logs`，写一个测试说明战报“应该”显示什么，再修改读日志的规则直到测试通过。
 

@@ -16,11 +16,21 @@ from ..system import (StopRequested, kill, kill_processes, launch_and_click, log
 from .base import Game
 
 GAME_EXE = "Client-Win64-Shipping.exe"
-DONE = "乐园任务完成"
-FAILED = "exception stopped"
-# progress appears as "本周游历值_1.00, 4400/6000" during a run, or "当前乐园进度：[6000_1.00]" when full
-PROGRESS = re.compile(r"本周游历值_[\d.]+, (\d+/\d+|已达到上限)|当前乐园进度：\[(\d+)_")
+# ok-ww writes its log in its UI language: zh-CN, zh-TW, English, Japanese, Korean, Spanish,
+# from ok-ww's i18n folder (tools/check_upstream.py watches them)
+DONE = ["乐园任务完成", "樂園任務完成", "Garden task completed", "楽園タスク完了", "낙원 임무 완료",
+        "Tarea del jardín completada"]
+CURRENT = ["当前乐园进度：", "當前樂園進度：", "Garden current: ", "現在の楽園進捗: ", "현재 낙원 진행도: ",
+           "Progreso actual del jardín: "]
+FAILED = "exception stopped"  # from ok-script, not translated
+# progress appears as "当前乐园进度：[6000_1.00]" when full (older ok-ww: "本周游历值_1.00, 4400/6000")
+PROGRESS = re.compile(r"本周游历值_[\d.]+, (\d+/\d+|已达到上限)|(?:%s)\[(\d+)_"
+                      % "|".join(map(re.escape, CURRENT)))
 EXCEPTION = re.compile(r"^Exception: (.+)$", re.M)
+
+
+def ended(text):
+    return any(word in text for word in DONE) or FAILED in text
 
 
 def parse_ww_log(text, rep):
@@ -33,7 +43,7 @@ def parse_ww_log(text, rep):
     detail = next((a or b for a, b in reversed(progress) if a or b), "")
     if detail in ("已达到上限", "6000"):
         detail = "max"
-    if DONE in text:
+    if any(word in text for word in DONE):
         rep.add("garden", R.OK, detail)
     elif FAILED in text:
         reasons = EXCEPTION.findall(text)
@@ -82,7 +92,7 @@ class WutheringWaves(Game):
                 if self.stuck(watch):
                     break
                 text = read_since(log, offset)
-                if ended_at is None and (DONE in text or FAILED in text):
+                if ended_at is None and ended(text):
                     ended_at = time.time()
                 # give ok-ww a minute to exit on its own after the task ends, then close it
                 if ended_at and time.time() - ended_at > 60:
@@ -99,7 +109,7 @@ class WutheringWaves(Game):
         text = read_since(log, offset)
         rep = parse_ww_log(text, self.new_report())
         if stop:
-            if DONE not in text and FAILED not in text:
+            if not ended(text):
                 rep = self.new_report()
                 rep.add("garden", R.SKIPPED)
             stop.report = rep

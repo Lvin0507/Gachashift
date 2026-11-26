@@ -11,17 +11,30 @@ from ..system import (StopRequested, gryphlink_processes, kill, kill_processes, 
                       process_running, read_since, ts)
 from .base import Game
 
-DONE_MARKERS = ["任务已全部完成"]
+# MAA writes gui.log in its UI language. Each list holds the text in zh-CN, zh-TW, en-US,
+# ja-JP and ko-KR, from MAA's Res/Localizations (tools/check_upstream.py watches them).
+DONE_MARKERS = ["任务已全部完成", "任務已全部完成", "All task(s) completed", "すべてのタスクが完了しました",
+                "모든 작업을 완료했습니다"]
+START_WORDS = ["开始任务:", "開始任務:", "Start task:", "タスク開始:", "작업 시작:"]
+COMPLETE_WORDS = ["完成任务:", "完成任務:", "Complete task:", "タスク完了:", "작업 완료:"]
+RECRUIT_CONFIRM = ["已确认招募", "已確認招募", "Recruit confirm", "募集を行いました", "모집 확정"]
+RECRUIT_TASK = ["自动公招", "自動公招", "Auto Recruit", "公開求人", "공개모집"]
+
+
+def _names(words, text):
+    """Task names after any of the words, to the end of the line: a name can have spaces."""
+    pattern = r"(?:%s)[ \u00a0]*(.+?)[ \t]*$" % "|".join(map(re.escape, words))
+    return [name.split("\\n")[0].strip() for name in re.findall(pattern, text, re.M)]
 
 
 def parse_maa_log(text, reason, rep):
-    started = re.findall(r"开始任务: (\S+)", text)
-    finished = set(re.findall(r"完成任务: (\S+)", text))
-    recruits = len(re.findall(r"已确认招募", text))
+    started = _names(START_WORDS, text)
+    finished = set(_names(COMPLETE_WORDS, text))
+    recruits = sum(text.count(word) for word in RECRUIT_CONFIRM)
     if not started:
         rep.note("note.no_records")
     for name in dict.fromkeys(started):  # keep order, drop repeats
-        detail = f"x{recruits}" if name == "自动公招" and name in finished else ""
+        detail = f"x{recruits}" if name in RECRUIT_TASK and name in finished else ""
         # a task cut short by a stop didn't fail; it just didn't get to finish
         unfinished = R.SKIPPED if reason == "stopped" else R.FAIL
         rep.add(name, R.OK if name in finished else unfinished, detail)
