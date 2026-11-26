@@ -68,6 +68,8 @@ If nothing in a game got done (the game didn't start, or the tool left no record
 
 If Gachashift itself fails, it still sends a short message with the error and where the log is, so a silent morning means the PC didn't run at all. When a game doesn't go well, a screenshot taken just before Gachashift closed it follows the report, so you can often see the cause (a launcher asking for an update, a game stuck on a pop-up) without going back to the PC. If a run was cut off before it could send anything (a power cut, the PC switched off), the next report starts with a line saying so. When a game didn't start but its launcher was still open, the report says the client probably needs an update. While a run is going, a tray icon shows which game is running; right-click it to stop.
 
+**Update games first** (General, off by default, experimental) handles client updates instead of only reporting them. Before the games, Gachashift checks Steam's own record of each Steam game and opens the launchers it can open by itself (Blue Archive's, and the ones Steam opens for Wuthering Waves and ZZZ) to see whether the start button has turned into an update button. A game whose launcher turns out to show an update during the run (GRYPHLINK for Endfield and Arknights too) gets its update started right there. Gachashift clicks the update button once (a second click would pause the download), answers a confirm window by clicking its main button or pressing Enter, minimizes the launcher, keeps the other games' cleanup from closing it, and runs that game after all the others, once its launcher shows the start button again. There is no fixed time limit, so a big update simply takes longer; it gives up only when nothing on the launcher has moved for 20 minutes, or after 8 hours. What the start button looks like is learned from the click that last started the game, so a launcher is checked before the run only after that has happened once. A download that stops moving (paused, or waiting for an install click) gets its button clicked again, at most three times. With the switch on, Gachashift also stops clicking a launcher button that steadily doesn't look like the start button, since clicking that spot during a download pauses it.
+
 If you are using the PC when the scheduled time comes, it asks first and gives you 60 seconds to skip. A run can be stopped from the app at any time: the game in progress closes its tool and game, sound and brightness are restored, the PC stays on, and the report lists what was finished before the stop.
 
 ## Requirements
@@ -145,6 +147,7 @@ gachashift/           The program
   system.py           Processes, logs, launcher clicks, Steam, lock screen, mute and brightness
   report.py           Structured results, the Telegram and Discord messages
   updates.py          Asks GitHub whether a newer release is out
+  updater.py          "Update games first": Steam and launcher updates, before and during a run
   finder.py           Finds each game's tool on the PC
   selfupdate.py       One-click update of the packaged exe
   health.py           Windows settings that would stop the morning run

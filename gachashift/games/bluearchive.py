@@ -56,6 +56,13 @@ class BlueArchive(Game):
     def launcher_exes(self):
         return (os.path.basename(self.cfg.get("launcher_path") or ""),)
 
+    def open_launcher(self):
+        launcher = self.cfg.get("launcher_path")
+        if not launcher:
+            return None
+        return lambda: subprocess.Popen([launcher], cwd=os.path.dirname(launcher),
+                                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
     def run(self, start_timeout=300, timeout=3600):
         baas_dir = self.cfg["baas_dir"]
         baas_exe = self.cfg.get("baas_exe") or os.path.join(baas_dir, "BlueArchiveAutoScript.exe")
@@ -69,10 +76,9 @@ class BlueArchive(Game):
         reason, saw_baas = "timeout", False
         start = time.time()
         try:
-            ok = launch_and_click(
-                lambda: subprocess.Popen([launcher], cwd=os.path.dirname(launcher),
-                                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL),
-                launcher_exe, self.cfg["start_button"], GAME_EXE)
+            ok = launch_and_click(self.open_launcher(), launcher_exe, self.cfg["start_button"],
+                                  GAME_EXE, remember=self.launcher_key(),
+                                  careful=self.clicks_carefully())
             if not ok:
                 rep.add("baas", R.FAIL)
                 rep.note("note.not_started", hint="hint.launcher")

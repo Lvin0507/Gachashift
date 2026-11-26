@@ -15,7 +15,7 @@ OK, FAIL, SKIPPED, ALREADY, PARTIAL, WARN, NOTHING = (
     "ok", "fail", "skipped", "already", "partial", "warn", "nothing")
 CLEAN = (OK, ALREADY, NOTHING)          # nothing to look at
 SUCCESS = CLEAN + (PARTIAL,)            # at least something got done
-INFO_NOTES = ("note.finished", "note.retried")  # notes that don't mean a problem
+INFO_NOTES = ("note.finished", "note.retried", "note.updated")  # notes that don't mean a problem
 
 
 @dataclass
@@ -95,6 +95,8 @@ def actions(report, lang):
     if report.game == "system":
         return []  # these notes speak for themselves at the top of the report
     game = short_name(report.game, lang)
+    if outcome(report) != "ok" and any(key == "note.update_failed" for key, _ in report.notes):
+        return [t(lang, "action.update_failed", game=game)]
     if outcome(report) != "ok" and any(key == "note.maybe_update" for key, _ in report.notes):
         return [t(lang, "action.update_client", game=game)]
     if outcome(report) == "fail":
@@ -139,6 +141,8 @@ def render_compact(report, lang):
         line += t(lang, "compact.minutes", minutes=notes["note.finished"]["minutes"])
     if "note.retried" in notes:
         line += t(lang, "compact.retried")
+    if "note.updated" in notes:
+        line += t(lang, "compact.updated")
     return line
 
 

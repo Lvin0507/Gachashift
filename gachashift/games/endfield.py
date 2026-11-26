@@ -159,6 +159,20 @@ class Endfield(Game):
     def launcher_running(self):
         return bool(gryphlink_processes())
 
+    def launcher_key(self):
+        return "endfield:gryphlink"
+
+    def launcher_group(self):
+        return "gryphlink"
+
+    def launcher_screen(self):
+        from ..updater import WindowsScreen
+        return WindowsScreen(processes=gryphlink_processes, game_exes=self.game_exes())
+
+    def steam_app(self):
+        # MaaEnd's Steam option: found by the folder of the game's exe
+        return (None, self.cfg.get("game_path") or "") if self.cfg.get("via_steam") else None
+
     def run(self, timeout=5400):
         path = self.cfg["maaend_path"]
         log = os.path.join(self.cfg["log_dir"], "go-service.log")

@@ -82,11 +82,28 @@ def process_running(exe_name):
     return any((p.info.get("name") or "").lower() == exe_name for p in psutil.process_iter(["name"]))
 
 
+# Processes that cleanup must leave alone: a launcher downloading a game update while other
+# games run (two games can share a launcher, and each closes it when it's done)
+_PROTECTED = set()
+
+
+def protect(pids):
+    _PROTECTED.update(pids)
+
+
+def unprotect(pids):
+    _PROTECTED.difference_update(pids)
+
+
 def kill(exe_names):
-    for name in exe_names:
-        if name:
-            subprocess.run(["taskkill", "/F", "/IM", name],
-                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    names = {n.lower() for n in exe_names if n}
+    if _PROTECTED:
+        kill_processes([p for p in psutil.process_iter(["name"])
+                        if (p.info.get("name") or "").lower() in names])
+        return
+    for name in names:
+        subprocess.run(["taskkill", "/F", "/IM", name],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
 def processes_in(folder):
@@ -118,6 +135,8 @@ def gryphlink_processes():
 
 def kill_processes(procs):
     for p in procs:
+        if p.pid in _PROTECTED:
+            continue
         try:
             p.kill()
         except psutil.Error:
@@ -256,28 +275,55 @@ def make_dpi_aware():
             pass
 
 
-def main_window_of(exe_name):
-    """The largest visible top-level window owned by a process with this exe name, or None."""
-    user32 = _user32()
-    pids = {p.pid for p in psutil.process_iter(["name"])
+def pids_of(exe_name):
+    return {p.pid for p in psutil.process_iter(["name"])
             if (p.info.get("name") or "").lower() == exe_name.lower()}
-    best, best_area = None, 0
+
+
+def windows_of(pids):
+    """[(hwnd, client area)] of the visible top-level windows of these processes, largest first."""
+    user32 = _user32()
+    pids = set(pids)
+    found = []
     enum_proc = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
 
     def callback(hwnd, _):
-        nonlocal best, best_area
-        if user32.IsWindowVisible(hwnd):
+        if user32.IsWindowVisible(hwnd) and not user32.IsIconic(hwnd):
             pid = wintypes.DWORD()
             user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
             if pid.value in pids:
                 rect = wintypes.RECT()
                 user32.GetClientRect(hwnd, ctypes.byref(rect))
-                if rect.right * rect.bottom > best_area:
-                    best, best_area = hwnd, rect.right * rect.bottom
+                if rect.right * rect.bottom > 0:
+                    found.append((hwnd, rect.right * rect.bottom))
         return True
 
     user32.EnumWindows(enum_proc(callback), 0)
-    return best
+    return sorted(found, key=lambda w: -w[1])
+
+
+def main_window_of(exe_name=None, pids=None):
+    """The largest visible top-level window owned by a process with this exe name (or one of
+    these process ids), or None."""
+    windows = windows_of(pids if pids is not None else pids_of(exe_name))
+    return windows[0][0] if windows else None
+
+
+def minimize(hwnd):
+    _user32().ShowWindow(hwnd, 6)  # SW_MINIMIZE; a launcher keeps downloading while minimized
+
+
+def restore(hwnd):
+    _user32().ShowWindow(hwnd, 9)  # SW_RESTORE (windows_of skips minimized windows)
+
+
+def press_enter(hwnd):
+    """Press Enter in a window: most confirm dialogs take it as their main button."""
+    user32 = _user32()
+    if bring_to_front(hwnd):
+        user32.keybd_event(0x0D, 0, 0, 0)
+        time.sleep(0.05)
+        user32.keybd_event(0x0D, 0, 2, 0)  # KEYEVENTF_KEYUP
 
 
 def bring_to_front(hwnd):
@@ -326,23 +372,47 @@ def click_in_window(hwnd, fx, fy):
     return True
 
 
+def button_look(hwnd, position):
+    """How the launcher's button at position looks now, with the mouse moved off it."""
+    from . import buttonfind, updater
+    move_mouse_to(hwnd, 0.02, 0.5)
+    time.sleep(0.4)
+    try:
+        picture = buttonfind.grab_client(hwnd, max_width=480)
+    except Exception as e:
+        print(f"could not look at the launcher: {type(e).__name__}: {e}")
+        return None
+    return updater.look(picture, position) if picture else None
+
+
 def launch_and_click(open_launcher, launcher_exe, button, game_exe, wait_after=30, timeout=600,
-                     look_after=3, find=None):
+                     look_after=3, find=None, remember=None, careful=False, see=None):
     """Open a game launcher, then keep clicking its start button until the game process appears.
     Clicking repeats because the launcher may still be checking for updates at first.
     With no calibrated position, or after look_after clicks there did nothing (a new screen,
-    a redesigned launcher), the button is looked for in the window instead."""
-    from . import buttonfind
+    a redesigned launcher), the button is looked for in the window instead.
+
+    remember: the key the start button's look is learned under (see updater.start_button):
+    the look just before the click that started the game.
+    careful: once a start button has been learned, don't click a button that steadily looks
+    different. That is an update, and while it downloads the same spot pauses it. Returns False
+    after a minute of that, with the launcher left open for the update to be handled."""
+    from . import buttonfind, updater
     find = find or buttonfind.find_in_window
+    see = see or button_look
     make_dpi_aware()
     open_launcher()
     start = time.time()
     position = tuple(button) if button else None
+    known = updater.start_button(remember) if remember else None
     clicks, looked = 0, False
+    last_look, clicked, different = None, None, 0
     while time.time() - start < timeout:
         pause(10)
         if process_running(game_exe):
             print(f"[{ts()}] game started, waiting for it to load...")
+            if remember and clicked and time.time() - clicked[0] < 90:
+                updater.remember_start_button(remember, clicked[1], clicked[2])
             pause(wait_after)
             return True
         hwnd = main_window_of(launcher_exe)
@@ -356,9 +426,24 @@ def launch_and_click(open_launcher, launcher_exe, button, game_exe, wait_after=3
                 position = found
             if position is None:
                 continue
+        now = see(hwnd, position) if remember and bring_to_front(hwnd) else None
+        if careful and known and now is not None:
+            reference = see(hwnd, known[0]) if tuple(known[0]) != tuple(position) else now
+            if not updater.same_look(reference, known[1]):
+                # count only a steady look: a launcher animates while it starts up
+                steady = last_look is not None and not updater.moved(last_look, reference)
+                different = different + 1 if steady else 0
+                last_look = reference
+                if different >= 6:
+                    print(f"[{ts()}] {launcher_exe} isn't showing its start button; not clicking")
+                    return False
+                continue
+            different, last_look = 0, None
         print(f"[{ts()}] clicking the start button in {launcher_exe}")
         if click_in_window(hwnd, *position):
             clicks += 1
+            if now is not None:
+                clicked = (time.time(), position, now)
     return False
 
 
@@ -543,12 +628,18 @@ def shutdown(delay=5):
 
 
 # ---------- Steam ----------
+_OUR_STEAM = set()  # pids of the Steam this process started (it already has admin rights)
+
+
 def restart_steam_if_running():
     """A Steam that is already running without admin rights makes admin-only games ask for
     elevation (a UAC prompt no script can click). Close it gracefully so that our elevated
     process starts Steam again and everything it launches inherits admin rights."""
-    if not process_running("steam.exe"):
+    running = pids_of("steam.exe")
+    if not running:
         return
+    if running & _OUR_STEAM:
+        return  # started by us: restarting would only interrupt its downloads
     print(f"[{ts()}] Steam is already running; restarting it with admin rights")
     os.startfile("steam://exit")  # graceful exit
     for _ in range(30):
@@ -565,6 +656,7 @@ def start_steam_elevated(wait=45):
     restart_steam_if_running()
     os.startfile("steam://open/main")
     pause(wait)
+    _OUR_STEAM.update(pids_of("steam.exe"))
 
 
 # ---------- lock screen ----------

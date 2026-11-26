@@ -79,11 +79,14 @@ def screenshot_folder():
     return app_dir() / "logs" / "screens"
 
 
-def run_game(game_cls, game_cfg, lang, wait_reset=True, shots=None):
+def run_game(game_cls, game_cfg, lang, wait_reset=True, shots=None, updates=None):
     """Run one game, turning any unexpected error into a report instead of a crash.
-    shots: folder for the screenshot taken before cleanup, or None for no screenshot."""
+    shots: folder for the screenshot taken before cleanup, or None for no screenshot.
+    updates: the run's updater.Updates when updates are handled; an update the game's
+    launcher started is attached to the report as rep.update."""
     game = game_cls(game_cfg)
     game.shot_dir = shots
+    game.updater = updates
     rep = R.GameReport(game.id)
     missing = game.missing_settings()
     if missing:
@@ -102,6 +105,7 @@ def run_game(game_cls, game_cfg, lang, wait_reset=True, shots=None):
             rep.screenshot = game.shot or ""
         if game.stalled:
             rep.note("note.stalled", minutes=game.stalled)
+        rep.update = game.update
         return explain(rep, game_cfg, game)
     except StopRequested:
         raise  # not an error: the whole run stops
@@ -116,7 +120,7 @@ def explain(rep, game_cfg, game=None):
     """When a game didn't go well, add what would explain it: a launcher left open without
     its game (usually a client update), and the tool's settings that differ from ours."""
     if R.outcome(rep) != "ok":
-        if game is not None and game.launcher_left:
+        if game is not None and game.launcher_left and not getattr(rep, "update", None):
             rep.note("note.maybe_update")
         for key in toolcheck.check_game(rep.game, game_cfg):
             rep.note(key)
@@ -183,33 +187,77 @@ def games_to_run(cfg, only, lang, log):
     return todo
 
 
-def run_games(cfg, only, lang, opts, log, dim=False, shots=None, status=None):
+def make_updates(opts, log):
+    if not opts.get("update_games"):
+        return None
+    from .updater import Updates
+    return Updates(log=lambda text: log(f"[{ts()}] {text}"))
+
+
+def run_games(cfg, only, lang, opts, log, dim=False, shots=None, status=None, updates=None):
     """Run every game that is enabled and due today (or just `only`) and return their reports.
     In a full run, a game where nothing got done is tried once more after all the others.
+    With updates handled ("Update games first"), a game whose client is updating is played
+    after the others, once its update is done.
     status: called with a short line about what is running now (the tray icon)."""
     status = status or (lambda text: None)
-    reports, retry = [], []
+    reports, retry, later = [], [], []
+    updates = updates if updates is not None else make_updates(opts, log)
     with QuietMode(mute=opts.get("mute", True), dim=dim,
                    dim_level=opts.get("dim_level", 30) / 100):
         todo = games_to_run(cfg, only, lang, log)
-        for number, game_cls in enumerate(todo, 1):
-            gid = game_cls.id
-            game_cfg = cfg["games"].get(gid, {})
-            status(t(lang, "tray.running", game=plain(gid, lang), n=number, total=len(todo)))
-            # a single-game test run shouldn't sit waiting for a reset
-            try:
-                reports.append(run_game(game_cls, game_cfg, lang, wait_reset=not only, shots=shots))
-            except StopRequested as stop:
-                # the game closed its own tool and game on the way out and, where it could,
-                # attached what it finished before the stop; keep that and earlier reports
-                if getattr(stop, "report", None):
-                    reports.append(stop.report)
-                reports.append(stopped_report())
-                return reports, True
-            # a test run of one game has someone watching it; they can just run it again
-            if (not only and game_cfg.get("retry", True) and needs_retry(reports[-1])
-                    and reports[-1].seconds < RETRY_MAX_MINUTES * 60):
-                retry.append((len(reports) - 1, game_cls, game_cfg))
+        try:
+            if updates:
+                status(t(lang, "tray.checking_updates"))
+                updates.before_run([g(cfg["games"].get(g.id, {})) for g in todo])
+            for number, game_cls in enumerate(todo, 1):
+                gid = game_cls.id
+                game_cfg = cfg["games"].get(gid, {})
+                if updates and updates.blocking(game_cls(game_cfg)):
+                    log(f"[{ts()}] " + t(lang, "log.after_update", game=game_name(gid, lang)))
+                    placeholder = R.GameReport(gid)  # filled in once it has run
+                    placeholder.waiting = True
+                    reports.append(placeholder)
+                    later.append((len(reports) - 1, game_cls, game_cfg, 0))
+                    continue
+                status(t(lang, "tray.running", game=plain(gid, lang), n=number, total=len(todo)))
+                # a single-game test run shouldn't sit waiting for a reset
+                try:
+                    reports.append(run_game(game_cls, game_cfg, lang, wait_reset=not only,
+                                            shots=shots, updates=updates))
+                except StopRequested as stop:
+                    # the game closed its own tool and game on the way out and, where it could,
+                    # attached what it finished before the stop; keep that and earlier reports
+                    if getattr(stop, "report", None):
+                        reports.append(stop.report)
+                    reports.append(stopped_report())
+                    return played(reports), True
+                failed = updates.failed.pop(gid, None) if updates else None
+                if failed:
+                    reports[-1].notes.insert(0, ("note.update_failed", {"reason": failed}))
+                if getattr(reports[-1], "update", None):
+                    later.append((len(reports) - 1, game_cls, game_cfg, 1))
+                # a test run of one game has someone watching it; they can just run it again
+                elif (not only and game_cfg.get("retry", True) and needs_retry(reports[-1])
+                        and reports[-1].seconds < RETRY_MAX_MINUTES * 60):
+                    retry.append((len(reports) - 1, game_cls, game_cfg))
+
+            while later:
+                index, game_cls, game_cfg, attempts = later.pop(0)
+                rep = after_update(game_cls, game_cfg, lang, updates, shots, status, log)
+                if getattr(rep, "update", None) and attempts < 2:
+                    # the launcher had another update once Steam's was done: wait for that too
+                    later.append((index, game_cls, game_cfg, attempts + 1))
+                remove_file(reports[index].screenshot)
+                reports[index] = rep
+        except StopRequested as stop:
+            if getattr(stop, "report", None):
+                reports.append(stop.report)
+            reports.append(stopped_report())
+            return played(reports), True
+        finally:
+            if updates:
+                updates.finish_all()
 
         for index, game_cls, game_cfg in retry:
             log(f"[{ts()}] " + t(lang, "log.retry", game=game_name(game_cls.id, lang)))
@@ -227,6 +275,39 @@ def run_games(cfg, only, lang, opts, log, dim=False, shots=None, status=None):
             remove_file(reports[index].screenshot)
             reports[index] = rep
     return reports, False
+
+
+def played(reports):
+    """The reports without the places kept for games that never got to run."""
+    return [r for r in reports if not getattr(r, "waiting", False)]
+
+
+def after_update(game_cls, game_cfg, lang, updates, shots, status, log):
+    """Wait for the game's update (or the one in its launcher), then run the game."""
+    game = game_cls(game_cfg)
+    own = updates.take(game.id)
+    other = updates.blocking(game)
+    note = None
+    for update in (u for u in (own, other) if u):
+        status(t(lang, "tray.waiting_update", game=plain(game.id, lang)))
+        log(f"[{ts()}] " + t(lang, "log.waiting_update", game=game_name(game.id, lang)))
+        result = update.wait()
+        if update is own:
+            source = "hint.update_steam" if update.kind == "steam" else "hint.update_launcher"
+            note = (("note.updated", {"source": source, "minutes": update.minutes()})
+                    if result == "done" else ("note.update_failed", {"reason": result}))
+        # close what the update left open (the launcher, or the game Steam started after
+        # updating), so the game starts the usual way
+        from .system import kill
+        kill(list(game.launcher_exes()) + list(game.game_exes()))
+    status(t(lang, "tray.running_after_update", game=plain(game.id, lang)))
+    rep = run_game(game_cls, game_cfg, lang, wait_reset=False, shots=shots, updates=updates)
+    if note:
+        rep.notes.insert(0, note)
+    failed = updates.failed.pop(game.id, None)
+    if failed:
+        rep.notes.insert(0, ("note.update_failed", {"reason": failed}))
+    return rep
 
 
 def stopped_report():

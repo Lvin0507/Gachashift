@@ -21,6 +21,8 @@ class Game:
         self.shot = None      # the screenshot taken before cleanup, if any
         self.stalled = 0      # minutes without progress, if the game was ended for that
         self.launcher_left = False  # its launcher was open but the game wasn't, at cleanup
+        self.updater = None   # updater.Updates when "Update games first" is on
+        self.update = None    # an update this run started for the game, still downloading
 
     def game_exes(self):
         """The game's own process names."""
@@ -37,6 +39,42 @@ class Game:
     def check_launcher(self):
         if self.launcher_running():
             self.launcher_left = not any(process_running(n) for n in self.game_exes() if n)
+        if self.launcher_left and self.updater:
+            # the launcher is still showing this game's page: start the update right here
+            try:
+                self.update = self.updater.start_in_run(self)
+            except Exception as e:  # cleanup must go on (a stop request is seen again later)
+                print(f"[{ts()}] {self.id}: could not start the update: {type(e).__name__}: {e}")
+
+    # --- updates (see updater.py) ---
+
+    def launcher_key(self):
+        """Name the learned start button is kept under."""
+        exes = [n for n in self.launcher_exes() if n]
+        return f"{self.id}:{exes[0].lower()}" if exes else ""
+
+    def launcher_group(self):
+        """Games whose launcher is the same program wait for each other's updates."""
+        exes = [n for n in self.launcher_exes() if n]
+        return exes[0].lower() if exes else ""
+
+    def launcher_screen(self):
+        from ..updater import WindowsScreen
+        exes = [n for n in self.launcher_exes() if n]
+        return WindowsScreen(exe=exes[0] if exes else None, game_exes=self.game_exes())
+
+    def steam_app(self):
+        """(app id or None, game exe path or "") when the game comes from Steam, else None."""
+        return None
+
+    def open_launcher(self):
+        """Opens the game's launcher without starting the game, when Gachashift can (for the
+        check before the run); None otherwise."""
+        return None
+
+    def clicks_carefully(self):
+        """launch_and_click's careful mode: on when updates are handled."""
+        return bool(self.updater)
 
     def watch(self, log=None):
         """A StallWatch for this game's wait loop."""

@@ -65,12 +65,26 @@ class WutheringWaves(Game):
     def launcher_exes(self):
         return (self.cfg.get("launcher_exe") or "launcher_main.exe",)
 
+    def steam_app(self):
+        if not self.cfg.get("steam_client"):
+            return None
+        return self.cfg.get("steam_appid") or "3513350", self.cfg.get("game_path") or ""
+
+    def open_launcher(self):
+        if not self.cfg.get("steam_client"):
+            return None
+        appid = self.cfg.get("steam_appid") or "3513350"
+
+        def open_it():
+            restart_steam_if_running()  # so the game inherits our admin rights
+            os.startfile(f"steam://rungameid/{appid}")
+        return open_it
+
     def _open_through_steam(self):
-        restart_steam_if_running()  # so the game inherits our admin rights
         return launch_and_click(
-            lambda: os.startfile(f"steam://rungameid/{self.cfg.get('steam_appid') or '3513350'}"),
-            self.cfg.get("launcher_exe") or "launcher_main.exe", self.cfg["start_button"],
-            GAME_EXE, wait_after=60)
+            self.open_launcher(), self.cfg.get("launcher_exe") or "launcher_main.exe",
+            self.cfg["start_button"], GAME_EXE, wait_after=60, remember=self.launcher_key(),
+            careful=self.clicks_carefully())
 
     def run(self, timeout=5400):
         path, log = self.cfg["okww_path"], self.cfg["log_path"]

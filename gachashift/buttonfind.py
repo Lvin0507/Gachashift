@@ -52,13 +52,15 @@ def _flat(colours):
     return spread(offsets) <= MAX_SPREAD and spread([c[2] for c in colours]) <= MAX_SPREAD * 2
 
 
-def find_button(pixels, width, height):
+def find_button(pixels, width, height, area=(AREA_X, AREA_Y, 1.0, 1.0)):
     """(x, y) fractions of the start button's centre in a picture given as a row-major list of
-    (r, g, b), or None when nothing button-like is there."""
-    x0, y0 = int(width * AREA_X), int(height * AREA_Y)
+    (r, g, b), or None when nothing button-like is there. area: (left, top, right, bottom)
+    fractions to search; the default is the lower right, where launchers keep it."""
+    x0, y0 = int(width * area[0]), int(height * area[1])
+    x1, y1 = min(width, round(width * area[2])), min(height, round(height * area[3]))
     colour = {}
-    for y in range(y0, height):
-        for x in range(x0, width):
+    for y in range(y0, y1):
+        for x in range(x0, x1):
             hsv = _hsv(pixels[y * width + x])
             if hsv[1] >= MIN_SATURATION and hsv[2] >= MIN_VALUE:
                 colour[(x, y)] = hsv
@@ -86,7 +88,7 @@ def find_button(pixels, width, height):
         xs, ys = [p[0] for p in shape], [p[1] for p in shape]
         w, h = max(xs) - min(xs) + 1, max(ys) - min(ys) + 1
         # a shape cut off by the edge of the searched area is part of something bigger
-        inside = min(xs) > x0 and min(ys) > y0 and max(xs) < width - 1 and max(ys) < height - 1
+        inside = min(xs) > x0 and min(ys) > y0 and max(xs) < x1 - 1 and max(ys) < y1 - 1
         if (inside and MIN_SHARE * width * height <= len(shape) <= MAX_SHARE * width * height
                 and h >= 3 and len(shape) / (w * h) >= MIN_FILL
                 and MIN_ASPECT <= w / h <= MAX_ASPECT and _flat([colour[p] for p in shape])):

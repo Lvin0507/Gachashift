@@ -24,6 +24,7 @@ DEFAULT_CONFIG = {
         "shutdown": True,        # shut the PC down when everything is done
         "check_updates": True,   # ask GitHub for a newer release when the app opens
         "screenshots": True,     # send a screenshot of a game that didn't go well
+        "update_games": False,   # check for and run client updates first (updater.py)
     },
     "appearance": {
         "accent": "#F4B860",

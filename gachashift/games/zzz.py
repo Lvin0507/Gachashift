@@ -78,11 +78,25 @@ class ZenlessZoneZero(Game):
     def launcher_exes(self):
         return (self.cfg.get("launcher_exe"),) if self.cfg.get("client") == "steam" else ()
 
+    def steam_app(self):
+        if self.cfg.get("client") != "steam":
+            return None
+        return self.cfg.get("steam_appid") or None, self.cfg.get("game_path") or ""
+
+    def open_launcher(self):
+        if self.cfg.get("client") != "steam":
+            return None
+        appid = self.cfg.get("steam_appid")
+
+        def open_it():
+            restart_steam_if_running()
+            os.startfile(f"steam://rungameid/{appid}")
+        return open_it
+
     def _open_through_steam(self):
-        restart_steam_if_running()
         return launch_and_click(
-            lambda: os.startfile(f"steam://rungameid/{self.cfg['steam_appid']}"),
-            self.cfg["launcher_exe"], self.cfg["start_button"], GAME_EXE, wait_after=60)
+            self.open_launcher(), self.cfg["launcher_exe"], self.cfg["start_button"], GAME_EXE,
+            wait_after=60, remember=self.launcher_key(), careful=self.clicks_carefully())
 
     def run(self, timeout=3600):
         od_dir = self.cfg["od_dir"]

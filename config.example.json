@@ -16,7 +16,8 @@
     "dim_level": 30,
     "shutdown": true,
     "check_updates": true,
-    "screenshots": true
+    "screenshots": true,
+    "update_games": false
   },
   "appearance": {
     "accent": "#F4B860",

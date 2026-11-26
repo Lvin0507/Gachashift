@@ -150,6 +150,9 @@ def build(app):
             inner.addWidget(dim_controls(app, options))
         if key == "screenshots":
             inner.addWidget(label(app.tr("general.screenshots_hint"), "hint", wrap=True))
+    inner.addLayout(switch_row(app.tr("general.update_games"), bool(options.get("update_games", False)),
+                               lambda on: app.set_option("update_games", on)))
+    inner.addWidget(label(app.tr("general.update_games_hint"), "hint", wrap=True))
     box.addWidget(card)
 
     # updates

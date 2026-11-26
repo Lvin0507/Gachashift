@@ -53,6 +53,16 @@ class Arknights(Game):
     def launcher_running(self):
         return bool(gryphlink_processes())
 
+    def launcher_key(self):
+        return "arknights:gryphlink"
+
+    def launcher_group(self):
+        return "gryphlink"
+
+    def launcher_screen(self):
+        from ..updater import WindowsScreen
+        return WindowsScreen(processes=gryphlink_processes, game_exes=self.game_exes())
+
     def run(self, timeout=1800):
         path, log = self.cfg["maa_path"], self.cfg["maa_log"]
         offset = log_size(log)
