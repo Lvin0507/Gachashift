@@ -284,7 +284,7 @@ class LauncherUpdate(Update):
         known = start_button(self.key)
         hwnd, pic = self._picture()
         if pic is None:
-            return "no_window"
+            return "no_picture" if hwnd else "no_window"
         self.position, self.reference = known if known else (None, None)
         if self.position is None:
             return "unknown"
@@ -559,6 +559,8 @@ class Updates:
                 self._started(game, update, update.begin())
                 if game.id in self.pending:
                     continue
+            elif found in ("no_window", "no_picture"):
+                self.log(f"{game.id}: couldn't look at the launcher ({found}); not checking this time")
             else:
                 self.log(f"{game.id}: no update ({found})")
             kill(list(game.launcher_exes()) + list(game.game_exes()))

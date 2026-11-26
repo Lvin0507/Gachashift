@@ -113,11 +113,45 @@ class _BITMAPINFOHEADER(ctypes.Structure):
                 ("biClrUsed", ctypes.c_uint32), ("biClrImportant", ctypes.c_uint32)]
 
 
+_GDI = None
+
+
+def _gdi():
+    """user32 and gdi32 with every handle typed as a pointer. Without that, ctypes passes
+    handles as 32-bit ints, and a drawing handle above 2**31 (common on 64-bit Windows)
+    fails with "OverflowError: int too long to convert". Separate WinDLL objects, so these
+    types don't change the functions the rest of the program calls."""
+    global _GDI
+    if _GDI is None:
+        from ctypes import wintypes as w
+        user32, gdi32 = ctypes.WinDLL("user32"), ctypes.WinDLL("gdi32")
+        types = {
+            (user32, "GetClientRect"): ([w.HWND, ctypes.POINTER(w.RECT)], w.BOOL),
+            (user32, "ClientToScreen"): ([w.HWND, ctypes.POINTER(w.POINT)], w.BOOL),
+            (user32, "GetDC"): ([w.HWND], w.HDC),
+            (user32, "ReleaseDC"): ([w.HWND, w.HDC], ctypes.c_int),
+            (gdi32, "CreateCompatibleDC"): ([w.HDC], w.HDC),
+            (gdi32, "CreateCompatibleBitmap"): ([w.HDC, ctypes.c_int, ctypes.c_int], w.HBITMAP),
+            (gdi32, "SelectObject"): ([w.HDC, w.HGDIOBJ], w.HGDIOBJ),
+            (gdi32, "BitBlt"): ([w.HDC, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int,
+                                 w.HDC, ctypes.c_int, ctypes.c_int, w.DWORD], w.BOOL),
+            (gdi32, "GetDIBits"): ([w.HDC, w.HBITMAP, w.UINT, w.UINT, ctypes.c_void_p,
+                                    ctypes.c_void_p, w.UINT], ctypes.c_int),
+            (gdi32, "DeleteObject"): ([w.HGDIOBJ], w.BOOL),
+            (gdi32, "DeleteDC"): ([w.HDC], w.BOOL),
+        }
+        for (dll, name), (args, result) in types.items():
+            function = getattr(dll, name)
+            function.argtypes, function.restype = args, result
+        _GDI = user32, gdi32
+    return _GDI
+
+
 def grab_client(hwnd, max_width=192):
     """(pixels, width, height) of a window's client area as it is on screen, scaled down to at
     most max_width pixels across. The window must be in front (it is read off the screen)."""
     from ctypes import wintypes
-    user32, gdi32 = ctypes.windll.user32, ctypes.windll.gdi32
+    user32, gdi32 = _gdi()
     rect = wintypes.RECT()
     user32.GetClientRect(hwnd, ctypes.byref(rect))
     w, h = rect.right, rect.bottom
@@ -125,9 +159,6 @@ def grab_client(hwnd, max_width=192):
         return None
     origin = wintypes.POINT(0, 0)
     user32.ClientToScreen(hwnd, ctypes.byref(origin))
-    gdi32.CreateCompatibleBitmap.restype = wintypes.HBITMAP
-    gdi32.CreateCompatibleDC.restype = wintypes.HDC
-    user32.GetDC.restype = wintypes.HDC
     screen = user32.GetDC(None)
     memory = gdi32.CreateCompatibleDC(screen)
     bitmap = gdi32.CreateCompatibleBitmap(screen, w, h)
