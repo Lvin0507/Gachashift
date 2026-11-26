@@ -8,6 +8,7 @@ from ..games import ordered
 from ..system import read_since
 from ..toolfix import can_fix
 from ..winutil import SHORT_NAMES, plain_name
+from .general import switch_row
 from .widgets import Choice, button, label, panel, shadowed
 
 
@@ -23,13 +24,21 @@ def build(app):
     card, inner = panel(spacing=6)
     inner.addWidget(label(app.tr("run.all"), "h2"))
     inner.addWidget(label(app.tr("run.all_explain"), "hint", wrap=True))
-    run_all = button(app.tr("run.all"), "primary", lambda: app.start_run("--no-shutdown"))
+    def start_all():
+        dark = ["--dim"] if app.cfg["options"].get("dim_manual", False) else []
+        app.start_run("--no-shutdown", *dark)
+
+    run_all = button(app.tr("run.all"), "primary", start_all)
     run_all.setEnabled(not busy)
     row = QHBoxLayout()
     row.addWidget(run_all)
     row.addStretch()
     inner.addSpacing(6)
     inner.addLayout(row)
+    # for starting a run at night and going to sleep; saved right away, like General's switches
+    inner.addLayout(switch_row(app.tr("run.dim"), bool(app.cfg["options"].get("dim_manual", False)),
+                               lambda on: app.set_option_now("dim_manual", on)))
+    inner.addWidget(label(app.tr("run.dim_hint"), "hint", wrap=True))
     box.addWidget(card)
 
     card, inner = panel(spacing=6)

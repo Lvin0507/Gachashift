@@ -14,6 +14,7 @@
     "mute": true,
     "dim_screen": false,
     "dim_level": 30,
+    "dim_manual": false,
     "shutdown": true,
     "check_updates": true,
     "screenshots": true,

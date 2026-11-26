@@ -32,7 +32,7 @@ def dim_controls(app, options):
     title = label(app.tr("general.dim_level", n=options.get("dim_level", 30)), "muted")
     col.addWidget(title)
     slider = QSlider(Qt.Horizontal)
-    slider.setRange(5, 100)
+    slider.setRange(1, 100)
     slider.setValue(int(options.get("dim_level", 30)))
 
     def set_level(v):

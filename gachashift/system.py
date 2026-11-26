@@ -5,6 +5,7 @@ import ctypes
 import datetime
 import os
 import subprocess
+import threading
 import time
 from ctypes import wintypes
 
@@ -498,6 +499,21 @@ def _set_ramp(name, ramp):
         gdi32.DeleteDC(hdc)
 
 
+def _get_ramp(name):
+    gdi32 = ctypes.windll.gdi32
+    hdc = gdi32.CreateDCW("DISPLAY", name, None, None)
+    try:
+        ramp = _RAMP()
+        return ramp if gdi32.GetDeviceGammaRamp(hdc, ctypes.byref(ramp)) else None
+    finally:
+        gdi32.DeleteDC(hdc)
+
+
+def ramp_level(ramp):
+    """The brightness (0-1) a linear ramp was set to, from its top entry."""
+    return ramp[255] / (255 * 257) if ramp is not None else None
+
+
 def _linear_ramp(level):
     ramp = _RAMP()
     for channel in range(3):
@@ -511,16 +527,103 @@ def dim_gamma(level=0.05):
     monitor gives off changes: screenshots and screen capture still see the normal picture, so
     the tools keep working. Windows refuses very dark ramps unless GdiIcmGammaRange allows them,
     so this steps up from `level` until each display accepts. Returns the level reached, or None."""
+    reached = dim_each(level)
+    accepted = [step for step in reached.values() if step is not None]
+    return max(accepted) if accepted else None
+
+
+def dim_each(level, displays=None, set_ramp=None):
+    """{display name: the level it accepted, or None if it refused every step}."""
+    set_ramp = set_ramp or _set_ramp
     steps = [level] + [s / 100 for s in range(10, 101, 5) if s / 100 > level]
-    accepted = None
-    for name in _displays():
-        for step in steps:
-            if _set_ramp(name, _linear_ramp(step)):
-                accepted = max(accepted or 0, step)
-                break
-    if accepted is not None:
-        gamma_marker().touch()
-    return accepted
+    reached = {}
+    for name in (displays if displays is not None else _displays()):
+        reached[name] = next((step for step in steps if set_ramp(name, _linear_ramp(step))), None)
+    if any(step is not None for step in reached.values()):
+        try:
+            gamma_marker().touch()
+        except OSError:
+            pass
+    return reached
+
+
+class DimKeeper:
+    """Keeps the screens dark for the whole run. A monitor that wakes up (the PC was left with
+    its screen off, and the run's first click turns it on) gets its colour profile loaded
+    again, which puts the gamma back to normal; a monitor that was asleep also ignores a
+    brightness change. So every `every` seconds this checks each screen and darkens it again
+    if it was reset."""
+
+    def __init__(self, level, every=15, displays=None, get_ramp=None, set_ramp=None,
+                 brightness=None, log=print):
+        self.level, self.every, self.log = level, every, log
+        self.displays = displays or _displays
+        self.get_ramp, self.set_ramp = get_ramp or _get_ramp, set_ramp or _set_ramp
+        self.brightness = brightness  # screen_brightness_control, or None
+        self.originals = None         # hardware brightness before the run, once readable
+        self.reached = {}             # gamma level each screen accepted
+        self._stop = threading.Event()
+        self._thread = None
+
+    def start(self):
+        self.reached = dim_each(self.level, self.displays(), self.set_ramp)
+        for name, step in self.reached.items():
+            self.log(f"screen {name} darkened to {int(step * 100)}%" if step is not None
+                     else f"screen {name} refused to be darkened")
+        if self.brightness is not None:
+            try:
+                self.originals = self.brightness.get_brightness()
+                self.brightness.set_brightness(int(self.level * 100))
+            except Exception as e:
+                self.log(f"brightness not changed (monitor may not support it): {e}")
+        self._thread = threading.Thread(target=self._run, daemon=True)
+        self._thread.start()
+        return self
+
+    def _run(self):
+        rounds = 0
+        while not self._stop.wait(self.every):
+            rounds += 1
+            try:
+                self.keep_once(hardware=rounds % 4 == 0)  # brightness every minute: DDC/CI is slow
+            except Exception as e:
+                print(f"keeping the screens dark failed once: {e}")
+
+    def keep_once(self, hardware=True):
+        for name in self.displays():
+            step = self.reached.get(name)
+            if step is None:
+                # a screen that was off at the start (or refused) gets another try
+                step = dim_each(self.level, [name], self.set_ramp)[name]
+                if step is not None:
+                    self.reached[name] = step
+                    self.log(f"screen {name} darkened to {int(step * 100)}% (it was off before)")
+                continue
+            current = ramp_level(self.get_ramp(name))
+            if current is not None and abs(current - step) > 0.02:
+                if self.set_ramp(name, _linear_ramp(step)):
+                    self.log(f"screen {name} had been reset to {int(current * 100)}%; darkened again")
+        if hardware and self.brightness is not None:
+            try:
+                now = self.brightness.get_brightness()
+            except Exception:
+                return
+            target = int(self.level * 100)
+            if self.originals is None or len(self.originals) != len(now):
+                self.originals = list(now)
+            for index, value in enumerate(now):
+                if value is not None and value != target:
+                    if self.originals[index] in (None, target):
+                        self.originals[index] = value
+                    try:
+                        self.brightness.set_brightness(target, display=index)
+                    except Exception:
+                        pass
+
+    def stop(self):
+        self._stop.set()
+        if self._thread:
+            self._thread.join(timeout=5)
 
 
 def restore_gamma():
@@ -563,8 +666,7 @@ class QuietMode:
     def __init__(self, mute=True, dim=False, dim_level=0.3):
         self.mute, self.dim, self.dim_level = mute, dim, dim_level
         self._volume = self._was_muted = None
-        self._brightness = None
-        self._gamma = False
+        self._keeper = None
 
     def __enter__(self):
         if self.mute:
@@ -585,20 +687,15 @@ class QuietMode:
                 print(f"mute skipped: {e}")
         if self.dim:
             # hardware brightness works on laptops and DDC/CI monitors; gamma works almost
-            # everywhere else, so use both
+            # everywhere else, so use both, and keep them applied for the whole run
             try:
                 import screen_brightness_control as sbc
-                self._brightness = sbc.get_brightness()
-                sbc.set_brightness(int(self.dim_level * 100))
-            except Exception as e:
-                print(f"brightness not changed (monitor may not support it): {e}")
+            except Exception:
+                sbc = None
             try:
-                level = dim_gamma(self.dim_level)
-                self._gamma = level is not None
-                print(f"screen darkened to {int(level * 100)}%" if self._gamma
-                      else "screen gamma not changed (the display refused it)")
+                self._keeper = DimKeeper(self.dim_level, brightness=sbc).start()
             except Exception as e:
-                print(f"gamma not changed: {e}")
+                print(f"screen not darkened: {e}")
         return self
 
     def __exit__(self, *exc):
@@ -607,18 +704,20 @@ class QuietMode:
                 self._volume.SetMute(self._was_muted, None)
             except Exception:
                 pass
-        if self._gamma:
+        keeper = self._keeper
+        if keeper is not None:
+            keeper.stop()
             try:
                 restore_gamma()
             except Exception:
                 pass
-        if self._brightness is not None:
-            try:
-                import screen_brightness_control as sbc
-                for index, level in enumerate(self._brightness):
-                    sbc.set_brightness(level, display=index)
-            except Exception:
-                pass
+            if keeper.brightness is not None and keeper.originals:
+                for index, level in enumerate(keeper.originals):
+                    if level is not None:
+                        try:
+                            keeper.brightness.set_brightness(level, display=index)
+                        except Exception:
+                            pass
         return False
 
 

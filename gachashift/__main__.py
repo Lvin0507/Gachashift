@@ -55,6 +55,7 @@ def start_run_log(keep_days=14):
 def main():
     p = argparse.ArgumentParser(prog="gachashift", description="Gachashift - daily game butler")
     p.add_argument("--no-shutdown", action="store_true", help="run now and keep the PC on afterwards")
+    p.add_argument("--dim", action="store_true", help="darken the screen during this run")
     p.add_argument("--only", choices=sorted(GAMES_BY_ID), help="run one game; no Telegram, no shutdown")
     p.add_argument("--dry-run-endfield", metavar="LOG", help="parse a MaaEnd log and print the report")
     p.add_argument("--lang", choices=["en", "zh"], help="report language for this run")
@@ -76,7 +77,8 @@ def main():
         if args.only:
             run_all(cfg, only=args.only, allow_shutdown=False, send=False, tray=True)
         elif args.no_shutdown:
-            run_all(cfg, allow_shutdown=False, tray=True)  # started by hand, so no need to ask
+            # started by hand, so no need to ask
+            run_all(cfg, allow_shutdown=False, tray=True, dim=args.dim)
         else:
             run_all(cfg, ask_first=True, tray=True)        # the scheduled morning run
     except Exception as e:

@@ -262,6 +262,14 @@ class MainWindow(QWidget):
         self.cfg["options"][key] = value
         self.changed()
 
+    def set_option_now(self, key, value):
+        """Change and save one option at once, leaving other unsaved changes as they are
+        (for a switch next to a Run button, which won't start with unsaved changes)."""
+        self.cfg["options"][key] = value
+        self.saved_cfg["options"][key] = value
+        save_config(self.saved_cfg)
+        self.changed()
+
     def set_language(self, key, value):
         self.cfg[key] = value
         if key == "language":
