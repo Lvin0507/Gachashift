@@ -7,7 +7,8 @@ import subprocess
 import time
 
 from .. import report as R
-from ..system import StopRequested, kill, log_size, pause, process_running, read_since, ts
+from ..system import (StopRequested, gryphlink_processes, kill, kill_processes, log_size, pause,
+                      process_running, read_since, ts)
 from .base import Game
 
 DONE_MARKERS = ["任务已全部完成"]
@@ -36,8 +37,8 @@ class Arknights(Game):
     def game_exes(self):
         return (self.cfg.get("game_exe") or "Arknights.exe",)
 
-    def launcher_exes(self):
-        return ("Gryphlink.exe",)
+    def launcher_running(self):
+        return bool(gryphlink_processes())
 
     def run(self, timeout=1800):
         path, log = self.cfg["maa_path"], self.cfg["maa_log"]
@@ -66,9 +67,10 @@ class Arknights(Game):
             stop, reason = e, "stopped"
         finally:
             # the Arknights PC client can bring up GRYPHLINK too
-            leftovers = ["MAA.exe", self.cfg.get("game_exe") or "Arknights.exe", "Gryphlink.exe"]
+            leftovers = ["MAA.exe", self.cfg.get("game_exe") or "Arknights.exe"]
             self.capture(leftovers)
             kill(leftovers)
+            kill_processes(gryphlink_processes())
             time.sleep(3)
         rep = parse_maa_log(read_since(log, offset), reason, self.new_report())
         if stop:

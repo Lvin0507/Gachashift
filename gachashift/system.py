@@ -101,6 +101,21 @@ def processes_in(folder):
     return found
 
 
+# GRYPHLINK (Endfield, and the Arknights PC client) runs under plain names such as
+# Launcher.exe or Games.exe, which other programs use too, so it is told apart by its folder
+GRYPHLINK_FOLDERS = ("gryphlink", "hypergryph")
+GRYPHLINK_NAMES = ("launcher.exe", "games.exe")
+
+
+def gryphlink_processes():
+    found = []
+    for p in psutil.process_iter(["exe", "name"]):
+        exe = (p.info.get("exe") or "").lower()
+        if (p.info.get("name") or "").lower() in GRYPHLINK_NAMES and any(f in exe for f in GRYPHLINK_FOLDERS):
+            found.append(p)
+    return found
+
+
 def kill_processes(procs):
     for p in procs:
         try:

@@ -114,6 +114,33 @@ class ClientUpdateTest(unittest.TestCase):
         self.assertEqual(rep.notes, [])
 
 
+class GryphlinkTest(unittest.TestCase):
+    """GRYPHLINK runs as plain Launcher.exe: only the one in its own folder counts."""
+
+    def processes(self, *exes):
+        class P:
+            def __init__(self, exe):
+                self.info = {"exe": exe, "name": exe.replace("\\", "/").split("/")[-1]}
+        return [P(e) for e in exes]
+
+    def test_found_by_folder(self):
+        procs = self.processes("D:\\GRYPHLINK\\Launcher.exe", "C:\\Rockstar\\Launcher.exe",
+                               "D:\\GRYPHLINK\\Games.exe", "C:\\Steam\\Games.exe",
+                               "D:\\GRYPHLINK\\games\\EndField Game\\Endfield.exe")
+        with mock.patch.object(system.psutil, "process_iter", lambda attrs: procs):
+            found = system.gryphlink_processes()
+        self.assertEqual([p.info["exe"] for p in found],
+                         ["D:\\GRYPHLINK\\Launcher.exe", "D:\\GRYPHLINK\\Games.exe"])
+
+    def test_endfield_update_hint(self):
+        from gachashift.games.endfield import Endfield
+        game = Endfield({})
+        with mock.patch("gachashift.games.endfield.gryphlink_processes", lambda: ["launcher"]), \
+                mock.patch("gachashift.games.base.process_running", lambda name: False):
+            game.check_launcher()
+        self.assertTrue(game.launcher_left)
+
+
 class StatusTest(unittest.TestCase):
     def test_status_lines(self):
         def make(gid, status):

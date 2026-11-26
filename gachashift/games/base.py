@@ -31,9 +31,11 @@ class Game:
         showing an update instead of a start button."""
         return ()
 
+    def launcher_running(self):
+        return any(process_running(n) for n in self.launcher_exes() if n)
+
     def check_launcher(self):
-        launchers = [n for n in self.launcher_exes() if n]
-        if launchers and any(process_running(n) for n in launchers):
+        if self.launcher_running():
             self.launcher_left = not any(process_running(n) for n in self.game_exes() if n)
 
     def watch(self, log=None):

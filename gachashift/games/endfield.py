@@ -10,7 +10,8 @@ import time
 
 from .. import report as R
 from ..config import app_dir
-from ..system import StopRequested, kill, pause, process_running, read_since, ts
+from ..system import (StopRequested, gryphlink_processes, kill, kill_processes, pause, process_running,
+                      read_since, ts)
 from .base import Game
 
 TASKS = ["LaunchGamePC", "StashBackpackMain", "DijiangRewards", "OutpostTradingSchedule",
@@ -119,8 +120,8 @@ class Endfield(Game):
     def game_exes(self):
         return ("Endfield.exe",)
 
-    def launcher_exes(self):
-        return ("Gryphlink.exe",)
+    def launcher_running(self):
+        return bool(gryphlink_processes())
 
     def run(self, timeout=5400):
         path = self.cfg["maaend_path"]
@@ -143,8 +144,9 @@ class Endfield(Game):
         except StopRequested as e:
             stop = e
         finally:
-            self.capture(["MaaEnd.exe", "Endfield.exe", "Gryphlink.exe"])
-            kill(["MaaEnd.exe", "Endfield.exe", "Gryphlink.exe"])
+            self.capture(["MaaEnd.exe", "Endfield.exe"])
+            kill(["MaaEnd.exe", "Endfield.exe"])
+            kill_processes(gryphlink_processes())
             time.sleep(5)
             archive_log(self.cfg["log_dir"])
         rep = parse_endfield_log(read_since(log, 0), self.new_report(), interrupted=bool(stop))
