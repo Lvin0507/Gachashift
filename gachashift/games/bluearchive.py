@@ -89,7 +89,8 @@ class BlueArchive(Game):
             subprocess.Popen([baas_exe], cwd=baas_dir, creationflags=subprocess.CREATE_NEW_CONSOLE)
             watch = self.watch()  # BAAS keeps no log, so only the screen tells
             while time.time() - start < timeout:
-                pause(15)
+                # look often at first: with nothing due, BAAS can come and go in seconds
+                pause(2 if time.time() - start < 60 else 15)
                 if saw_baas and self.stuck(watch):
                     reason = "stalled"
                     break
@@ -103,7 +104,9 @@ class BlueArchive(Game):
                     reason = "exited"
                     break
                 if not procs:
-                    reason = "exited" if saw_baas else "not_started"
+                    # nothing of BAAS left: it either ran and exited, or closed before its
+                    # tasks started (BAAS itself was started; it just didn't stay)
+                    reason = "exited" if saw_baas else "closed_early"
                     break
                 if not saw_baas and time.time() - start > start_timeout:
                     reason = "not_started"
@@ -126,9 +129,12 @@ class BlueArchive(Game):
         elif reason == "exited":
             rep.add("baas", R.WARN)
             rep.note("note.quick_exit", minutes=minutes)
+        elif reason == "closed_early":
+            rep.add("baas", R.WARN)
+            rep.note("note.baas_closed_early", seconds=max(1, round(time.time() - start)))
         elif reason == "not_started":
             rep.add("baas", R.FAIL)
-            rep.note("note.not_started", hint="hint.baas")
+            rep.note("note.baas_not_started")
         else:
             rep.add("baas", R.WARN)
             rep.note("note.timeout", minutes=minutes)
