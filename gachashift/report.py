@@ -33,6 +33,15 @@ class GameReport:
     notes: list = field(default_factory=list)   # (string key, params) pairs
     seconds: float = 0                          # how long the tool ran, not counting waits
     screenshot: str = ""                        # the screen before cleanup, kept if it went badly
+    labels: dict = field(default_factory=dict)  # {task key: {lang: name}} from the tool itself
+
+    def label(self, key, lang):
+        """A task's display name: ours if we have one, else the tool's own, else its key."""
+        ours = task_label(self.game, key, lang)
+        if ours != key:
+            return ours
+        theirs = self.labels.get(key, {})
+        return theirs.get(lang) or theirs.get("en") or key
 
     def add(self, key, status, detail="", new=False):
         self.tasks.append(TaskResult(key, status, detail, new))
@@ -44,7 +53,7 @@ class GameReport:
 def render_game(report, lang):
     lines = [f"『{game_name(report.game, lang)}』"]
     for task in report.tasks:
-        label = task_label(report.game, task.key, lang)
+        label = report.label(task.key, lang)
         if task.new:
             label += " " + t(lang, "note.new_task")
         status = t(lang, f"status.{task.status}")
@@ -101,7 +110,7 @@ def actions(report, lang):
             found.append(t(lang, special, game=game))
         else:
             found.append(t(lang, "action.task_failed", game=game,
-                           task=task_label(report.game, task.key, lang)))
+                           task=report.label(task.key, lang)))
     return found
 
 

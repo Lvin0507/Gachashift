@@ -133,6 +133,38 @@ class EndfieldTest(unittest.TestCase):
         ), R.GameReport("endfield"))
         self.assertEqual(tasks(rep)["DeliveryJobsMain"], (R.FAIL, "1/2"))
 
+    def test_renamed_stash_entry(self):
+        start = "Checking aspect ratio before task execution"
+        rep = parse_endfield_log(self.lines(
+            {"task": "LaunchGamePC", "message": "Pretask succeeded"},
+            {"entry": "StashBackpackEntry", "message": start},
+        ), R.GameReport("endfield"))
+        self.assertEqual(tasks(rep)["StashBackpackMain"], (R.OK, ""))
+        self.assertNotIn("StashBackpackEntry", tasks(rep))
+
+    def test_renamed_by_suffix_without_an_alias(self):
+        # a rename nobody has added yet: only the last word changed
+        start = "Checking aspect ratio before task execution"
+        rep = parse_endfield_log(self.lines(
+            {"task": "LaunchGamePC", "message": "Pretask succeeded"},
+            {"entry": "VisitFriendsEntry", "message": start},
+            {"entry": "GiftOperatorTask", "message": start},
+            {"entry": "GiftOperatorTask", "message": "Task failed: no gift"},
+        ), R.GameReport("endfield"))
+        self.assertEqual(tasks(rep)["VisitFriendsMain"], (R.OK, ""))
+        self.assertEqual(tasks(rep)["GiftOperatorMain"], (R.FAIL, ""))
+        self.assertEqual([t.key for t in rep.tasks if t.new], [])
+        self.assertNotIn("note.maybe_renamed", [k for k, _ in rep.notes])
+
+    def test_unrecognised_rename_is_explained(self):
+        start = "Checking aspect ratio before task execution"
+        rep = parse_endfield_log(self.lines(
+            {"task": "LaunchGamePC", "message": "Pretask succeeded"},
+            {"entry": "BackpackStorage", "message": start},
+        ), R.GameReport("endfield"))
+        self.assertEqual(tasks(rep)["StashBackpackMain"][0], R.SKIPPED)
+        self.assertIn(("note.maybe_renamed", {"new": "BackpackStorage"}), rep.notes)
+
 
 class ArknightsTest(unittest.TestCase):
     """Format samples of MAA's gui.log."""

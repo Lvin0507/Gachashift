@@ -3,6 +3,7 @@
 import datetime
 import glob
 import json
+import re
 import os
 import shutil
 import subprocess
@@ -12,6 +13,7 @@ from .. import report as R
 from ..config import app_dir
 from ..system import (StopRequested, gryphlink_processes, kill, kill_processes, pause, process_running,
                       read_since, start_steam_elevated, ts)
+from . import maaend_tasks
 from .base import Game
 
 TASKS = ["LaunchGamePC", "StashBackpackMain", "DijiangRewards", "OutpostTradingSchedule",
@@ -21,14 +23,41 @@ TASKS = ["LaunchGamePC", "StashBackpackMain", "DijiangRewards", "OutpostTradingS
          "MXU_KILLPROC"]
 ALIASES = {"SeizeDeliveryJobsMain": "SeizeDeliveryJobs",
            "SeizeDeliveryJobsCheckOngoingJob": "SeizeDeliveryJobs",
-           "SellProductSchedule": "AutoSellMain"}
+           "SellProductSchedule": "AutoSellMain",
+           # MaaEnd renamed the stash task's entry (seen 26 Nov); both mean the same task
+           "StashBackpackEntry": "StashBackpackMain"}
 DELIVERY_TARGET = 3
+# MaaEnd sometimes renames a task's entry, mostly by changing this last word
+# (StashBackpackMain became StashBackpackEntry); names are compared without it
+ENTRY_SUFFIX = re.compile(r"(Main|Entry|Start|Schedule|Task)$")
 
 
-def parse_endfield_log(text, rep, interrupted=False):
+def base_name(entry):
+    return ENTRY_SUFFIX.sub("", entry)
+
+
+def match_renamed(runs, fails, expected):
+    """Count a task under its expected name when the log only has a renamed entry for it, and
+    return the expected tasks that didn't run while unknown ones did (perhaps renamed further)."""
+    known_by_base = {base_name(k): k for k in expected}
+    for key in [k for k in runs if k not in expected]:
+        known = known_by_base.get(base_name(key))
+        if known and not runs.get(known):
+            runs[known] = runs.pop(key)
+            fails[known] = fails.pop(key, 0)
+    if not any(k not in expected for k in runs):
+        return []
+    return [k for k in expected if k != "LaunchGamePC" and not runs.get(k)]
+
+
+def parse_endfield_log(text, rep, interrupted=False, expected=None, labels=None):
     """Fill `rep` from MaaEnd's go-service.log (one JSON object per line).
     A run starts at "Checking aspect ratio before task execution"; any "Task failed" line
-    marks it failed (some failures are only logged at debug level)."""
+    marks it failed (some failures are only logged at debug level).
+    expected: the entries the run should do, in order (from maaend_tasks.plan); without it,
+    the fixed TASKS list. labels: MaaEnd's own names for them, used when ours has none."""
+    expected = list(expected) if expected else TASKS
+    rep.labels.update(labels or {})
     runs, fails = {}, {}
     launch = None
     deliveries = delivery_activity = 0
@@ -65,8 +94,12 @@ def parse_endfield_log(text, rep, interrupted=False):
     if launch is None and not runs:
         rep.note("note.no_records")
         return rep
-    rep.add("LaunchGamePC", {True: R.OK, False: R.FAIL, None: R.SKIPPED}[launch])
-    for key in TASKS[1:]:
+    missing = match_renamed(runs, fails, expected)
+    if "LaunchGamePC" in expected:  # not when the game is opened by a pre-action
+        rep.add("LaunchGamePC", {True: R.OK, False: R.FAIL, None: R.SKIPPED}[launch])
+    for key in expected:
+        if key == "LaunchGamePC":
+            continue
         n_runs, n_fails = runs.get(key, 0), fails.get(key, 0)
         if key == "SeizeDeliveryJobs" and n_runs:
             detail = f"{deliveries}/{DELIVERY_TARGET}"
@@ -85,9 +118,12 @@ def parse_endfield_log(text, rep, interrupted=False):
             rep.add(key, R.FAIL, f"{n_fails}/{n_runs}" if n_runs > 1 else "")
         else:
             rep.add(key, R.OK)
-    for key in runs:
-        if key not in TASKS:
-            rep.add(key, R.FAIL if fails.get(key) else R.OK, new=True)
+    unknown = [key for key in runs if key not in expected]
+    for key in unknown:
+        rep.add(key, R.FAIL if fails.get(key) else R.OK, new=True)
+    if unknown and missing and not interrupted:
+        # a task that "didn't run" next to a new one is most likely the same task renamed
+        rep.note("note.maybe_renamed", new=", ".join(unknown))
     if interrupted and current:
         # the task that was running when the user stopped didn't get to finish
         for task in rep.tasks:
@@ -153,7 +189,9 @@ class Endfield(Game):
             kill_processes(gryphlink_processes())
             time.sleep(5)
             archive_log(self.cfg["log_dir"])
-        rep = parse_endfield_log(read_since(log, 0), self.new_report(), interrupted=bool(stop))
+        expected, labels = maaend_tasks.plan(self.cfg, ALIASES)
+        rep = parse_endfield_log(read_since(log, 0), self.new_report(), interrupted=bool(stop),
+                                 expected=expected, labels=labels)
         if stop:
             stop.report = rep  # show what was finished before the stop
             raise stop
