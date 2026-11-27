@@ -127,6 +127,9 @@ WATCH = [
             "{LogPrefix}：使用 {ResinName}，消耗：{Num}",   # a domain reward claimed
             "体力耗尽或者设置轮次已达标，结束自动秘境",
             "自动秘境：检测到树脂不足提示",
+            "领奖 {report.ClaimCount}/{target} 次",          # rewards claimed of those asked for
+            "当前获取焦点的窗口为: {name}，不是原神，暂停",    # paused: the game isn't in front
+            "任务中断:{Msg}",
         ],
     },
     {

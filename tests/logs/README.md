@@ -10,6 +10,8 @@ a test for what the report should have said, then fix the parser until the test 
 | `bettergi_2026-11-27.log` | BetterGI 0.67, commission script 1.0.5 | no progress line, only the list of commissions: 4/4, reward claimed |
 | `bettergi_2026-11-27_mondstadt.log` | BetterGI 0.67 | a misread commission skipped (3/4); game closed during the first domain |
 | `bettergi_2026-11-27_domain.log` | BetterGI 0.67 | a domain started by hand, cancelled after one reward |
+| `bettergi_2026-11-27_focus.log` | BetterGI 0.67 | crosses midnight; paused a minute with another window in front, the domain given up |
+| `bettergi_2026-11-28_six_rewards.log` | BetterGI 0.67 | domains set to 6 rewards, resin for one: 1/6 |
 | `onedragon_2026-11-15.log` | OneDragon | 8 apps done; the log file was new that morning |
 | `onedragon_2026-11-27.log` | OneDragon | 7 apps done, 活跃度奖励 failed; the log file was new that morning and the stall check hid it |
 | `okww_2026-11-13.log` | ok-ww | Weekly garden already at the cap |

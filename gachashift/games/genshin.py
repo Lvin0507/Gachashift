@@ -14,8 +14,9 @@ import subprocess
 import time
 
 from .. import report as R
-from ..system import StopRequested, kill, log_size, pause, process_running, read_since, ts
-from .base import FailureShots, Game, minutes_since, remove_file
+from ..system import (StopRequested, bring_to_front, kill, log_size, main_window_of, pause,
+                      process_running, read_since, seconds_since_input, ts)
+from .base import FailureShots, Game, LiveLog, minutes_since, remove_file
 from .zzz import SERVER_UTC
 
 TOOL_EXE = "BetterGI.exe"
@@ -41,6 +42,17 @@ DOMAIN = re.compile(r"自动秘境任务：执行|自动秘境[\"”]?：")
 DOMAIN_CLAIMED = re.compile(r"自动秘境[\"”]?：使用 [\"“]?[^\"”，,\r\n]+[\"”]?[,，] ?(?:数量|消耗)：\d+")
 DOMAIN_ENDED = ("体力耗尽或者设置轮次已达标，结束自动秘境",  # resin used up, or the set rounds done
                 "自动秘境：检测到树脂不足提示")             # no resin to start with
+# With a set number of rewards ("指定领奖次数"): '自动秘境："原粹树脂" 刷取 1/6' after each one,
+# and at the end '当前刷取情况："原粹树脂(1/6)"' (one pair per kind of resin)
+DOMAIN_PROGRESS = re.compile(r"自动秘境：[\"“]?[^\"”\r\n]+[\"”]? 刷取 (\d+)/(\d+)")
+DOMAIN_TALLY = re.compile(r"当前刷取情况：[\"“]?([^\"”\r\n]+)")
+TALLY_PAIR = re.compile(r"\((\d+)/(\d+)\)")
+# newer BetterGI sums it up in the task's result instead: "领奖 6/6 次"
+DOMAIN_RESULT = re.compile(r"领奖 (\d+)/(\d+) 次")
+# BetterGI only acts while the game is the foreground window; otherwise it logs this every
+# second and, after a while, gives up on the task
+PAUSED = re.compile(r"当前获取焦点的窗口为: ?(.+?)，不是原神，暂停")
+INTERRUPTED = "任务中断:"
 
 
 # Read while BetterGI runs, for the failure pictures. Each entry is a header line with the
@@ -111,6 +123,60 @@ def log_path(bgi_dir, day):
     return os.path.join(bgi_dir, "log", f"better-genshin-impact{day:%Y%m%d}.log")
 
 
+def domain_target(text):
+    """(rewards claimed, rewards asked for) when the domains were set to a number of rewards,
+    else None. The end tally covers every kind of resin; the last progress line otherwise."""
+    tally = DOMAIN_TALLY.findall(text)
+    if tally:
+        pairs = [(int(a), int(b)) for a, b in TALLY_PAIR.findall(tally[-1])]
+        if pairs:
+            return sum(a for a, _ in pairs), sum(b for _, b in pairs)
+    for pattern in (DOMAIN_PROGRESS, DOMAIN_RESULT):
+        found = pattern.findall(text)
+        if found:
+            return int(found[-1][0]), int(found[-1][1])
+    return None
+
+
+class FocusWatch(LiveLog):
+    """Brings the game back to the front when BetterGI pauses because another window took the
+    focus (a notification, a program's pop-up), but only when nobody has used the PC for a
+    while: someone testing at the PC is left alone."""
+
+    IDLE = 120     # seconds without keyboard or mouse
+    EVERY = 10     # seconds between two tries
+
+    def __init__(self, path, offset, bring_back, idle=seconds_since_input, clock=time.time):
+        super().__init__(path, offset)
+        self.bring_back, self.idle, self.clock = bring_back, idle, clock
+        self.window, self.last_try, self.tries = None, None, 0
+
+    def line(self, raw):
+        m = PAUSED.search(raw)
+        if m:
+            self.window = m.group(1)
+
+    def check(self):
+        self.window = None
+        self.poll()
+        now = self.clock()
+        if self.window is None or self.idle() < self.IDLE:
+            return
+        if self.last_try is not None and now - self.last_try < self.EVERY:
+            return
+        self.last_try, self.tries = now, self.tries + 1
+        print(f"[{ts()}] BetterGI is paused: {self.window} is in front; bringing Genshin back")
+        self.bring_back()
+
+
+def bring_game_back():
+    for exe in GAME_EXES:
+        hwnd = main_window_of(exe)
+        if hwnd:
+            return bring_to_front(hwnd)
+    return False
+
+
 def count_commissions(text):
     """(done, total) of today's four commissions, or None if the script didn't run.
     The progress line is only logged when the commission page is read, usually before the
@@ -158,13 +224,19 @@ def parse_bgi_log(text, rep, minutes, reason, stopped=False):
 
     if DOMAIN.search(text):
         rounds = len(DOMAIN_CLAIMED.findall(text))
+        target = domain_target(text)
+        detail = f"{target[0]}/{target[1]}" if target else (f"×{rounds}" if rounds else "")
         if any(end in text for end in DOMAIN_ENDED):
-            rep.add("domain", R.OK if rounds else R.NOTHING, f"×{rounds}" if rounds else "")
+            if target and 0 < target[0] < target[1]:
+                status = R.PARTIAL   # not enough resin for the rewards that were asked for
+            else:
+                status = R.OK if rounds or (target and target[0]) else R.NOTHING
+            rep.add("domain", status, detail if status != R.NOTHING else "")
         elif stopped:
             rep.add("domain", R.SKIPPED)
         else:
             # BetterGI moved on without saying the resin was used up: an error or a wipe
-            rep.add("domain", R.PARTIAL if rounds else R.FAIL, f"×{rounds}" if rounds else "")
+            rep.add("domain", R.PARTIAL if rounds else R.FAIL, detail)
 
     daily = DAILY.findall(text)
     if daily:
@@ -177,6 +249,11 @@ def parse_bgi_log(text, rep, minutes, reason, stopped=False):
         rep.add("daily_reward", R.SKIPPED)
     else:
         rep.add("daily_reward", R.WARN)
+
+    paused = PAUSED.findall(text)
+    if paused and (INTERRUPTED in text or any(t.status not in R.CLEAN for t in rep.tasks)):
+        # about one line a second while paused
+        rep.note("note.bgi_focus", seconds=len(paused), window=paused[-1])
 
     if stopped:
         return rep
@@ -211,6 +288,7 @@ class Genshin(Game):
             subprocess.Popen([exe, "startOneDragon", config], cwd=folder)
             watch = self.watch(log)
             failures = BetterGIFailures(log, self.snap, remove_file, offset) if self.shot_dir else None
+            focus = FocusWatch(log, offset, bring_game_back)
             rounds = 0
             while time.time() - start < timeout:
                 # every 3 s for the failure pictures; the rest every 15 s as before
@@ -218,6 +296,7 @@ class Genshin(Game):
                 rounds += 1
                 if failures:
                     failures.poll()
+                focus.check()
                 if rounds % 5:
                     continue
                 if self.stuck(watch):

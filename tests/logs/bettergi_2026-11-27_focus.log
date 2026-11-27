@@ -1,0 +1,356 @@
+参数指定的一条龙配置：resin
+
+[23:59:02.432] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+启用一条龙配置：resin
+
+[23:59:02.433] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+启用任务总数量: 2
+
+[23:59:02.452] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+启用一条龙任务的数量: 2
+
+[23:59:13.698] [DBG] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Runtime.GameRuntimeService
+游戏运行环境已绑定：Win32Window，窗口句柄 3410192
+
+[23:59:13.757] [DBG] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动开门" "启用"
+
+[23:59:13.757] [DBG] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动拾取" "启用"
+
+[23:59:13.759] [DBG] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "启用"
+
+[23:59:14.081] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.ViewModel.Pages.HomePageViewModel
+更好的原神 "0.67.0"
+
+[23:59:14.081] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.ViewModel.Pages.HomePageViewModel
+遮罩窗口已启动，游戏大小1920x1080，素材缩放"1.00"，DPI缩放1
+
+[23:59:14.385] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前不在游戏主界面，等待进入主界面后执行任务...
+
+[23:59:14.386] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+如果你已经在游戏内的其他界面，请自行退出当前界面（ESC），或是30秒后将程序将自动尝试到入主界面，使当前任务能够继续运行！
+
+[23:59:42.453] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+启用配置组任务的数量: 0
+
+[23:59:42.454] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+一条龙任务执行: 1/2
+
+[23:59:42.456] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.TaskRunner
+→ "任务启动！"
+
+[23:59:42.471] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+自动秘境任务：执行
+
+[23:59:42.500] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.Core.Recognition.ONNX.BgiOnnxFactory
+[ONNX]当前引擎 Cpu，设备 "处理器"，OCR 强制 CPU：True
+
+[23:59:42.502] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+→ "自动秘境，" 指定使用树脂
+
+[23:59:42.506] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+自动秘境：传送到秘境"椛染之庭"
+
+[23:59:42.510] [DBG] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动开门" "停用"
+
+[23:59:42.510] [DBG] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动拾取" "停用"
+
+[23:59:42.511] [DBG] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "停用"
+
+[23:59:42.525] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[23:59:43.540] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[23:59:44.541] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[23:59:45.551] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[23:59:46.567] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[23:59:47.579] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[23:59:48.582] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[23:59:49.597] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[23:59:50.610] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[23:59:51.624] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[23:59:52.635] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[23:59:53.636] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[23:59:54.650] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[23:59:55.662] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[23:59:56.664] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[23:59:57.668] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[23:59:58.682] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[23:59:59.698] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:00.711] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:01.729] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:02.730] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:03.743] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:04.759] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:05.762] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:06.763] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:07.778] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:08.783] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:09.799] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:10.801] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:11.812] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:12.812] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:13.827] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:14.831] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:15.843] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:16.844] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:17.857] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:18.860] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:19.862] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:20.877] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:21.891] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:22.896] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:23.904] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:24.919] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:25.924] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:26.928] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:27.932] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:28.939] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:29.945] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:30.950] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:31.958] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:32.963] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:33.971] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:34.976] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:35.984] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:36.992] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:37.997] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:39.004] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:40.013] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:41.019] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:42.034] [WRN] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: claude，不是原神，暂停
+
+[00:00:43.044] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.TaskRunner
+任务中断:"取消自动任务"
+
+[00:00:43.046] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.TaskRunner
+→ "任务结束"
+
+[00:00:43.046] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+一条龙任务执行: 2/2
+
+[00:00:43.046] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.TaskRunner
+→ "任务启动！"
+
+[00:00:43.052] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+→ "前往冒险家协会领取奖励" 开始
+
+[00:00:45.429] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+"历练点："未找到领取历练点奖励按钮
+
+[00:00:46.563] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+"历练点："未找到领取历练点奖励按钮
+
+[00:00:47.849] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.Core.Recognition.ONNX.BgiOnnxFactory
+[ONNX]当前引擎 Cpu，设备 "处理器"，OCR 强制 CPU：True
+
+[00:00:47.926] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+识别到的队伍角色:"宵宫,钟离,夜兰,云堇"
+
+[00:00:48.051] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+[TemplateMatch]提瓦特大陆地图模板加载中，可能耗时较久，请耐心等待...
+
+[00:00:53.350] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+地图特征点加载完成！
+
+[00:00:54.203] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+开始传送："蒙德 / 坠星山谷 / 蒙德城 - 传送锚点"
+
+[00:00:56.056] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+切换到区域："蒙德"
+
+[00:00:57.208] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+点击候选列表："传送锚点"
+
+[00:00:59.510] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+传送完成
+
+[00:01:00.223] [DBG] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-882.1","2262.4")
+
+[00:01:05.428] [DBG] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[00:01:05.520] [DBG] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-911.3","2240.6")
+
+[00:01:11.998] [DBG] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[00:01:12.089] [DBG] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-913.5","2232.7")
+
+[00:01:14.145] [DBG] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[00:01:14.146] [DBG] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+精确接近目标点，位置("-913.5","2232.7")
+
+[00:01:18.960] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.Job.ChooseTalkOptionTask
+识别到橙色文字区域占比:0
+
+[00:01:18.961] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+▶ "领取『每日委托』奖励" 未完成或者已领取
+
+[00:01:21.321] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.Job.ChooseTalkOptionTask
+识别到橙色文字区域占比:0
+
+[00:01:21.321] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+▶ "探索派遣" 未探索完成或已领取
+
+[00:01:28.327] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+退出当前对话
+
+[00:01:28.327] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+→ "前往冒险家协会领取奖励" 结束
+
+[00:01:30.230] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+纪行："无需领取"
+
+[00:01:34.439] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+纪行："无需领取"
+
+[00:01:36.415] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.TaskRunner
+→ "任务结束"
+
+[00:01:36.415] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.TaskRunner
+→ "任务启动！"
+
+[00:01:38.508] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.Common.TaskControl
+检查每日奖励结果："今日奖励已领取"
+
+[00:01:40.175] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+一条龙和配置组任务结束
+
+[00:01:40.661] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+游戏已退出，BetterGI 自动停止截图器
+
+[00:01:41.938] [INF] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.GameTask.TaskRunner
+→ "任务结束"
+
+[00:01:41.951] [DBG] [Primary:S1:P21416:T1795795141015] BetterGenshinImpact.View.MainWindow
+主窗体退出
+

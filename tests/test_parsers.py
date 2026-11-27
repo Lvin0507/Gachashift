@@ -104,6 +104,35 @@ class GenshinTest(unittest.TestCase):
         rep = parse_bgi_log('→ "前往冒险家协会领取奖励" 开始', R.GameReport("genshin"), 5, "exited")
         self.assertEqual(tasks(rep)["daily_reward"][0], R.WARN)
 
+    def test_six_rewards_asked_but_resin_for_one(self):
+        # 28 Nov 00:03: set to 6 rewards, 20 resin left: one reward, then BetterGI ended it
+        rep = self.parse("bettergi_2026-11-28_six_rewards.log")
+        self.assertEqual(tasks(rep)["domain"], (R.PARTIAL, "1/6"))
+
+    def test_six_rewards_done(self):
+        lines = ['"自动秘境"：使用 "原粹树脂", 数量：20\n自动秘境："原粹树脂" 刷取 %d/6' % n for n in range(1, 7)]
+        text = "\n".join(["自动秘境任务：执行", *lines, '当前刷取情况："原粹树脂(6/6)"',
+                          "体力耗尽或者设置轮次已达标，结束自动秘境"])
+        self.assertEqual(tasks(parse_bgi_log(text, R.GameReport("genshin"), 15, "exited"))["domain"],
+                         (R.OK, "6/6"))
+
+    def test_rewards_count_from_newer_bettergi(self):
+        text = "\n".join(["自动秘境任务：执行", "自动秘境：使用 原粹树脂，消耗：20",
+                          "自动秘境任务结果：Success，秘境流程已结束：领奖 1/1 次",
+                          "体力耗尽或者设置轮次已达标，结束自动秘境"])
+        self.assertEqual(tasks(parse_bgi_log(text, R.GameReport("genshin"), 5, "exited"))["domain"],
+                         (R.OK, "1/1"))
+
+    def test_paused_because_the_game_was_not_in_front(self):
+        # 27 Nov 23:59: Claude's window was in front, BetterGI paused a minute and gave up
+        rep = self.parse("bettergi_2026-11-27_focus.log")
+        self.assertEqual(tasks(rep)["domain"], (R.FAIL, ""))
+        self.assertIn(("note.bgi_focus", {"seconds": 60, "window": "claude"}), rep.notes)
+
+    def test_short_pause_that_did_no_harm(self):
+        text = "\n".join(["当前获取焦点的窗口为: explorer，不是原神，暂停", '检查每日奖励结果："今日奖励已领取"'])
+        self.assertNotIn("note.bgi_focus", notes(parse_bgi_log(text, R.GameReport("genshin"), 5, "exited")))
+
     def test_domain_with_no_resin(self):
         self.assertEqual(self.domain('自动秘境：检测到树脂不足提示："原粹树脂不足"'), (R.NOTHING, ""))
 

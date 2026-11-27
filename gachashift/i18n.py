@@ -674,6 +674,7 @@ QT_STRINGS = {
         "h.game_path": "The game itself (not its launcher). Optional: used to fix the tool's settings when its game path is missing. Find tools fills it in.",
         "h.onedragon_config": "The one-dragon config to run in the morning, picked from the ones in BetterGI (the list is read again each time it opens). You can keep several in BetterGI, say one for resin only and one for commissions, and pick here. In that config, set the finishing action to close both the game and BetterGI.",
         "bgi.config_missing": "BetterGI has no one-dragon config with this name.",
+        "note.bgi_focus": "⚠️ BetterGI paused for about {seconds} s because Genshin wasn't the window in front ({window} was). BetterGI only works while the game is in front; when nobody is using the PC, Gachashift brings the game back by itself.",
     },
     "zh": {
         "nav.appearance": "外观",
@@ -815,6 +816,7 @@ QT_STRINGS = {
         "h.game_path": "游戏本体的 exe（不是启动器）。可以不填：工具的游戏路径不见了时，用它来帮你改。“自动寻找工具”会顺便填好。",
         "h.onedragon_config": "早上要跑的一条龙配置，从 BetterGI 里已有的配置中选（每次打开选单都会重新读取）。你可以在 BetterGI 里准备好几个，例如只刷树脂、只做委托，再在这里选一个。请在该配置里把完成后操作设为同时关闭游戏和 BetterGI。",
         "bgi.config_missing": "BetterGI 里没有这个名称的一条龙配置。",
+        "note.bgi_focus": "⚠️ BetterGI 暂停了约 {seconds} 秒，因为原神不在最前面（在前面的是 {window}）。BetterGI 只在原神是当前视窗时才会动；没人用电脑时，Gachashift 会自己把原神拉回前面。",
     },
 }
 

@@ -10,7 +10,7 @@ from gachashift import report as R
 from gachashift import system
 from gachashift.games.arknights import MaaFailures
 from gachashift.games.base import LiveLog
-from gachashift.games.genshin import BetterGIFailures
+from gachashift.games.genshin import BetterGIFailures, FocusWatch
 from gachashift.games.zzz import OneDragonFailures, parse_od_log
 
 LOGS = Path(__file__).parent / "logs"
@@ -198,6 +198,39 @@ class BetterGIFailuresTest(Folder, Pictures):
     def test_commission_reward_not_claimed(self):
         kept = self.watch(bgi("WRN", '检查每日奖励结果："未领取"，请手动检查！'))
         self.assertEqual(kept, [("daily_reward", "daily_reward-0.jpg")])
+
+
+class FocusWatchTest(Folder):
+    PAUSE = "当前获取焦点的窗口为: Telegram，不是原神，暂停"
+
+    def watch(self, idle):
+        self.write("")
+        self.now, self.brought = [0.0], []
+        return FocusWatch(self.path, 0, lambda: self.brought.append(self.now[0]),
+                          idle=lambda: idle, clock=lambda: self.now[0])
+
+    def pause_for(self, watch, seconds):
+        for _ in range(seconds // 3):
+            self.write(bgi("WRN", self.PAUSE), "a")
+            self.now[0] += 3
+            watch.check()
+
+    def test_nobody_at_the_pc(self):
+        # at 4 in the morning a pop-up took the focus: bring the game back, every 10 s at most
+        watch = self.watch(idle=3600)
+        self.pause_for(watch, 30)
+        self.assertEqual(self.brought, [3.0, 15.0, 27.0])
+
+    def test_someone_using_the_pc(self):
+        watch = self.watch(idle=5)
+        self.pause_for(watch, 30)
+        self.assertEqual(self.brought, [])
+
+    def test_not_paused(self):
+        watch = self.watch(idle=3600)
+        self.write(bgi("INF", "自动秘境：点击 \"单人挑战\""), "a")
+        watch.check()
+        self.assertEqual(self.brought, [])
 
 
 if __name__ == "__main__":
