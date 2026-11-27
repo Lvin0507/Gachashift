@@ -256,8 +256,12 @@ class BlueArchive(Game):
                     reason = "stalled" if saw_baas else "not_started"
                     break
         except StopRequested as stop:
-            # BAAS keeps no task log, so all we can say is that it didn't finish
-            rep.add("baas", R.SKIPPED)
+            # what BAAS finished before the stop, from its record; the rest wasn't run
+            dailies = daily_results(before, read_events(list(before)), start) if before else []
+            for name, status in dailies:
+                rep.add(name, status if status in (R.OK, R.ALREADY) else R.SKIPPED)
+            if not dailies:
+                rep.add("baas", R.SKIPPED)
             stop.report = rep
             raise
         finally:

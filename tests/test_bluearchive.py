@@ -23,11 +23,12 @@ RUNNING = [P("BlueArchiveAutoScript.exe"), P("pythonw.exe")]
 
 
 class Runs:
-    def play(self, sightings, frozen_from=None, events=None, tap_unfreezes=False):
+    def play(self, sightings, frozen_from=None, events=None, tap_unfreezes=False, stop_at=None):
         """sightings: what is running in the BAAS folder at each look; the last one stays.
         frozen_from: seconds after the start from which nothing on the screen moves.
         events: seconds since the start -> event.json contents; None means no event.json.
-        tap_unfreezes: the tap on a still screen gets things moving again."""
+        tap_unfreezes: the tap on a still screen gets things moving again.
+        stop_at: seconds after the start at which the player presses Stop."""
         clock = [1000.0]
         looks = iter(sightings)
         last = [sightings[-1]]
@@ -43,6 +44,8 @@ class Runs:
 
         def pause(seconds):
             clock[0] += seconds
+            if stop_at is not None and elapsed() >= stop_at:
+                raise bluearchive.StopRequested()
 
         def fingerprint():
             if frozen_from is not None and elapsed() >= frozen_from and not (tap_unfreezes and self.taps):
@@ -279,6 +282,22 @@ class DailyRecordTest(Runs, unittest.TestCase):
         self.assertEqual(self.tasks(rep), [("baas", R.FAIL)])
         self.assertEqual(rep.notes[0][0], "note.baas_not_started")
 
+    def test_stopped_by_the_player(self):
+        # 27 Nov, 18:45: stopped during 竞技场; the report said only "BAAS dailies: not run"
+        with self.assertRaises(bluearchive.StopRequested) as caught:
+            self.play([BAAS] + [RUNNING] * 1000, events=schedule(every(2, NAMES[1:3]), already=NAMES[3:5]),
+                      stop_at=7 * MIN)
+        rep = caught.exception.report
+        self.assertEqual(self.tasks(rep), [("竞技场", R.SKIPPED), ("咖啡厅", R.OK), ("日程", R.OK),
+                                           ("查收邮箱", R.ALREADY), ("悬赏通缉", R.ALREADY),
+                                           ("普通关清体力", R.SKIPPED), ("自动制造", R.SKIPPED),
+                                           ("收集奖励", R.SKIPPED)])
+
+    def test_stopped_with_no_record(self):
+        with self.assertRaises(bluearchive.StopRequested) as caught:
+            self.play([BAAS] + [RUNNING] * 1000, stop_at=3 * MIN)
+        self.assertEqual(self.tasks(caught.exception.report), [("baas", R.SKIPPED)])
+
     def test_stuck_at_different_dailies(self):
         # started again twice already: the third time it ends, and runs again later
         rep = R.GameReport("bluearchive")
@@ -311,6 +330,23 @@ class EventFilesTest(unittest.TestCase):
             self.assertEqual(paths, [os.path.join(baas, "config", "jp", "event.json")])
             self.assertEqual(len(bluearchive.read_events(paths + ["missing.json"])[paths[0]]),
                              len(NAMES) + 2)
+
+
+class AfterStopTest(unittest.TestCase):
+    def test_no_update_looked_for_after_a_stop(self):
+        # 27 Nov, 18:45: right after Stop, the cleanup found the launcher open and went
+        # looking for an update to click
+        from gachashift.games import base
+        game = bluearchive.BlueArchive({"launcher_path": "C:/BA/launcher.exe"})
+        game.updater = mock.Mock()
+        running = {"launcher.exe"}
+        with mock.patch.object(base, "process_running", lambda name: name in running):
+            with mock.patch.object(base, "stop_requested", lambda: True):
+                game.check_launcher()
+            game.updater.start_in_run.assert_not_called()
+            with mock.patch.object(base, "stop_requested", lambda: False):
+                game.check_launcher()
+            game.updater.start_in_run.assert_called_once_with(game)
 
 
 class RetryWordingTest(unittest.TestCase):

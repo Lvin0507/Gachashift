@@ -5,7 +5,7 @@ import os
 import time
 
 from ..report import GameReport
-from ..system import StallWatch, capture_screen, process_running, processes_in, ts
+from ..system import StallWatch, capture_screen, process_running, processes_in, stop_requested, ts
 
 
 MAX_FAILURE_SHOTS = 3  # pictures of failed tasks per game, besides the one at the end
@@ -154,8 +154,9 @@ class Game:
     def check_launcher(self):
         if self.launcher_running():
             self.launcher_left = not any(process_running(n) for n in self.game_exes() if n)
-        if self.launcher_left and self.updater:
+        if self.launcher_left and self.updater and not stop_requested():
             # the launcher is still showing this game's page: start the update right here
+            # (not after a stop: the player wants everything closed, not an update clicked)
             try:
                 self.update = self.updater.start_in_run(self)
             except Exception as e:  # cleanup must go on (a stop request is seen again later)
