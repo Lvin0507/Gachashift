@@ -8,4 +8,5 @@ a test for what the report should have said, then fix the parser until the test 
 | `bettergi_2026-11-14.log` | BetterGI | 3/4 (one commission has no route), reward not claimed |
 | `bettergi_2026-11-15.log` | BetterGI | 3/4 (one commission has no route), reward not claimed |
 | `onedragon_2026-11-15.log` | OneDragon | 8 apps done; the log file was new that morning |
+| `onedragon_2026-11-27.log` | OneDragon | 7 apps done, 活跃度奖励 failed; the log file was new that morning and the stall check hid it |
 | `okww_2026-11-13.log` | ok-ww | Weekly garden already at the cap |

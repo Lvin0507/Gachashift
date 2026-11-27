@@ -23,7 +23,7 @@ class WatchListTest(unittest.TestCase):
     def test_maa_strings_are_watched(self):
         strings = watched("MaaAssistantArknights/MaaAssistantArknights")
         for group in (arknights.DONE_MARKERS, arknights.START_WORDS, arknights.COMPLETE_WORDS,
-                      arknights.RECRUIT_CONFIRM, arknights.RECRUIT_TASK):
+                      arknights.RECRUIT_CONFIRM, arknights.RECRUIT_TASK, arknights.TASK_ERROR):
             for s in group:
                 self.assertIn(s, strings)
 

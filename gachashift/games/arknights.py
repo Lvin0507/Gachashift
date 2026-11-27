@@ -9,7 +9,7 @@ import time
 from .. import report as R
 from ..system import (StopRequested, gryphlink_processes, kill, kill_processes, log_size, pause,
                       process_running, read_since, ts)
-from .base import Game
+from .base import FailureShots, Game, remove_file
 
 # MAA writes gui.log in its UI language. Each list holds the text in zh-CN, zh-TW, en-US,
 # ja-JP and ko-KR, from MAA's Res/Localizations (tools/check_upstream.py watches them).
@@ -19,6 +19,17 @@ START_WORDS = ["开始任务:", "開始任務:", "Start task:", "タスク開始
 COMPLETE_WORDS = ["完成任务:", "完成任務:", "Complete task:", "タスク完了:", "작업 완료:"]
 RECRUIT_CONFIRM = ["已确认招募", "已確認招募", "Recruit confirm", "募集を行いました", "모집 확정"]
 RECRUIT_TASK = ["自动公招", "自動公招", "Auto Recruit", "公開求人", "공개모집"]
+TASK_ERROR = ["任务出错:", "任務出錯:", "Task error:", "タスクエラー:", "작업 오류:"]
+
+
+class MaaFailures(FailureShots):
+    """MAA's gui.log while it runs: "任务出错: <task>" is logged as the task gives up, and MAA
+    goes on to the next one, so the picture is taken right then."""
+
+    def line(self, raw):
+        names = _names(TASK_ERROR, raw)
+        if names:
+            self.failed(names[0], names[0])
 
 
 def _names(words, text):
@@ -66,14 +77,22 @@ class Arknights(Game):
     def run(self, timeout=1800):
         path, log = self.cfg["maa_path"], self.cfg["maa_log"]
         offset = log_size(log)
-        reason, missing, stop = "timeout", 0, None
+        reason, missing, stop, failures = "timeout", 0, None, None
         try:
             print(f"[{ts()}] starting {path}")
             subprocess.Popen([path], cwd=os.path.dirname(path))
             start = time.time()
             watch = self.watch(log)
+            failures = MaaFailures(log, self.snap, remove_file, offset) if self.shot_dir else None
+            rounds = 0
             while time.time() - start < timeout:
-                pause(15)
+                # every 3 s for the failure pictures; the rest every 15 s as before
+                pause(3)
+                rounds += 1
+                if failures:
+                    failures.poll()
+                if rounds % 5:
+                    continue
                 if self.stuck(watch):
                     reason = "stalled"
                     break
@@ -89,6 +108,8 @@ class Arknights(Game):
         except StopRequested as e:
             stop, reason = e, "stopped"
         finally:
+            if failures:
+                self.failure_shots = failures.close()
             # the Arknights PC client can bring up GRYPHLINK too
             leftovers = ["MAA.exe", self.cfg.get("game_exe") or "Arknights.exe"]
             self.capture(leftovers)

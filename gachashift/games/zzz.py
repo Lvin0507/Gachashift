@@ -13,11 +13,45 @@ import time
 from .. import report as R
 from ..system import (StopRequested, kill, kill_processes, launch_and_click, log_size, pause,
                       process_running, processes_in, read_since, restart_steam_if_running, ts)
-from .base import Game, minutes_since
+from .base import FailureShots, Game, minutes_since, remove_file
 
 GAME_EXE = "ZenlessZoneZero.exe"
 SERVER_UTC = {"asia": 8, "america": -5, "europe": 1}
 LINE = re.compile(r"指令\[ (.+?) \] (?:节点 .*?返回状态 (.*)|执行成功 返回状态 (.*)|执行失败 返回状态 (.*))$")
+
+
+class OneDragonFailures(FailureShots):
+    """OneDragon's log.txt while it runs. Apps are found the way parse_od_log finds them.
+    A sub-step's [ERROR] (a teleport that hasn't arrived yet) takes a picture that is kept
+    only if the app then fails: by the time OneDragon logs the app's failure it has usually
+    gone back to the world map."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.expect_app = False
+
+    def line(self, raw):
+        m = LINE.search(raw)
+        if not m:
+            if "[ERROR]" in raw:
+                self.error()
+            return
+        name, node, ok, fail = m.groups()
+        if name.startswith("执行应用组"):
+            self.expect_app = True
+            return
+        if name == "一条龙":
+            return
+        current = self.current[1] if self.current else None
+        if self.expect_app and node is not None:
+            self.expect_app = False
+            self.begin(name, name)
+        elif name == current and ok is not None:
+            self.succeeded(name)
+        elif name == current and fail is not None:
+            self.failed(name, name)
+        elif fail is not None:
+            self.error()  # a sub-step failed; the app may still get past it
 
 
 def parse_od_log(text, rep, minutes, stopped=False):
@@ -109,7 +143,7 @@ class ZenlessZoneZero(Game):
         offset = log_size(log)
         rep = self.new_report()
         start, reason, saw_od, saw_game, game_gone = time.time(), "timeout", False, False, 0
-        stop = None
+        stop = failures = None
         try:
             if steam:
                 if not self._open_through_steam():
@@ -121,8 +155,16 @@ class ZenlessZoneZero(Game):
             subprocess.Popen([od_exe, "-o", "-c"], cwd=od_dir,
                              creationflags=subprocess.CREATE_NEW_CONSOLE)
             watch = self.watch(log)
+            failures = OneDragonFailures(log, self.snap, remove_file, offset) if self.shot_dir else None
+            rounds = 0
             while time.time() - start < timeout:
-                pause(15)
+                # every 3 s for the failure pictures; the rest every 15 s as before
+                pause(3)
+                rounds += 1
+                if failures:
+                    failures.poll()
+                if rounds % 5:
+                    continue
                 if self.stuck(watch):
                     reason = "stalled"
                     break
@@ -141,6 +183,8 @@ class ZenlessZoneZero(Game):
         except StopRequested as e:
             stop, reason = e, "stopped"
         finally:
+            if failures:
+                self.failure_shots = failures.close()
             leftovers = [GAME_EXE, self.cfg.get("launcher_exe") if steam else None]
             self.capture(leftovers, od_dir)
             kill_processes(processes_in(od_dir))

@@ -9,6 +9,117 @@ from ..system import StallWatch, capture_screen, process_running, processes_in, 
 
 
 MAX_FAILURE_SHOTS = 3  # pictures of failed tasks per game, besides the one at the end
+HEAD_BYTES = 256
+
+
+class LiveLog:
+    """Follows a tool's log while the tool runs, one complete line at a time.
+
+    It keeps its own place in the file and its own copy of the file's first bytes, so a tool
+    that starts a new log file (OneDragon does, once a day) is read again from the top."""
+
+    def __init__(self, path, offset=0, encoding="utf-8"):
+        self.path, self.offset, self.encoding = path, offset, encoding
+        self.head = self._head() if offset else b""
+
+    def _head(self):
+        try:
+            with open(self.path, "rb") as f:
+                return f.read(HEAD_BYTES)
+        except OSError:
+            return b""
+
+    def poll(self):
+        try:
+            size = os.path.getsize(self.path)
+        except OSError:
+            return
+        head = self._head()
+        if size < self.offset or (self.head and head[:len(self.head)] != self.head):
+            self.offset = 0  # a new file
+        self.head = head if len(head) > len(self.head) or self.offset == 0 else self.head
+        try:
+            with open(self.path, "rb") as f:
+                f.seek(self.offset)
+                data = f.read()
+        except OSError:
+            return
+        end = data.rfind(b"\n")
+        if end < 0:
+            return
+        self.offset += end + 1
+        for raw in data[:end + 1].decode(self.encoding, errors="ignore").splitlines():
+            self.line(raw.strip())
+
+    def line(self, raw):
+        """One line of the log, without its line break."""
+
+
+class FailureShots(LiveLog):
+    """Takes a picture of the screen when the tool says a task failed, while it runs.
+
+    Subclasses read their tool's lines and call begin() when a task starts, error() when it
+    hits an error it may still recover from, failed() and succeeded() when it ends. An error
+    takes a picture at once (the screen where the task got stuck); it is kept if the task
+    then fails and deleted if it recovers. snap(key) takes a picture and returns its path,
+    remove(path) deletes one."""
+
+    def __init__(self, path, snap, remove, offset=0, encoding="utf-8"):
+        super().__init__(path, offset, encoding)
+        self.snap, self.remove = snap, remove
+        self.current = None      # (task id, key) of the task running now
+        self.pending = {}        # task id -> (key, path) taken at an error, not yet confirmed
+        self.kept = []           # (key, path) of the tasks that failed
+        self.done = set()        # task ids that already have a kept picture
+
+    def begin(self, task_id, key):
+        self.finish_current()
+        self.current = (task_id, key)
+
+    def error(self):
+        if not self.current:
+            return
+        task_id, key = self.current
+        if task_id not in self.pending and task_id not in self.done:
+            path = self.snap(key)
+            if path:
+                self.pending[task_id] = (key, path)
+
+    def failed(self, task_id, key):
+        if task_id in self.done:
+            return
+        shot = self.pending.pop(task_id, None)
+        if shot is None:
+            path = self.snap(key)
+            shot = (key, path) if path else None
+        if shot:
+            self.kept.append(shot)
+            self.done.add(task_id)
+
+    def succeeded(self, task_id):
+        shot = self.pending.pop(task_id, None)
+        if shot:
+            self.remove(shot[1])
+
+    def finish_current(self):
+        """A task with an error that ended without failing: drop its picture."""
+        if self.current:
+            self.succeeded(self.current[0])
+
+    def close(self):
+        self.poll()
+        self.finish_current()
+        for _, path in self.pending.values():
+            self.remove(path)
+        self.pending = {}
+        return self.kept
+
+
+def remove_file(path):
+    try:
+        os.remove(path)
+    except OSError:
+        pass
 
 
 class Game:

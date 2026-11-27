@@ -14,14 +14,7 @@ from ..config import app_dir
 from ..system import (StopRequested, gryphlink_processes, kill, kill_processes, pause, process_running,
                       read_since, start_steam_elevated, ts)
 from . import maaend_tasks
-from .base import Game
-
-
-def remove_file(path):
-    try:
-        os.remove(path)
-    except OSError:
-        pass
+from .base import FailureShots, Game, remove_file
 
 TASKS = ["LaunchGamePC", "StashBackpackMain", "DijiangRewards", "OutpostTradingSchedule",
          "AutoStockStapleSchedule", "AutoStockpileMain", "DeliveryJobsMain", "AutoSellMain",
@@ -57,32 +50,10 @@ def match_renamed(runs, fails, expected):
     return [k for k in expected if k != "LaunchGamePC" and not runs.get(k)]
 
 
-class FailureWatch:
-    """Reads go-service.log while MaaEnd runs, to take a picture as soon as a task fails.
-
-    A task's first error line comes when it gets stuck (a target not found on screen); "Task
-    failed" only comes once MaaEnd has given up on it, often after leaving that screen. So the
-    picture is taken at the first error line and kept if the task then fails; a task that
-    recovers from its error has its picture deleted. snap(key) takes the picture, returning
-    its path; remove(path) deletes one."""
-
-    def __init__(self, path, snap, remove, offset=0):
-        self.path, self.snap, self.remove = path, snap, remove
-        self.offset = offset
-        self.current = None      # (task_id, key) of the task running now
-        self.pending = {}        # task_id -> (key, path) taken at an error, not yet confirmed
-        self.kept = []           # (key, path) of tasks that failed
-        self.done = set()        # task ids with a kept picture
-
-    def poll(self):
-        text = read_since(self.path, self.offset)
-        end = text.rfind("\n")
-        if end < 0:
-            return
-        chunk = text[:end + 1]
-        self.offset += len(chunk.encode("utf-8"))
-        for raw in chunk.splitlines():
-            self.line(raw.strip())
+class FailureWatch(FailureShots):
+    """MaaEnd's go-service.log while it runs. A task's first error line comes when it gets
+    stuck (a target not found on screen); "Task failed" only once MaaEnd has given up and
+    often left that screen, so the picture is taken at the error (see FailureShots)."""
 
     def line(self, raw):
         if not raw.startswith("{"):
@@ -93,42 +64,11 @@ class FailureWatch:
             return
         msg, entry, task_id = rec.get("message", ""), rec.get("entry"), rec.get("task_id")
         if entry and task_id is not None and msg == "Checking aspect ratio before task execution":
-            self.finish_current()
-            self.current = (task_id, ALIASES.get(entry, entry))
+            self.begin(task_id, ALIASES.get(entry, entry))
         elif entry and task_id is not None and "Task failed" in msg:
             self.failed(task_id, ALIASES.get(entry, entry))
-        elif rec.get("level") == "error" and self.current:
-            tid, key = self.current
-            if tid not in self.pending and tid not in self.done:
-                path = self.snap(key)
-                if path:
-                    self.pending[tid] = (key, path)
-
-    def failed(self, task_id, key):
-        if task_id in self.done:
-            return
-        shot = self.pending.pop(task_id, None)
-        if shot is None:
-            path = self.snap(key)
-            shot = (key, path) if path else None
-        if shot:
-            self.kept.append(shot)
-            self.done.add(task_id)
-
-    def finish_current(self):
-        """The task before the next one didn't fail after all: drop its picture."""
-        if self.current:
-            shot = self.pending.pop(self.current[0], None)
-            if shot:
-                self.remove(shot[1])
-
-    def close(self):
-        self.poll()
-        self.finish_current()
-        for key, path in self.pending.values():
-            self.remove(path)
-        self.pending = {}
-        return self.kept
+        elif rec.get("level") == "error":
+            self.error()
 
 
 def parse_endfield_log(text, rep, interrupted=False, expected=None, labels=None):

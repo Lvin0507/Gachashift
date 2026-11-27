@@ -209,7 +209,11 @@ class StallWatch:
 
     def stuck(self):
         now = self.clock()
-        size = log_size(self.log) if self.log else None
+        # only the size: log_size would also remember the file's first bytes, and a game's
+        # final read relies on those being from when the run started (27 Nov: OneDragon began
+        # a new log file, this check remembered the new file's start, and the report read
+        # only the last few lines of the run)
+        size = _size(self.log) if self.log else None
         log_moved, self.size = size != self.size, size
         shot = self.look()
         if shot is None:
@@ -236,6 +240,13 @@ def _head(path):
             return f.read(HEAD_BYTES)
     except OSError:
         return b""
+
+
+def _size(path):
+    try:
+        return os.path.getsize(path)
+    except OSError:
+        return None
 
 
 def log_size(path):
