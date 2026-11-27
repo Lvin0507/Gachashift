@@ -16,6 +16,13 @@ from ..system import (StopRequested, gryphlink_processes, kill, kill_processes, 
 from . import maaend_tasks
 from .base import Game
 
+
+def remove_file(path):
+    try:
+        os.remove(path)
+    except OSError:
+        pass
+
 TASKS = ["LaunchGamePC", "StashBackpackMain", "DijiangRewards", "OutpostTradingSchedule",
          "AutoStockStapleSchedule", "AutoStockpileMain", "DeliveryJobsMain", "AutoSellMain",
          "EnvironmentMonitoringMain", "TrialOfSwordmancyMain", "SeizeDeliveryJobs",
@@ -48,6 +55,80 @@ def match_renamed(runs, fails, expected):
     if not any(k not in expected for k in runs):
         return []
     return [k for k in expected if k != "LaunchGamePC" and not runs.get(k)]
+
+
+class FailureWatch:
+    """Reads go-service.log while MaaEnd runs, to take a picture as soon as a task fails.
+
+    A task's first error line comes when it gets stuck (a target not found on screen); "Task
+    failed" only comes once MaaEnd has given up on it, often after leaving that screen. So the
+    picture is taken at the first error line and kept if the task then fails; a task that
+    recovers from its error has its picture deleted. snap(key) takes the picture, returning
+    its path; remove(path) deletes one."""
+
+    def __init__(self, path, snap, remove, offset=0):
+        self.path, self.snap, self.remove = path, snap, remove
+        self.offset = offset
+        self.current = None      # (task_id, key) of the task running now
+        self.pending = {}        # task_id -> (key, path) taken at an error, not yet confirmed
+        self.kept = []           # (key, path) of tasks that failed
+        self.done = set()        # task ids with a kept picture
+
+    def poll(self):
+        text = read_since(self.path, self.offset)
+        end = text.rfind("\n")
+        if end < 0:
+            return
+        chunk = text[:end + 1]
+        self.offset += len(chunk.encode("utf-8"))
+        for raw in chunk.splitlines():
+            self.line(raw.strip())
+
+    def line(self, raw):
+        if not raw.startswith("{"):
+            return
+        try:
+            rec = json.loads(raw)
+        except ValueError:
+            return
+        msg, entry, task_id = rec.get("message", ""), rec.get("entry"), rec.get("task_id")
+        if entry and task_id is not None and msg == "Checking aspect ratio before task execution":
+            self.finish_current()
+            self.current = (task_id, ALIASES.get(entry, entry))
+        elif entry and task_id is not None and "Task failed" in msg:
+            self.failed(task_id, ALIASES.get(entry, entry))
+        elif rec.get("level") == "error" and self.current:
+            tid, key = self.current
+            if tid not in self.pending and tid not in self.done:
+                path = self.snap(key)
+                if path:
+                    self.pending[tid] = (key, path)
+
+    def failed(self, task_id, key):
+        if task_id in self.done:
+            return
+        shot = self.pending.pop(task_id, None)
+        if shot is None:
+            path = self.snap(key)
+            shot = (key, path) if path else None
+        if shot:
+            self.kept.append(shot)
+            self.done.add(task_id)
+
+    def finish_current(self):
+        """The task before the next one didn't fail after all: drop its picture."""
+        if self.current:
+            shot = self.pending.pop(self.current[0], None)
+            if shot:
+                self.remove(shot[1])
+
+    def close(self):
+        self.poll()
+        self.finish_current()
+        for key, path in self.pending.values():
+            self.remove(path)
+        self.pending = {}
+        return self.kept
 
 
 def parse_endfield_log(text, rep, interrupted=False, expected=None, labels=None):
@@ -176,19 +257,29 @@ class Endfield(Game):
     def run(self, timeout=5400):
         path = self.cfg["maaend_path"]
         log = os.path.join(self.cfg["log_dir"], "go-service.log")
-        stop = None
+        stop = failures = None
         try:
             if self.cfg.get("via_steam"):
                 # MaaEnd starts the game through Steam; a Steam without admin rights would make
                 # the game ask for them, a prompt nobody is there to answer
                 start_steam_elevated()
+            # only what this run writes: an old log left behind mustn't trigger pictures
+            log_start = os.path.getsize(log) if os.path.exists(log) else 0
             print(f"[{ts()}] starting {path}")
             subprocess.Popen([path], cwd=os.path.dirname(path))
             pause(15)
             start = time.time()
             watch = self.watch(log)
+            failures = FailureWatch(log, self.snap, remove_file, log_start) if self.shot_dir else None
+            rounds = 0
             while process_running("MaaEnd.exe") and time.time() - start < timeout:
-                pause(10)
+                # every 2 s for the failure pictures; the rest every 10 s as before
+                pause(2)
+                rounds += 1
+                if failures:
+                    failures.poll()
+                if rounds % 5:
+                    continue
                 if self.stuck(watch):
                     break
                 # MaaEnd stays open after its launch step fails; don't wait out the whole timeout
@@ -198,6 +289,8 @@ class Endfield(Game):
         except StopRequested as e:
             stop = e
         finally:
+            if failures:
+                self.failure_shots = failures.close()
             self.capture(["MaaEnd.exe", "Endfield.exe"])
             kill(["MaaEnd.exe", "Endfield.exe"])
             kill_processes(gryphlink_processes())

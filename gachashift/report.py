@@ -33,6 +33,7 @@ class GameReport:
     notes: list = field(default_factory=list)   # (string key, params) pairs
     seconds: float = 0                          # how long the tool ran, not counting waits
     screenshot: str = ""                        # the screen before cleanup, kept if it went badly
+    failure_shots: list = field(default_factory=list)  # (task key, path): taken as a task failed
     labels: dict = field(default_factory=dict)  # {task key: {lang: name}} from the tool itself
 
     def label(self, key, lang):

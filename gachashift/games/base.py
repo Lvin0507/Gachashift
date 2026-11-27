@@ -8,6 +8,9 @@ from ..report import GameReport
 from ..system import StallWatch, capture_screen, process_running, processes_in, ts
 
 
+MAX_FAILURE_SHOTS = 3  # pictures of failed tasks per game, besides the one at the end
+
+
 class Game:
     id = ""
     # (utc offset, reset hour) of the server's daily reset, or None
@@ -23,6 +26,7 @@ class Game:
         self.launcher_left = False  # its launcher was open but the game wasn't, at cleanup
         self.updater = None   # updater.Updates when "Update games first" is on
         self.update = None    # an update this run started for the game, still downloading
+        self.failure_shots = []  # (task key, path) taken while the tool ran, as a task failed
 
     def game_exes(self):
         """The game's own process names."""
@@ -100,6 +104,15 @@ class Game:
             return
         name = f"{datetime.datetime.now():%Y-%m-%d_%H%M%S}_{self.id}.jpg"
         self.shot = capture_screen(os.path.join(self.shot_dir, name))
+
+    def snap(self, key):
+        """A picture of the screen right now, for a task that just failed; its path or None.
+        Only when screenshots are on, and at most MAX_FAILURE_SHOTS per game."""
+        if not self.shot_dir or len(self.failure_shots) >= MAX_FAILURE_SHOTS:
+            return None
+        safe = "".join(c if c.isalnum() else "-" for c in key)[:40]
+        name = f"{datetime.datetime.now():%Y-%m-%d_%H%M%S}_{self.id}_{safe}.jpg"
+        return capture_screen(os.path.join(self.shot_dir, name))
 
     def missing_settings(self):
         return [key for key in self.required if not self.cfg.get(key)]

@@ -103,6 +103,7 @@ def run_game(game_cls, game_cfg, lang, wait_reset=True, shots=None, updates=None
         finally:
             rep.seconds = time.time() - started
             rep.screenshot = game.shot or ""
+            rep.failure_shots = list(game.failure_shots)
         if game.stalled:
             rep.note("note.stalled", minutes=game.stalled)
         rep.update = game.update
@@ -113,6 +114,7 @@ def run_game(game_cls, game_cfg, lang, wait_reset=True, shots=None, updates=None
         print(f"[{ts()}] {game.id} failed: {e}")
         rep.note("note.error", error=f"{type(e).__name__}: {e}")
         rep.screenshot = game.shot or ""
+        rep.failure_shots = list(game.failure_shots)
         return explain(rep, game_cfg, game)
 
 
@@ -135,18 +137,50 @@ def remove_file(path):
             pass
 
 
+# Notes that say the run itself ended badly: the screen at the end shows why
+END_SHOT_NOTES = ("note.error", "note.stalled", "note.timeout", "note.not_started", "note.no_records",
+                  "note.no_done_marker", "note.maybe_update", "note.update_failed",
+                  "note.baas_not_started", "note.locked")
+
+
+def end_shot_wanted(rep):
+    """The picture taken at the end is worth sending when the game ended badly: nothing got
+    done, the run went wrong (a timeout, a crash, a client update), or the last task failed.
+    A task that failed earlier, with later ones done, says nothing about the end: the screen
+    has long moved on (tools that report failures as they happen get their own pictures)."""
+    if R.outcome(rep) == "fail":
+        return True
+    if any(key in END_SHOT_NOTES for key, _ in rep.notes):
+        return True
+    ran = [task for task in rep.tasks if task.status not in (R.SKIPPED, R.NOTHING)]
+    return bool(ran) and ran[-1].status == R.FAIL
+
+
+def discard_pictures(rep):
+    remove_file(rep.screenshot)
+    rep.screenshot = ""
+    for _, path in rep.failure_shots:
+        remove_file(path)
+    rep.failure_shots = []
+
+
 def screenshots_to_send(reports, stopped, lang):
-    """(caption, path) for each game that didn't go well. Pictures of games that went fine,
-    and every picture of a run the user stopped, are deleted."""
+    """(caption, path) for each picture worth sending: one per failed task where the tool says
+    so while it runs, then the screen at the end when the game ended badly. The rest, and every
+    picture of a run the user stopped, are deleted."""
     photos = []
     for rep in reports:
-        if not rep.screenshot:
-            continue
+        game = R.short_name(rep.game, lang)
         if stopped or R.outcome(rep) == "ok":
+            discard_pictures(rep)
+            continue
+        for key, path in rep.failure_shots:
+            photos.append((t(lang, "photo.task_failed", game=game, task=rep.label(key, lang)), path))
+        if rep.screenshot and end_shot_wanted(rep):
+            photos.append((t(lang, "photo.caption", game=game), rep.screenshot))
+        elif rep.screenshot:
             remove_file(rep.screenshot)
             rep.screenshot = ""
-        else:
-            photos.append((t(lang, "photo.caption", game=R.short_name(rep.game, lang)), rep.screenshot))
     return photos
 
 
@@ -248,7 +282,7 @@ def run_games(cfg, only, lang, opts, log, dim=False, shots=None, status=None, up
                 if getattr(rep, "update", None) and attempts < 2:
                     # the launcher had another update once Steam's was done: wait for that too
                     later.append((index, game_cls, game_cfg, attempts + 1))
-                remove_file(reports[index].screenshot)
+                discard_pictures(reports[index])
                 reports[index] = rep
         except StopRequested as stop:
             if getattr(stop, "report", None):
@@ -272,7 +306,7 @@ def run_games(cfg, only, lang, opts, log, dim=False, shots=None, status=None, up
                 return reports, True
             # the second attempt is what the game is in now, so it replaces the first
             rep.note("note.retried")
-            remove_file(reports[index].screenshot)
+            discard_pictures(reports[index])
             reports[index] = rep
     return reports, False
 
