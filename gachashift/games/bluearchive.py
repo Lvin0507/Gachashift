@@ -2,7 +2,12 @@
 
 The JP client must be opened from its launcher (click スタート), BAAS needs a 1280x720 window,
 and BAAS exits by itself when done. Its .exe is only a launcher that starts the real BAAS
-(pythonw.exe inside the BAAS folder), so we watch every process living in that folder."""
+(pythonw.exe inside the BAAS folder), so we watch every process living in that folder.
+
+BAAS writes no log file (its log only goes to its window). What it does keep is
+config/<name>/event.json: each daily with the time it is next due ("next_tick"), moved past the
+next reset as soon as the daily is finished. Reading that file before and after the run tells
+which dailies got done, and where BAAS stopped."""
 
 import os
 import subprocess
@@ -10,6 +15,7 @@ import time
 
 from .. import report as R
 from ..system import StopRequested, kill, kill_processes, launch_and_click, pause, processes_in, ts
+from ..toolcheck import baas_config_paths, read_json
 from .base import Game, minutes_since
 
 REG_KEY = r"Software\YostarJP\BlueArchive"
@@ -27,6 +33,55 @@ WINDOWED = {
     "Screenmanager Window Position X": 0,
     "Screenmanager Window Position Y": 0,
 }
+SKIP_EVENTS = ("restart",)  # BAAS's own restart at the daily reset, not a daily
+
+
+def event_paths(baas_dir):
+    """event.json of each BAAS config that runs on startup (every config, when none does)."""
+    configs = baas_config_paths({"baas_dir": baas_dir})
+    running = [p for p, d in configs.items() if d.get("autostart") is True] or list(configs)
+    return [os.path.join(os.path.dirname(p), "event.json") for p in running]
+
+
+def read_events(paths):
+    """{path: [daily, ...]} for each event.json that could be read."""
+    found = {}
+    for path in paths:
+        data = read_json(path)
+        if isinstance(data, list):
+            found[path] = [e for e in data if isinstance(e, dict)]
+    return found
+
+
+def _tick(event):
+    try:
+        return float(event.get("next_tick") or 0)
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def daily_results(before, after, since):
+    """[(name, status)] for each daily switched on in BAAS, in the order BAAS runs them:
+    ALREADY when it wasn't due, OK when BAAS finished it during the run, FAIL for the first
+    due one it didn't finish (where it stopped), SKIPPED for those it never got to."""
+    later = {(path, e.get("func_name")): _tick(e) for path, events in after.items() for e in events}
+    results, stopped = [], False
+    for path, events in before.items():
+        for event in sorted(events, key=lambda e: e.get("priority") or 0):
+            func = event.get("func_name")
+            if not event.get("enabled") or func in SKIP_EVENTS:
+                continue
+            name = event.get("event_name") or func
+            if _tick(event) > since:
+                status = R.ALREADY
+            elif later.get((path, func), 0) > since:
+                status = R.OK
+            elif not stopped:
+                status, stopped = R.FAIL, True
+            else:
+                status = R.SKIPPED
+            results.append((name, status))
+    return results
 
 
 def set_windowed():
@@ -75,7 +130,7 @@ class BlueArchive(Game):
             set_windowed()
         except OSError as e:
             print(f"could not set window size: {e}")
-        reason, saw_baas = "timeout", False
+        reason, saw_baas, before = "timeout", False, {}
         ran_since = gone_since = None  # BAAS's task runner first seen; BAAS last seen gone
         start = time.time()
         try:
@@ -87,6 +142,7 @@ class BlueArchive(Game):
                 rep.note("note.not_started", hint="hint.launcher")
                 return rep
             start = time.time()  # time BAAS itself, not the launcher
+            before = read_events(event_paths(baas_dir))
             print(f"[{ts()}] starting {baas_exe}")
             # its own console: redirecting its output crashes it on a cp932 system
             subprocess.Popen([baas_exe], cwd=baas_dir, creationflags=subprocess.CREATE_NEW_CONSOLE)
@@ -134,12 +190,16 @@ class BlueArchive(Game):
             time.sleep(3)
 
         minutes = minutes_since(start)
-        # BAAS keeps no task log; how long its runner worked before it was stopped is the
-        # best sign of whether the dailies got done
         stalled = self.stalled * 60 if reason == "stalled" else 0
         worked = (time.time() - ran_since - stalled) / 60 if ran_since else 0
         print(f"[{ts()}] Blue Archive ended: {reason}, BAAS runner seen={saw_baas}, "
               f"worked about {worked:.0f} min")
+        dailies = daily_results(before, read_events(list(before)), start) if before else []
+        if dailies and reason != "not_started":
+            print(f"[{ts()}] BAAS dailies: " + ", ".join(f"{name}={status}" for name, status in dailies))
+            self.judge_dailies(rep, dailies, reason, minutes)
+            return rep
+        # no record to read (event.json not found): how long BAAS worked is the best sign
         if reason in ("stalled", "timeout") and worked >= WORKED_MINUTES:
             rep.add("baas", R.PARTIAL)
             rep.note("note.baas_stopped_after_work", minutes=round(worked))
@@ -159,3 +219,24 @@ class BlueArchive(Game):
             rep.add("baas", R.WARN)
             rep.note("note.timeout", minutes=minutes)
         return rep
+
+    @staticmethod
+    def judge_dailies(rep, dailies, reason, minutes):
+        """Report each daily from BAAS's own record of what it finished."""
+        due = [(name, status) for name, status in dailies if status != R.ALREADY]
+        done = [name for name, status in due if status == R.OK]
+        if due and not done and reason == "closed_early":
+            # BAAS came and went without touching a daily that was due
+            rep.add("baas", R.FAIL)
+            rep.note("note.baas_closed_with_dailies", count=len(due))
+            return
+        for name, status in dailies:
+            rep.add(name, status)
+        stopped_at = next((name for name, status in due if status == R.FAIL), None)
+        if stopped_at is None:
+            if due:
+                rep.note("note.finished", minutes=minutes)
+        elif reason == "exited":
+            rep.note("note.baas_stopped_at", task=stopped_at)
+        else:
+            rep.note("note.baas_stuck_at", task=stopped_at)

@@ -45,7 +45,7 @@ Each game can be turned on or off and given its own weekdays. When everything is
 
 『🎯 Arknights』✅ All 6 done
 
-『📘 Blue Archive』BAAS dailies: ✅ Done · 13 min
+『📘 Blue Archive』✅ All 8 done · 13 min
 
 『⚡ Zenless Zone Zero』✅ All 8 done · 6 min
 
@@ -128,7 +128,7 @@ Add `--lang zh` for a Chinese report.
 
 ## Known limitations
 
-- **Blue Archive's ✅ means BAAS finished, not that every daily mission is done.** BAAS doesn't write its task log to a file, so Gachashift only knows that BAAS ran and exited normally. Which missions get done depends on the tasks enabled in BAAS.
+- **Blue Archive's results come from BAAS's schedule, not a log.** BAAS doesn't write its task log to a file. It does keep `config/<name>/event.json`, where each daily's next due time moves past the next reset once the daily is finished, so Gachashift compares that file before and after the run. That shows which dailies got done and where BAAS stopped. It reflects BAAS's own idea of done: a daily BAAS thinks it finished but didn't fully do still shows ✅. If the file can't be found, the result falls back to how long BAAS ran.
 - **OneDragon updates itself on every start**, and an update that needs a driver installed waits for a click. Open OneDragon by hand once after each game update, so the morning run doesn't stop at that window.
 - **Wuthering Waves only runs the weekly garden task** for now.
 - **Genshin's commissions depend on BetterGI's community scripts.** Some commissions have no route yet; the commission reward can still be claimed with Adventurer Rank points. Turn off BetterGI's automatic script updates, so an update can't replace a script while it runs.
@@ -188,6 +188,7 @@ Problems I hit while building this, and what fixed them:
 - **The script needs a 1280x720 window, but I play full screen.** Blue Archive (Unity) keeps its window size in the registry, so Gachashift writes a 1280x720 window before launching. Restoring full screen afterwards turned out not to be possible from the registry: the game's full-screen toggle isn't stored in Unity's standard settings, and an earlier save-and-restore approach also broke once an interrupted run left the window values behind. So Gachashift only sets the window it needs, and I press Alt+Enter when I play.
 - **"Wait for the process to exit" waited for the wrong process.** BAAS's `.exe` is only a launcher that starts the real script and quits. Gachashift tracks the processes running from inside each tool's folder, matching on the path so it never touches its own `python.exe`. Later BAAS started leaving `adb.exe` running after it quit, so for BAAS the run now ends when its main `pythonw.exe` exits, and the leftovers are closed.
 - **Redirecting a tool's output crashed it.** BAAS's launcher prints a banner with block characters. Sent to a file, Python fell back to the system's Japanese code page (cp932), which can't encode them, and the launcher died before starting BAAS. Giving it its own console window fixed it.
+- **A tool with no log can still say what it did.** BAAS logs only to its window, so for a while Blue Archive was judged by how long BAAS ran, and a run that got stuck partway was reported as "nothing got done". BAAS's scheduler file, which it rewrites after every finished daily, turned out to be a better record than any log line.
 - **The JP client can't be started directly.** Running `BlueArchive.exe` by itself crashes at login, and the official launcher has no auto-start option. Gachashift opens the launcher, finds its window by process, and clicks スタート (as a fraction of the window size, so it survives DPI scaling) until the game process appears. The position is calibrated once per launcher, or found for you: launchers keep a big, evenly coloured, wide button in their lower right while the rest is game art, so Gachashift looks for the largest flat, button-shaped patch of colour there. If clicks at the saved position do nothing three times (a new monitor, a redesigned launcher), it looks for the button the same way.
 - **A real-mouse click can land on the wrong window.** Windows sometimes refuses to bring a window to the front, and one morning a click meant for Blue Archive's launcher opened Endfield's instead. Gachashift now checks that the launcher really is the foreground window before clicking, and skips the click if it isn't.
 - **The Steam build of ZZZ can't be launched directly.** Starting the game exe makes it quit and ask for Steam, and Steam then opens the HoYoverse launcher, which needs a click on its start button. Gachashift starts the game through `steam://rungameid/`, clicks the launcher's button the same way it does for Blue Archive, and only then hands the running game to OneDragon. A Wuthering Waves update later brought the same launcher step to its Steam build, and it is handled the same way.

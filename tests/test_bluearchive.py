@@ -1,5 +1,9 @@
-"""How a Blue Archive run is judged from the BAAS processes Gachashift can see."""
+"""How a Blue Archive run is judged: from BAAS's own record of finished dailies (event.json)
+when it can be read, otherwise from the BAAS processes Gachashift can see."""
 
+import json
+import os
+import tempfile
 import unittest
 from unittest import mock
 
@@ -18,11 +22,13 @@ BAAS = [P("BlueArchiveAutoScript.exe")]
 RUNNING = [P("BlueArchiveAutoScript.exe"), P("pythonw.exe")]
 
 
-class BlueArchiveTest(unittest.TestCase):
-    def play(self, sightings, seconds_per_look=2, stuck_after=None):
+class Runs:
+    def play(self, sightings, seconds_per_look=2, stuck_after=None, events=None):
         """sightings: what is running in the BAAS folder at each look; the last one stays.
-        stuck_after: seconds after which the screen counts as still for 15 min."""
+        stuck_after: seconds after which the screen counts as still for 15 min.
+        events: (before, after) event.json contents; None means no event.json was found."""
         clock = [1000.0]
+        records = iter([{"event.json": e} for e in events] if events else [])
         looks = iter(sightings)
         last = [sightings[-1]]
 
@@ -37,7 +43,9 @@ class BlueArchiveTest(unittest.TestCase):
                                         "start_button": [0.85, 0.86]})
         with mock.patch.multiple(bluearchive, launch_and_click=lambda *a, **k: True,
                                  set_windowed=lambda: None, processes_in=processes_in, pause=pause,
-                                 kill=lambda names: None, kill_processes=lambda procs: None), \
+                                 kill=lambda names: None, kill_processes=lambda procs: None,
+                                 event_paths=lambda folder: ["event.json"],
+                                 read_events=lambda paths: next(records, {})), \
                 mock.patch.object(bluearchive.subprocess, "Popen", lambda *a, **k: None), \
                 mock.patch.object(bluearchive.subprocess, "CREATE_NEW_CONSOLE", 16, create=True), \
                 mock.patch.object(bluearchive.time, "time", lambda: clock[0]), \
@@ -52,6 +60,10 @@ class BlueArchiveTest(unittest.TestCase):
             game.stalled = 15
             return True
         return False
+
+
+class BlueArchiveTest(Runs, unittest.TestCase):
+    """No event.json found: the timing decides."""
 
     def test_long_run_then_stuck_counts_as_done(self):
         # 27 Nov: BAAS did its dailies, then stood on a rewards screen until the stall check
@@ -105,6 +117,112 @@ class BlueArchiveTest(unittest.TestCase):
         for lang in ("en", "zh"):
             for key in ("note.baas_closed_early", "note.baas_not_started"):
                 self.assertIn(key, STRINGS[lang], (lang, key))
+
+
+def daily(name, priority, tick, func=None, enabled=True):
+    return {"enabled": enabled, "priority": priority, "next_tick": tick, "event_name": name,
+            "func_name": func or name}
+
+
+DUE, DONE = 900, 5000   # next_tick before the run (1000) and after it
+# the dailies BAAS has switched on in the player's config, in BAAS's order (lowest first)
+NAMES = ["竞技场", "咖啡厅", "日程", "查收邮箱", "悬赏通缉", "普通关清体力", "自动制造", "收集奖励"]
+
+
+def dailies(ticks):
+    """event.json with BAAS's own restart (not a daily), a switched-off daily, and NAMES."""
+    found = [daily("凌晨四点重启", -2, ticks.get("restart", DUE), func="restart"),
+             daily("总力战", 13, DUE, enabled=False)]
+    return found + [daily(name, i, ticks.get(name, DUE)) for i, name in enumerate(NAMES)]
+
+
+class DailyRecordTest(Runs, unittest.TestCase):
+    """BAAS's event.json, read before and after the run."""
+
+    def tasks(self, rep):
+        return [(t.key, t.status) for t in rep.tasks]
+
+    def test_everything_done(self):
+        rep = self.play([BAAS] + [RUNNING] * 100 + [[]],
+                        events=(dailies({}), dailies({name: DONE for name in NAMES})))
+        self.assertEqual(self.tasks(rep), [(name, R.OK) for name in NAMES])
+        self.assertEqual([k for k, _ in rep.notes], ["note.finished"])
+        self.assertEqual(R.outcome(rep), "ok")
+        self.assertFalse(runner.end_shot_wanted(rep))
+        self.assertFalse(runner.needs_retry(rep))
+
+    def test_stuck_on_the_last_daily(self):
+        # 27 Nov: BAAS stood on a 報酬獲得 screen until the stall check closed it
+        after = dailies({name: DONE for name in NAMES[:-1]})
+        rep = self.play([BAAS] + [RUNNING] * 1000, stuck_after=40 * 60, events=(dailies({}), after))
+        self.assertEqual(self.tasks(rep), [(n, R.OK) for n in NAMES[:-1]] + [("收集奖励", R.FAIL)])
+        self.assertEqual(rep.notes, [("note.baas_stuck_at", {"task": "收集奖励"})])
+        self.assertFalse(R.nothing_done(rep))
+        self.assertTrue(runner.end_shot_wanted(rep))   # the picture shows where it stopped
+        self.assertTrue(runner.needs_retry(rep))       # a second run does what is left
+
+    def test_stuck_early_leaves_the_rest_not_run(self):
+        after = dailies({"竞技场": DONE, "咖啡厅": DONE})
+        rep = self.play([BAAS] + [RUNNING] * 1000, stuck_after=20 * 60, events=(dailies({}), after))
+        self.assertEqual(self.tasks(rep)[:4], [("竞技场", R.OK), ("咖啡厅", R.OK), ("日程", R.FAIL),
+                                               ("查收邮箱", R.SKIPPED)])
+        self.assertEqual(rep.notes, [("note.baas_stuck_at", {"task": "日程"})])
+
+    def test_baas_gave_up_on_a_daily(self):
+        # BAAS stops by itself when a daily fails three times
+        after = dailies({name: DONE for name in NAMES[:4]})
+        rep = self.play([BAAS] + [RUNNING] * 100 + [[]], events=(dailies({}), after))
+        self.assertEqual(self.tasks(rep)[4], ("悬赏通缉", R.FAIL))
+        self.assertEqual(rep.notes, [("note.baas_stopped_at", {"task": "悬赏通缉"})])
+        self.assertTrue(runner.needs_retry(rep))
+
+    def test_second_attempt_does_the_rest(self):
+        before = dailies({name: DONE for name in NAMES[:-1]})
+        rep = self.play([BAAS] + [RUNNING] * 60 + [[]],
+                        events=(before, dailies({name: DONE for name in NAMES})))
+        self.assertEqual(self.tasks(rep), [(n, R.ALREADY) for n in NAMES[:-1]] + [("收集奖励", R.OK)])
+        self.assertEqual(R.outcome(rep), "ok")
+
+    def test_nothing_due_and_baas_left_at_once(self):
+        # e.g. BAAS was run by hand earlier: not a warning any more, the record says so
+        done = dailies({name: DONE for name in NAMES})
+        rep = self.play([BAAS, []], events=(done, done))
+        self.assertEqual(self.tasks(rep), [(n, R.ALREADY) for n in NAMES])
+        self.assertEqual(rep.notes, [])
+        self.assertEqual(R.outcome(rep), "ok")
+
+    def test_baas_left_at_once_with_dailies_due(self):
+        rep = self.play([BAAS, []], events=(dailies({}), dailies({})))
+        self.assertEqual(self.tasks(rep), [("baas", R.FAIL)])
+        self.assertEqual(rep.notes, [("note.baas_closed_with_dailies", {"count": len(NAMES)})])
+        self.assertTrue(runner.needs_retry(rep))
+
+    def test_baas_never_starts_its_tasks(self):
+        rep = self.play([BAAS], events=(dailies({}), dailies({})))
+        self.assertEqual(self.tasks(rep), [("baas", R.FAIL)])
+        self.assertEqual(rep.notes[0][0], "note.baas_not_started")
+
+    def test_texts_exist(self):
+        from gachashift.i18n import STRINGS
+        for lang in ("en", "zh"):
+            for key in ("note.baas_stuck_at", "note.baas_stopped_at", "note.baas_closed_with_dailies"):
+                self.assertIn(key, STRINGS[lang], (lang, key))
+
+
+class EventFilesTest(unittest.TestCase):
+    def test_config_that_runs_on_startup(self):
+        with tempfile.TemporaryDirectory() as baas:
+            for name, autostart in (("jp", True), ("global", False)):
+                folder = os.path.join(baas, "config", name)
+                os.makedirs(folder)
+                with open(os.path.join(folder, "config.json"), "w", encoding="utf-8") as f:
+                    json.dump({"autostart": autostart}, f)
+                with open(os.path.join(folder, "event.json"), "w", encoding="utf-8") as f:
+                    json.dump(dailies({}), f, ensure_ascii=False)
+            paths = bluearchive.event_paths(baas)
+            self.assertEqual(paths, [os.path.join(baas, "config", "jp", "event.json")])
+            self.assertEqual(len(bluearchive.read_events(paths + ["missing.json"])[paths[0]]),
+                             len(NAMES) + 2)
 
 
 class RetryWordingTest(unittest.TestCase):

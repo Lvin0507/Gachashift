@@ -140,7 +140,8 @@ def remove_file(path):
 # Notes that say the run itself ended badly: the screen at the end shows why
 END_SHOT_NOTES = ("note.error", "note.stalled", "note.timeout", "note.not_started", "note.no_records",
                   "note.no_done_marker", "note.maybe_update", "note.update_failed",
-                  "note.baas_not_started", "note.baas_stopped_after_work", "note.locked")
+                  "note.baas_not_started", "note.baas_stopped_after_work", "note.baas_stuck_at",
+                  "note.baas_stopped_at", "note.baas_closed_with_dailies", "note.locked")
 
 
 def end_shot_wanted(rep):
@@ -195,7 +196,8 @@ def prune_screenshots(keep_days=SCREENSHOT_DAYS):
 # The tool stopped partway through its own list: a second run picks up what is left (BAAS
 # skips what it already did). 27 Nov: BAAS got stuck after 4 min, and the second run did 11
 # more minutes of dailies.
-RETRY_NOTES = ("note.baas_stopped_after_work",)
+# BAAS stopped partway: a second run does only what is left, since BAAS skips finished dailies
+RETRY_NOTES = ("note.baas_stopped_after_work", "note.baas_stuck_at", "note.baas_stopped_at")
 
 
 def stuck_partway(rep):

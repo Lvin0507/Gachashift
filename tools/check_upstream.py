@@ -81,6 +81,20 @@ WATCH = [
         "strings": ["exception stopped", "game exited"],
     },
     {
+        # BAAS keeps no log file; its scheduler file says which dailies got done
+        "repo": "pur1fying/blue_archive_auto_script",
+        "game": "Blue Archive",
+        "used_in": "gachashift/games/bluearchive.py",
+        "paths": ["core"],
+        "strings": [
+            '"/event.json"',
+            "event['next_tick'] = int(event['next_tick'])",  # written once a daily is finished
+            "x['next_tick'] <= time_since_epoch",             # what is due
+            "key=lambda x: x['priority']",                    # the order dailies run in
+            "'func_name'", "'event_name'", "'enabled'",
+        ],
+    },
+    {
         "repo": "OneDragon-Anything/ZenlessZoneZero-OneDragon",
         "game": "Zenless Zone Zero",
         "used_in": "gachashift/games/zzz.py",
