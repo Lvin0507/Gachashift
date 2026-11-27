@@ -31,7 +31,7 @@ You also need the automation tool for each game you play (MaaEnd, MAA, ok-ww, BA
 | Wuthering Waves (official or Steam) | [ok-ww](https://github.com/ok-oldking/ok-wuthering-waves) | Weekly garden task, Mondays by default |
 | Blue Archive (JP PC client) | [BAAS](https://github.com/pur1fying/blue_archive_auto_script) | Cafe, lessons, arena, sweeps, crafting, rewards |
 | Zenless Zone Zero (official or Steam) | [OneDragon](https://github.com/OneDragon-Anything/ZenlessZoneZero-OneDragon) | Redeem codes, check-in, mail, video store, coffee, rewards |
-| Genshin Impact | [BetterGI](https://github.com/babalae/better-genshin-impact) | Mail, daily commissions, commission reward, expeditions |
+| Genshin Impact | [BetterGI](https://github.com/babalae/better-genshin-impact) | Mail, daily commissions, commission reward, expeditions, domains (resin) |
 
 Each game can be turned on or off and given its own weekdays. When everything is done, Gachashift sends a short report to Telegram or Discord (English by default, Chinese optional). Anything you need to do by hand comes first; a game where everything worked takes one line, and only the tasks that need a look are listed:
 
@@ -133,7 +133,7 @@ Add `--lang zh` for a Chinese report.
 - **When BAAS gets stuck, Gachashift does what you would.** If the screen stays still for 5 minutes, it taps once where BAAS itself taps to close a reward pop-up, then waits 3 more minutes. If the screen still doesn't move, or no daily gets finished for 20 minutes while BAAS keeps going round in circles, it closes BAAS and starts it again (the game stays open, and BAAS skips the dailies it already did). If BAAS gets stuck at the same daily twice, it gives up and the report names that daily: usually its settings in BAAS don't match what the game shows. The tap uses the real mouse, like the launcher clicks.
 - **OneDragon updates itself on every start**, and an update that needs a driver installed waits for a click. Open OneDragon by hand once after each game update, so the morning run doesn't stop at that window.
 - **Wuthering Waves only runs the weekly garden task** for now.
-- **Genshin's commissions depend on BetterGI's community scripts.** Some commissions have no route yet; the commission reward can still be claimed with Adventurer Rank points. Turn off BetterGI's automatic script updates, so an update can't replace a script while it runs.
+- **Genshin's commissions depend on BetterGI's community scripts.** Some commissions have no route yet, and a misread name or a lost fight can leave one undone; the commission reward can still be claimed with Adventurer Rank points (the 使用历练点完成每日委托 script). Turn off BetterGI's automatic script updates, so an update can't replace a script while it runs.
 - **Windows only**, because every tool is Windows-only.
 
 ## Project layout

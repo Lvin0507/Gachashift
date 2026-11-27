@@ -24,16 +24,50 @@ GAME_EXES = ["GenshinImpact.exe", "YuanShen.exe"]  # global / China client
 # The log file quotes values ("全部领取"); BetterGI's console output doesn't. Accept both.
 MAIL = re.compile(r"邮件：[\"“]?([^\"”\r\n]+)")
 PROGRESS = re.compile(r"当前每日委托奖励进度: (\d+)/(\d+)")
-SUCCESS = re.compile(r"委托执行成功：")
+SUCCESS_NAME = re.compile(r"委托执行成功：[\"“]?([^\"”\r\n]+)")
 DISPATCH_CLAIMED = re.compile(r"探索派遣：[\"“]?全部领取")
 DISPATCH_NOTHING = re.compile(r"探索派遣[\"”]? 未探索完成或已领取")
 DAILY = re.compile(r"检查每日奖励结果：[\"“]?([^\"”\r\n]+)")
 CLAIMED = "今日奖励已领取"
+REWARD_TASK = "前往冒险家协会领取奖励"  # the one-dragon task that claims the commission reward
 DONE = "一条龙和配置组任务结束"
+# The commission script lists the four commissions it found ("委托 1 | name | 已完成 | ..."),
+# which newer versions log even when they can't read the reward progress
+LISTED = re.compile(r"^委托 (\d) \| .*? \| (已完成|未完成|未知) \|", re.M)
+# Domains (自动秘境), which spend the resin
+DOMAIN = re.compile(r"自动秘境任务：执行|自动秘境[\"”]?：")
+# one domain reward claimed; older BetterGI: '"自动秘境"：使用 "原粹树脂", 数量：20',
+# newer: '自动秘境：使用 原粹树脂，消耗：20'
+DOMAIN_CLAIMED = re.compile(r"自动秘境[\"”]?：使用 [\"“]?[^\"”，,\r\n]+[\"”]?[,，] ?(?:数量|消耗)：\d+")
+DOMAIN_ENDED = ("体力耗尽或者设置轮次已达标，结束自动秘境",  # resin used up, or the set rounds done
+                "自动秘境：检测到树脂不足提示")             # no resin to start with
 
 
 def log_path(bgi_dir, day):
     return os.path.join(bgi_dir, "log", f"better-genshin-impact{day:%Y%m%d}.log")
+
+
+def count_commissions(text):
+    """(done, total) of today's four commissions, or None if the script didn't run.
+    The progress line is only logged when the commission page is read, usually before the
+    commissions run, and the list of commissions likewise; the ones that finished after it
+    are added."""
+    succeeded = len(set(SUCCESS_NAME.findall(text)))
+    found = []
+    progress = PROGRESS.findall(text)
+    if progress:
+        first, total = int(progress[0][0]), int(progress[0][1])
+        found.append((max(int(progress[-1][0]), min(total, first + succeeded)), total))
+    starts = [m.start() for m in LISTED.finditer(text) if m.group(1) == "1"]
+    if starts:
+        # the last time the list was read, and what finished after it
+        rest = text[starts[-1]:]
+        listed = dict(LISTED.findall(rest))
+        total = len(listed)
+        before = sum(1 for state in listed.values() if state == "已完成")
+        after = len(set(SUCCESS_NAME.findall(rest)))
+        found.append((min(total, before + after), total))
+    return max(found) if found else None
 
 
 def parse_bgi_log(text, rep, minutes, reason, stopped=False):
@@ -48,12 +82,9 @@ def parse_bgi_log(text, rep, minutes, reason, stopped=False):
     if mail:
         rep.add("mail", R.OK)
 
-    progress = PROGRESS.findall(text)
-    if progress:
-        # The progress line is only logged when the commission page is read, usually before
-        # the commissions run, so add the ones that finished after it.
-        first, total = int(progress[0][0]), int(progress[0][1])
-        done = max(int(progress[-1][0]), min(total, first + len(SUCCESS.findall(text))))
+    commissions = count_commissions(text)
+    if commissions:
+        done, total = commissions
         rep.add("commissions", R.OK if done == total else R.PARTIAL, f"{done}/{total}")
 
     if DISPATCH_CLAIMED.search(text):
@@ -61,11 +92,23 @@ def parse_bgi_log(text, rep, minutes, reason, stopped=False):
     elif DISPATCH_NOTHING.search(text):
         rep.add("dispatch", R.NOTHING)
 
+    if DOMAIN.search(text):
+        rounds = len(DOMAIN_CLAIMED.findall(text))
+        if any(end in text for end in DOMAIN_ENDED):
+            rep.add("domain", R.OK if rounds else R.NOTHING, f"×{rounds}" if rounds else "")
+        elif stopped:
+            rep.add("domain", R.SKIPPED)
+        else:
+            # BetterGI moved on without saying the resin was used up: an error or a wipe
+            rep.add("domain", R.PARTIAL if rounds else R.FAIL, f"×{rounds}" if rounds else "")
+
     daily = DAILY.findall(text)
     if daily:
         result = daily[-1].strip()
         rep.add("daily_reward", R.OK if result == CLAIMED else R.FAIL,
                 "" if result == CLAIMED else result)
+    elif not (commissions or REWARD_TASK in text):
+        pass  # a config without commissions (only domains, say): no reward to ask about
     elif stopped:
         rep.add("daily_reward", R.SKIPPED)
     else:

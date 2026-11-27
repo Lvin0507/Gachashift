@@ -12,7 +12,7 @@ import unittest
 from gachashift import report as R
 from gachashift.games.arknights import parse_maa_log
 from gachashift.games.endfield import parse_endfield_log
-from gachashift.games.genshin import parse_bgi_log
+from gachashift.games.genshin import count_commissions, parse_bgi_log
 from gachashift.games.wuthering import parse_ww_log
 from gachashift.games.zzz import parse_od_log
 from gachashift.system import log_size, read_since
@@ -61,6 +61,58 @@ class GenshinTest(unittest.TestCase):
     def test_empty_log(self):
         rep = parse_bgi_log("", R.GameReport("genshin"), 0, "not_started")
         self.assertEqual(notes(rep), ["note.no_records"])
+
+    def test_commission_list_without_progress_line(self):
+        # 27 Nov, commission script 1.0.5: no "当前每日委托奖励进度" line, only the list of the
+        # four (three already done) and the one it then finished
+        rep = self.parse("bettergi_2026-11-27.log")
+        self.assertEqual(tasks(rep), {
+            "commissions": (R.OK, "4/4"), "dispatch": (R.NOTHING, ""), "daily_reward": (R.OK, "")})
+        self.assertEqual(notes(rep), ["note.finished"])
+
+    def test_misread_commission_and_a_domain_cut_short(self):
+        # one commission's name misread ("鸿子习惯："), so skipped as unsupported; the game
+        # was closed during the first domain
+        rep = self.parse("bettergi_2026-11-27_mondstadt.log")
+        self.assertEqual(tasks(rep)["commissions"], (R.PARTIAL, "3/4"))
+        self.assertEqual(tasks(rep)["dispatch"], (R.OK, ""))
+        self.assertEqual(tasks(rep)["domain"], (R.FAIL, ""))
+
+    def test_domain_stopped_after_one_reward(self):
+        rep = self.parse("bettergi_2026-11-27_domain.log")
+        self.assertEqual(tasks(rep)["domain"], (R.PARTIAL, "×1"))
+
+    def domain(self, *lines):
+        text = "\n".join(["自动秘境任务：执行", *lines])
+        return tasks(parse_bgi_log(text, R.GameReport("genshin"), 30, "exited"))["domain"]
+
+    def test_domain_resin_used_up(self):
+        claim_old = '"自动秘境"：使用 "原粹树脂", 数量：20'
+        claim_new = "自动秘境：使用 浓缩树脂，消耗：1"
+        self.assertEqual(self.domain(claim_old, claim_old, claim_new,
+                                     "体力耗尽或者设置轮次已达标，结束自动秘境"), (R.OK, "×3"))
+
+    def test_config_with_domains_only(self):
+        # a one-dragon config that only spends resin: no commission reward to warn about
+        text = "\n".join(["自动秘境任务：执行", '"自动秘境"：使用 "原粹树脂", 数量：20',
+                          "体力耗尽或者设置轮次已达标，结束自动秘境", "一条龙和配置组任务结束"])
+        rep = parse_bgi_log(text, R.GameReport("genshin"), 30, "exited")
+        self.assertEqual(tasks(rep), {"domain": (R.OK, "×1")})
+        self.assertEqual(R.outcome(rep), "ok")
+
+    def test_reward_task_that_said_nothing(self):
+        rep = parse_bgi_log('→ "前往冒险家协会领取奖励" 开始', R.GameReport("genshin"), 5, "exited")
+        self.assertEqual(tasks(rep)["daily_reward"][0], R.WARN)
+
+    def test_domain_with_no_resin(self):
+        self.assertEqual(self.domain('自动秘境：检测到树脂不足提示："原粹树脂不足"'), (R.NOTHING, ""))
+
+    def test_commissions_listed_again_are_not_counted_twice(self):
+        listing = lambda states: "\n".join(f"委托 {i} | 委托{i} | {s} | Basic | 蒙德 | - | 坐标: -"
+                                           for i, s in enumerate(states, 1))
+        text = "\n".join([listing(["已完成", "未完成", "未完成", "未知"]), "委托执行成功：委托2",
+                          listing(["已完成", "已完成", "未完成", "未知"]), "委托执行成功：委托3"])
+        self.assertEqual(count_commissions(text), (3, 4))
 
 
 class ZenlessTest(unittest.TestCase):

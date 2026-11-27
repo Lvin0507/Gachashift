@@ -120,8 +120,13 @@ WATCH = [
             "探索派遣：{Text}",
             "未探索完成或已领取",
             "检查每日奖励结果：{Msg}",
+            "\"前往冒险家协会领取奖励\"",                 # the reward task (a config may not have it)
             "今日奖励已领取",
             "一条龙和配置组任务结束",
+            "自动秘境：{Text}",                          # a domain started
+            "{LogPrefix}：使用 {ResinName}，消耗：{Num}",   # a domain reward claimed
+            "体力耗尽或者设置轮次已达标，结束自动秘境",
+            "自动秘境：检测到树脂不足提示",
         ],
     },
     {
@@ -129,7 +134,9 @@ WATCH = [
         "game": "Genshin Impact",
         "used_in": "gachashift/games/genshin.py",
         "paths": ["repo/js/AutoCommissionNova"],
-        "strings": ["当前每日委托奖励进度: ", "委托执行成功："],
+        "strings": ["当前每日委托奖励进度: ", "委托执行成功：",
+                    "log.info(`委托 ${commission.id} | ${commission.name || \"-\"} | ${commission.status",
+                    'COMPLETED: "已完成"'],
     },
 ]
 

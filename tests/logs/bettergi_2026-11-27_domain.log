@@ -1,0 +1,375 @@
+实例 IPC v2 已启动：Primary，进程 14588，Session 1，根管道 "BetterGI.v2.user-S-1-5-21-0-0-0-1001.root"
+
+[21:16:55.487] [DBG] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.View.MainWindow
+主窗体实例化
+
+[21:16:55.844] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Recognition.ONNX.BgiOnnxFactory
+[ONNX]当前引擎 Cpu，设备 "处理器"，OCR 强制 CPU：True
+
+[21:16:55.844] [DBG] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Recognition.ONNX.BgiOnnxFactory
+[ONNX]创建推理会话，模型: "PpOcrDetV4"
+
+[21:16:55.870] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Recognition.ONNX.BgiOnnxFactory
+[ONNX]OCR CPU 线程策略，模型 "PpOcrDetV4"，算子内线程 16，算子间线程 1，并行 False，自旋 True
+
+[21:16:55.952] [DBG] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Recognition.ONNX.BgiOnnxFactory
+[ONNX]创建推理会话，模型: "PpOcrRecV4"
+
+[21:16:55.952] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Recognition.ONNX.BgiOnnxFactory
+[ONNX]OCR CPU 线程策略，模型 "PpOcrRecV4"，算子内线程 4，算子间线程 1，并行 False，自旋 True
+
+[21:16:56.045] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.ViewModel.Pages.HomePageViewModel
+已加载默认背景图片
+
+[21:16:56.162] [DBG] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Recognition.ONNX.BgiOnnxFactory
+创建了类型为 "Paddle" 的 OCR服务
+
+[21:17:02.105] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Script.ScriptRepoUpdater
+自动更新订阅脚本：开始静默更新脚本仓库...
+
+[21:17:03.708] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Script.ScriptRepoUpdater
+本地仓库已是最新版本，无需更新
+
+[21:17:03.974] [DBG] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Script.ScriptRepoUpdater
+仓库目录结构重合度(Overlap): 100 % (旧 619 个目录, 新 619 个目录, 交集 619 个)
+
+[21:17:04.290] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Script.ScriptRepoUpdater
+已标记repo.json中的更新节点并保存到: C:\Users\Player\Downloads\BetterGI_v0.66.0\BetterGI\Repos\bettergi-scripts-list\repo_updated.json
+
+[21:17:04.290] [DBG] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Script.ScriptRepoUpdater
+自动更新订阅脚本：仓库已是最新
+
+[21:17:04.303] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Script.ScriptRepoUpdater
+更新脚本成功: "combat/全配队通用（日常向）.txt"
+
+[21:17:04.313] [WRN] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Script.ScriptRepoUpdater
+没有找到匹配的文件: Data/path-recorder-settings.json
+
+[21:17:04.314] [WRN] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Script.ScriptRepoUpdater
+没有找到匹配的文件: Data/process-editor-recents.json
+
+[21:17:04.314] [WRN] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Script.ScriptRepoUpdater
+需要备份的文件夹不存在: C:\Users\Player\Downloads\BetterGI_v0.66.0\BetterGI\User\JsScript\AutoCommissionNova\pathing
+
+[21:17:09.885] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Script.ScriptRepoUpdater
+更新脚本成功: "js/AutoCommissionNova"
+
+[21:17:09.894] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Script.ScriptRepoUpdater
+脚本 js/使用历练点完成每日委托 没有需要保存的文件
+
+[21:17:10.001] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Script.ScriptRepoUpdater
+更新脚本成功: "js/使用历练点完成每日委托"
+
+[21:17:10.157] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Script.ScriptRepoUpdater
+自动更新订阅脚本完成: 成功 3 个, 失败 0 个
+
+[21:21:06.276] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+启用一条龙配置：默认配置
+
+[21:21:06.276] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+一条龙：任务将从 "自动秘境" 开始执行
+
+[21:21:06.281] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+启用任务总数量: 1
+
+[21:21:06.286] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+启用一条龙任务的数量: 1
+
+[21:21:06.390] [DBG] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Runtime.GameRuntimeService
+游戏运行环境已绑定：Win32Window，窗口句柄 1311616
+
+[21:21:06.448] [DBG] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动开门" "启用"
+
+[21:21:06.449] [DBG] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动拾取" "启用"
+
+[21:21:06.450] [DBG] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "启用"
+
+[21:21:06.697] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.ViewModel.Pages.HomePageViewModel
+更好的原神 "0.67.0"
+
+[21:21:06.697] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.ViewModel.Pages.HomePageViewModel
+遮罩窗口已启动，游戏大小1920x1080，素材缩放"1.00"，DPI缩放1
+
+[21:21:06.745] [DBG] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动开门" "停用"
+
+[21:21:06.968] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+启用配置组任务的数量: 0
+
+[21:21:06.969] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+一条龙任务执行: 1/1
+
+[21:21:06.971] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.TaskRunner
+→ "任务启动！"
+
+[21:21:06.980] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+自动秘境任务：执行
+
+[21:21:06.996] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Recognition.ONNX.BgiOnnxFactory
+[ONNX]当前引擎 Cpu，设备 "处理器"，OCR 强制 CPU：True
+
+[21:21:06.997] [DBG] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动拾取" "停用"
+
+[21:21:06.998] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+→ "自动秘境，" 用尽所有浓缩树脂和原粹树脂后结束
+
+[21:21:06.998] [DBG] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "停用"
+
+[21:21:07.001] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+自动秘境：传送到秘境"椛染之庭"
+
+[21:21:07.741] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+开始传送："稻妻 / 八酝岛 - 祝圣秘境「椛染之庭」"
+
+[21:21:09.710] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+切换到区域："稻妻"
+
+[21:21:14.654] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+点击候选列表："花染之庭"
+
+[21:21:19.444] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+传送完成
+
+[21:21:28.147] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+自动秘境：点击 "单人挑战"
+
+[21:21:29.308] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+自动秘境：进入 "队伍选择界面"
+
+[21:21:30.323] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+尝试切换至队伍: "婆"
+
+[21:21:30.855] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+切换队伍，当前队伍名称: "婆"，使用正则表达式规则进行模糊匹配
+
+[21:21:30.855] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+当前队伍["婆"]即为目标队伍，无需切换
+
+[21:21:31.673] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+自动秘境：点击 "开始挑战"
+
+[21:21:33.861] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Recognition.ONNX.BgiOnnxFactory
+[ONNX]当前引擎 Cpu，设备 "处理器"，OCR 强制 CPU：True
+
+[21:21:33.861] [DBG] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+0. 关闭秘境提示
+
+[21:21:38.809] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+自动秘境：点击 "地脉异常"
+
+[21:21:39.915] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Recognition.ONNX.BgiOnnxFactory
+[ONNX]当前引擎 Cpu，设备 "处理器"，OCR 强制 CPU：True
+
+[21:21:39.996] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+识别到的队伍角色:"宵宫,钟离,夜兰,云堇"
+
+[21:21:39.998] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+匹配到战斗脚本："全配队通用（日常向）"
+
+[21:21:40.214] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+自动秘境："1. 走到钥匙处启动"
+
+[21:21:44.211] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+检测到交互键
+
+[21:21:44.267] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+自动秘境："2. 执行战斗策略"
+
+[21:21:47.704] [WRN] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+检测到复苏界面，存在角色被击败，前往七天神像复活
+
+[21:21:48.905] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+将传送至 "须弥" "道成林" 七天神像
+
+[21:21:49.125] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+开始传送："须弥 / 道成林 / 化城郭 - 七天神像「七天神像-草」"
+
+[21:21:51.180] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+切换到区域："须弥"
+
+[21:21:57.799] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+传送完成
+
+[21:22:02.813] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+血量恢复完成。【设置】-【七天神像设置】可以修改回血相关配置。
+
+[21:22:02.813] [WRN] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+检测到复苏界面，存在角色被击败，前往七天神像复活
+
+[21:22:02.813] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+自动战斗线程结束
+
+[21:22:02.815] [WRN] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+自动秘境："存在角色死亡，复活后重试秘境..."
+
+[21:22:04.830] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+自动秘境：传送到秘境"椛染之庭"
+
+[21:22:05.637] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+开始传送："稻妻 / 八酝岛 - 祝圣秘境「椛染之庭」"
+
+[21:22:07.501] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+切换到区域："稻妻"
+
+[21:22:11.971] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+点击候选列表："花染之庭"
+
+[21:22:16.078] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+传送完成
+
+[21:22:24.827] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+自动秘境：点击 "单人挑战"
+
+[21:22:25.999] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+自动秘境：进入 "队伍选择界面"
+
+[21:22:27.016] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+尝试切换至队伍: "婆"
+
+[21:22:27.543] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+切换队伍，当前队伍名称: "婆"，使用正则表达式规则进行模糊匹配
+
+[21:22:27.543] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+当前队伍["婆"]即为目标队伍，无需切换
+
+[21:22:28.342] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+自动秘境：点击 "开始挑战"
+
+[21:22:30.536] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Recognition.ONNX.BgiOnnxFactory
+[ONNX]当前引擎 Cpu，设备 "处理器"，OCR 强制 CPU：True
+
+[21:22:30.536] [DBG] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+0. 关闭秘境提示
+
+[21:22:34.909] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+自动秘境：点击 "地脉异常"
+
+[21:22:35.976] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Recognition.ONNX.BgiOnnxFactory
+[ONNX]当前引擎 Cpu，设备 "处理器"，OCR 强制 CPU：True
+
+[21:22:36.016] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+识别到的队伍角色:"宵宫,钟离,夜兰,云堇"
+
+[21:22:36.016] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+匹配到战斗脚本："全配队通用（日常向）"
+
+[21:22:36.225] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+自动秘境："1. 走到钥匙处启动"
+
+[21:22:39.835] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+检测到交互键
+
+[21:22:39.893] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+自动秘境："2. 执行战斗策略"
+
+[21:22:43.711] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+"夜兰" 点按元素战技，cd:9.5 秒
+
+[21:22:44.183] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+"夜兰" 点按元素战技，cd:9 秒
+
+[21:22:46.594] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.AutoFight.Script.ConditionEvaluator
+"云堇" 元素战技，cd:7.4 秒
+
+[21:22:58.875] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+"夜兰" 点按元素战技，cd:9.8 秒
+
+[21:22:59.331] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+"夜兰" 点按元素战技，cd:9.4 秒
+
+[21:23:01.737] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.AutoFight.Script.ConditionEvaluator
+"云堇" 元素战技，cd:7.3 秒
+
+[21:23:03.509] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+"宵宫" 点按元素战技，cd:3.1 秒
+
+[21:23:14.376] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+"夜兰" 点按元素战技，cd:9.8 秒
+
+[21:23:14.861] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+"夜兰" 点按元素战技，cd:9.4 秒
+
+[21:23:17.276] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.AutoFight.Script.ConditionEvaluator
+"云堇" 元素战技，cd:7.3 秒
+
+[21:23:18.960] [DBG] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+当前所有编号边缘均为白色（背景过白），通过内部黑色像素识别出战编号为1，存在黑色数字的角色编号有3个，总角色数量4
+
+[21:23:30.563] [WRN] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+切换角色卡住，执行脱困（方向：MoveLeft）
+
+[21:23:32.880] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+"夜兰" 点按元素战技，cd:9.5 秒
+
+[21:23:33.351] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+"夜兰" 点按元素战技，cd:9 秒
+
+[21:23:35.758] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.AutoFight.Script.ConditionEvaluator
+"云堇" 元素战技，cd:7.3 秒
+
+[21:23:44.496] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+检测到秘境结束提示(挑战达成)，结束秘境
+
+[21:23:44.511] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+检测到秘境结束提示(挑战达成)，结束秘境
+
+[21:23:44.760] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+战斗操作中断："取消自动任务"
+
+[21:23:44.760] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+自动战斗线程结束
+
+[21:23:44.761] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+战斗结束后等待 5 秒
+
+[21:23:49.777] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+自动秘境："3. 寻找石化古树"
+
+[21:23:56.847] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+锁定东方向视角线程结束
+
+[21:23:56.847] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+自动秘境："4. 走到石化古树处"
+
+[21:24:02.029] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+检测到交互键
+
+[21:24:02.087] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+自动秘境："5. 领取奖励"
+
+[21:24:04.455] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+原粹树脂：200，浓缩树脂：0
+
+[21:24:05.044] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+"自动秘境"：使用 "原粹树脂", 数量：20
+
+[21:24:14.554] [DBG] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+0. 关闭秘境提示
+
+[21:24:15.250] [WRN] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: explorer，不是原神，暂停
+
+[21:24:16.256] [WRN] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: BetterGI，不是原神，暂停
+
+[21:24:17.290] [WRN] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.Common.TaskControl
+当前获取焦点的窗口为: BetterGI，不是原神，暂停
+
+[21:24:18.307] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.TaskRunner
+任务中断:"取消自动任务"
+
+[21:24:18.307] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.GameTask.TaskRunner
+→ "任务结束"
+
+[21:24:18.307] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+任务被取消，退出执行
+
+[21:25:53.791] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Script.ScriptRepoUpdater
+自动更新订阅脚本：开始静默更新脚本仓库...
+
+[21:25:54.633] [INF] [Primary:S1:P14588:T1795785415108] BetterGenshinImpact.Core.Script.ScriptRepoUpdater

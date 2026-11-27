@@ -31,7 +31,7 @@
 | 鸣潮（官方或 Steam） | [ok-ww](https://github.com/ok-oldking/ok-wuthering-waves) | 每周乐园，默认每周一 |
 | 蔚蓝档案（日服 PC 客户端） | [BAAS](https://github.com/pur1fying/blue_archive_auto_script) | 咖啡厅、课程表、竞技场、扫荡、制造、领取奖励 |
 | 绝区零（官方或 Steam） | [OneDragon](https://github.com/OneDragon-Anything/ZenlessZoneZero-OneDragon) | 兑换码、签到、邮件、录像店、咖啡店、领取奖励 |
-| 原神 | [BetterGI](https://github.com/babalae/better-genshin-impact) | 邮件、每日委托、委托奖励、探索派遣 |
+| 原神 | [BetterGI](https://github.com/babalae/better-genshin-impact) | 邮件、每日委托、委托奖励、探索派遣、秘境（树脂） |
 
 每款游戏都可以单独开关，也可以各自设定在星期几运行。全部完成后，Gachashift 会把简短的战报发到 Telegram 或 Discord（默认英文，可改成中文）。需要你手动处理的事放在最前面；全部成功的游戏只占一行，有问题的游戏只列出需要看的任务：
 
@@ -133,7 +133,7 @@ python -m gachashift --dry-run-endfield logs\go-service_<日期>.log
 - **BAAS 卡住时，Gachashift 会照你手动的做法处理。** 画面 5 分钟没动，就在 BAAS 自己关领奖弹窗的位置点一下，再等 3 分钟；画面还是不动，或 BAAS 一直在转、20 分钟都没做完一个任务，就关掉 BAAS 再重开（游戏不关，BAAS 会跳过已经做完的任务）。同一个任务卡两次就放弃，战报会写出是哪个任务，通常是 BAAS 里这个任务的设定和游戏画面对不上。点击用的是真实鼠标，和点启动器一样。
 - **OneDragon 每次启动都会自动更新**，遇到需要安装驱动的更新时，会停下来等人点击。每次游戏更新后，手动打开一次 OneDragon，早上的运行就不会卡在那个视窗。
 - **鸣潮目前只跑每周乐园。**
-- **原神的委托取决于 BetterGI 的社区脚本。** 有些委托还没有路线，但委托奖励仍可用历练点领取。请关闭 BetterGI 的自动更新订阅脚本，以免脚本在运行中途被更新替换。
+- **原神的委托取决于 BetterGI 的社区脚本。** 有些委托还没有路线，名字认错或战斗失败也会漏掉一个，但委托奖励仍可用历练点领取（“使用历练点完成每日委托”脚本）。请关闭 BetterGI 的自动更新订阅脚本，以免脚本在运行中途被更新替换。
 - **只支持 Windows**，因为这些工具都只支持 Windows。
 
 ## 项目结构

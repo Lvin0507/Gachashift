@@ -246,6 +246,7 @@ LABELS = {
         "commissions": {"en": "Daily commissions", "zh": "每日委托"},
         "dispatch": {"en": "Expeditions", "zh": "探索派遣"},
         "daily_reward": {"en": "Commission reward", "zh": "每日委托奖励"},
+        "domain": {"en": "Domains (resin)", "zh": "秘境（树脂）"},
     },
 }
 

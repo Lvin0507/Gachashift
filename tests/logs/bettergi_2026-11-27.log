@@ -1,0 +1,836 @@
+实例 IPC v2 已启动：Primary，进程 6988，Session 1，根管道 "BetterGI.v2.user-S-1-5-21-0-0-0-1001.root"
+
+[21:51:13.192] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.View.MainWindow
+主窗体实例化
+
+[21:51:13.547] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Recognition.ONNX.BgiOnnxFactory
+[ONNX]当前引擎 Cpu，设备 "处理器"，OCR 强制 CPU：True
+
+[21:51:13.548] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Recognition.ONNX.BgiOnnxFactory
+[ONNX]创建推理会话，模型: "PpOcrDetV4"
+
+[21:51:13.572] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Recognition.ONNX.BgiOnnxFactory
+[ONNX]OCR CPU 线程策略，模型 "PpOcrDetV4"，算子内线程 16，算子间线程 1，并行 False，自旋 True
+
+[21:51:13.658] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Recognition.ONNX.BgiOnnxFactory
+[ONNX]创建推理会话，模型: "PpOcrRecV4"
+
+[21:51:13.658] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Recognition.ONNX.BgiOnnxFactory
+[ONNX]OCR CPU 线程策略，模型 "PpOcrRecV4"，算子内线程 4，算子间线程 1，并行 False，自旋 True
+
+[21:51:13.741] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.ViewModel.Pages.HomePageViewModel
+已加载默认背景图片
+
+[21:51:13.855] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Recognition.ONNX.BgiOnnxFactory
+创建了类型为 "Paddle" 的 OCR服务
+
+[21:51:14.172] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+参数指定的一条龙配置：默认配置
+
+[21:51:14.219] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+启用一条龙配置：默认配置
+
+[21:51:14.220] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+启用任务总数量: 3
+
+[21:51:14.241] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+启用一条龙任务的数量: 3
+
+[21:51:25.463] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Runtime.GameRuntimeService
+游戏运行环境已绑定：Win32Window，窗口句柄 919876
+
+[21:51:25.522] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动开门" "启用"
+
+[21:51:25.522] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动拾取" "启用"
+
+[21:51:25.524] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "启用"
+
+[21:51:25.660] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.ViewModel.Pages.HomePageViewModel
+更好的原神 "0.67.0"
+
+[21:51:25.660] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.ViewModel.Pages.HomePageViewModel
+遮罩窗口已启动，游戏大小1920x1080，素材缩放"1.00"，DPI缩放1
+
+[21:51:25.939] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+当前不在游戏主界面，等待进入主界面后执行任务...
+
+[21:51:25.939] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+如果你已经在游戏内的其他界面，请自行退出当前界面（ESC），或是30秒后将程序将自动尝试到入主界面，使当前任务能够继续运行！
+
+[21:52:06.697] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+启用配置组任务的数量: 1
+
+[21:52:06.698] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+一条龙任务执行: 1/3
+
+[21:52:06.699] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskRunner
+→ "任务启动！"
+
+[21:52:06.716] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动开门" "停用"
+
+[21:52:06.716] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动拾取" "停用"
+
+[21:52:06.716] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "停用"
+
+[21:52:12.305] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskRunner
+→ "任务结束"
+
+[21:52:12.305] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+配置组任务执行: 1/1
+
+[21:52:12.319] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动开门" "启用"
+
+[21:52:12.319] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动拾取" "启用"
+
+[21:52:12.320] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "启用"
+
+[21:52:12.365] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动开门" "停用"
+
+[21:52:12.834] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Service.ScriptService
+配置组 "test" 加载完成，共2个脚本，开始执行
+
+[21:52:12.834] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskRunner
+→ "任务启动！"
+
+[21:52:12.838] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Service.ScriptService
+------------------------------
+
+[21:52:12.838] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Service.ScriptService
+→ 开始执行JS脚本: "自动每日委托"
+
+[21:52:12.863] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动拾取" "停用"
+
+[21:52:12.863] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "停用"
+
+[21:52:13.027] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+已注册探针类型: "dialog, achievement, completion"
+
+[21:52:13.030] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+当前版本为："1.0.5"
+
+[21:52:13.031] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Http
+[HTTP] 发送HTTP请求: GET https://cnb.cool/bettergi/bettergi-scripts-list/-/git/raw/release/repo/js/AutoCommissionNova/manifest.json Body: null Headers: null
+
+[21:52:13.032] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Http
+[HTTP] 检查URL https://cnb.cool/bettergi/bettergi-scripts-list/-/git/raw/release/repo/js/AutoCommissionNova/manifest.json 是否符合: ^https://cnb\.cool/bettergi/bettergi-scripts-list/.*$
+
+[21:52:13.692] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+setting:["[runMode, 运行自动每日委托]", "[showConfigEditor, False]"]
+
+[21:52:13.750] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+当前UID: "100000001"，识别值: "100000001"，相似度: "1.000"
+
+[21:52:13.861] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+开始执行委托识别
+
+[21:52:13.879] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+Basic委托参考数据: 40 个委托
+
+[21:52:13.879] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+NPC委托参考数据: 58 个委托
+
+[21:52:15.516] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+已进入委托界面
+
+[21:52:15.541] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+冒险历练已解锁
+
+[21:52:20.942] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+位置识别成功: (-912, 1959)
+
+[21:52:21.208] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+尝试从地图返回委托页面
+
+[21:52:22.513] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+委托 1 | 鸽子习惯一去不回 | 未完成 | NPC | 蒙德 | 清泉镇 | 坐标: (-912, 1959)
+
+[21:52:22.555] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+委托名称标准化: "冰凉凉的大团危机！" -> "冰凉凉的大团危机"
+
+[21:52:22.560] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+委托 2 | 冰凉凉的大团危机 | 已完成 | Basic | - | - | 坐标: -
+
+[21:52:22.604] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+委托 3 | 圆滚滚的易爆品 | 已完成 | Basic | - | - | 坐标: -
+
+[21:52:23.497] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+委托 4 | 临危受命 | 已完成 | Basic | - | - | 坐标: -
+
+[21:52:23.515] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+委托数据保存完成: "100000001"
+
+[21:52:23.516] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+委托识别完成，共识别到 4 个委托，其中 4 个受支持
+
+[21:52:23.516] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+开始执行委托前准备
+
+[21:52:24.966] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+将传送至 "须弥" "道成林" 七天神像
+
+[21:52:25.204] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+开始传送："须弥 / 道成林 / 化城郭 - 七天神像「七天神像-草」"
+
+[21:52:27.091] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+切换到区域："须弥"
+
+[21:52:33.561] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+传送完成
+
+[21:52:38.575] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+开始执行委托追踪
+
+[21:52:38.591] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+执行委托：鸽子习惯一去不回 | 蒙德/清泉镇 | NPC | 第 1/2 次
+
+[21:52:38.591] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+执行统一NPC委托流程: "鸽子习惯一去不回"
+
+[21:52:38.591] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+开始追踪委托: "鸽子习惯一去不回"
+
+[21:52:40.227] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+已进入委托界面
+
+[21:52:40.249] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+冒险历练已解锁
+
+[21:52:40.283] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+找到委托 "鸽子习惯一去不回" 在位置 1
+
+[21:52:47.364] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+执行流程步骤 "1": "地图追踪"
+
+[21:52:47.365] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+执行地图追踪: "鸽子习惯一去不回-1.json"
+
+[21:52:47.365] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+地图追踪完整路径: "process/蒙德/NPC/鸽子习惯一去不回/清泉镇/鸽子习惯一去不回-1.json"
+
+[21:52:47.732] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Recognition.ONNX.BgiOnnxFactory
+[ONNX]当前引擎 Cpu，设备 "处理器"，OCR 强制 CPU：True
+
+[21:52:47.800] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+识别到的队伍角色:"宵宫,钟离,夜兰,云堇"
+
+[21:52:47.918] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+[TemplateMatch]提瓦特大陆地图模板加载中，可能耗时较久，请耐心等待...
+
+[21:52:53.260] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+地图特征点加载完成！
+
+[21:52:54.216] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+开始传送："蒙德 / 苍风高地 / 清泉镇 - 传送锚点"
+
+[21:52:56.154] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+切换到区域："蒙德"
+
+[21:52:57.266] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+点击候选列表："传送锚点"
+
+[21:53:01.536] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+传送完成
+
+[21:53:02.141] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-911.4","1975.8")
+
+[21:53:08.817] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:53:08.820] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+设置时间到 20 点 0 分
+
+[21:53:17.467] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-916.0","1963.9")
+
+[21:53:19.838] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:53:19.913] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-927.7","1951.9")
+
+[21:53:23.357] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:53:23.457] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-917.8","1929.7")
+
+[21:53:27.724] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:53:27.807] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-927.5","1917.6")
+
+[21:53:31.398] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:53:31.398] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+设置时间到 20 点 0 分
+
+[21:53:40.069] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-935.9","1924.4")
+
+[21:53:41.755] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:53:41.872] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-940.9","1928.1")
+
+[21:53:43.480] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:53:43.481] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+精确接近目标点，位置("-940.9","1928.1")
+
+[21:53:44.423] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+已到达路径点
+
+[21:53:45.438] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+地图追踪执行完成
+
+[21:53:45.689] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+执行流程步骤 "2": "对话"
+
+[21:53:45.691] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+执行对话步骤
+
+[21:53:46.721] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+任务区域识别文本: "与杜拉夫对话"
+
+[21:53:46.723] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+提取到人名: "杜拉夫"
+
+[21:53:47.276] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+找到白名单NPC: "杜拉夫"，点击该NPC
+
+[21:53:48.308] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+开始执行自动对话
+
+[21:53:48.318] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "启用"
+
+[21:53:50.664] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.AutoSkip.AutoSkipTrigger
+自动剧情："点击感叹号选项"
+
+[21:53:55.655] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.AutoSkip.AutoSkipTrigger
+自动剧情："我明白了。"
+
+[21:53:58.657] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+已返回主界面，AutoSkip 对话执行完成
+
+[21:53:58.667] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "停用"
+
+[21:53:58.908] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+执行流程步骤 "3": "地图追踪"
+
+[21:53:58.908] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+执行地图追踪: "鸽子习惯一去不回-2.json"
+
+[21:53:58.908] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+地图追踪完整路径: "process/蒙德/NPC/鸽子习惯一去不回/清泉镇/鸽子习惯一去不回-2.json"
+
+[21:54:00.047] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+开始传送："蒙德 / 苍风高地 / 清泉镇 - 传送锚点"
+
+[21:54:01.490] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+点击候选列表："传送锚点"
+
+[21:54:05.363] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+传送完成
+
+[21:54:05.972] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-860.3","2007.4")
+
+[21:54:09.685] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:54:09.769] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-821.0","1979.8")
+
+[21:54:17.459] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:54:17.552] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-808.0","1975.2")
+
+[21:54:19.751] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:54:19.897] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-800.8","1972.6")
+
+[21:54:21.643] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:54:21.643] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+精确接近目标点，位置("-800.8","1972.6")
+
+[21:54:21.891] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+已到达路径点
+
+[21:54:22.983] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-807.8","1950.6")
+
+[21:54:27.399] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:54:27.500] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-808.7","1940.7")
+
+[21:54:29.029] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:54:29.029] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+精确接近目标点，位置("-808.7","1940.7")
+
+[21:54:29.642] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+已到达路径点
+
+[21:54:30.736] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-775.1","1962.0")
+
+[21:54:38.655] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:54:38.750] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-765.1","1959.1")
+
+[21:54:42.308] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:54:42.430] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-760.9","1964.2")
+
+[21:54:44.041] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:54:44.130] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-756.8","1971.5")
+
+[21:54:46.572] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:54:46.572] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+精确接近目标点，位置("-756.8","1971.5")
+
+[21:54:47.451] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+已到达路径点
+
+[21:54:48.462] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+地图追踪执行完成
+
+[21:54:48.714] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+执行流程步骤 "4": "执行子流程" - "目的地址与检测地址超过15的情况"
+
+[21:54:48.714] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+步骤 loc 地址检测: 目标(-696, 2009), 容差: 15
+
+[21:54:48.715] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+开始寻找委托目标位置: "鸽子习惯一去不回"
+
+[21:54:50.350] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+已进入委托界面
+
+[21:54:50.376] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+冒险历练已解锁
+
+[21:54:50.418] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+找到委托 "鸽子习惯一去不回" 在位置 1
+
+[21:54:57.645] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+位置识别成功: (-941, 1929)
+
+[21:54:59.532] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+步骤 loc 地址检测 - 委托位置: (-941, 1929), 目标位置: (-696, 2009), 距离: 258, 容差: 15
+
+[21:54:59.532] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+步骤 loc 地址检测失败，所有候选目标距离过远
+
+[21:54:59.532] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+步骤 loc 不匹配，跳过步骤
+
+[21:54:59.788] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+执行流程步骤 "5": "地图追踪"
+
+[21:54:59.788] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+执行地图追踪: "鸽子习惯一去不回-1.json"
+
+[21:54:59.788] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+地图追踪完整路径: "process/蒙德/NPC/鸽子习惯一去不回/清泉镇/鸽子习惯一去不回-1.json"
+
+[21:55:00.808] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+开始传送："蒙德 / 苍风高地 / 清泉镇 - 传送锚点"
+
+[21:55:05.392] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+传送完成
+
+[21:55:05.976] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-911.4","1975.8")
+
+[21:55:12.944] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:55:12.945] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+设置时间到 20 点 0 分
+
+[21:55:21.572] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-916.0","1963.9")
+
+[21:55:23.822] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:55:23.904] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-927.7","1951.9")
+
+[21:55:27.398] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:55:27.490] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-917.8","1929.7")
+
+[21:55:31.921] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:55:32.032] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-927.5","1917.6")
+
+[21:55:35.541] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:55:35.541] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+设置时间到 20 点 0 分
+
+[21:55:44.189] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-935.9","1924.4")
+
+[21:55:45.844] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:55:45.949] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-940.9","1928.1")
+
+[21:55:47.508] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:55:47.509] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+精确接近目标点，位置("-940.9","1928.1")
+
+[21:55:48.757] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+已到达路径点
+
+[21:55:49.766] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+地图追踪执行完成
+
+[21:55:50.030] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+执行流程步骤 "6": "对话"
+
+[21:55:50.030] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+执行对话步骤
+
+[21:55:51.075] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+任务区域识别文本: "向杜拉夫回报"
+
+[21:55:51.075] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+提取到人名: "杜拉夫"
+
+[21:55:51.639] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+找到白名单NPC: "杜拉夫"，点击该NPC
+
+[21:55:52.654] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+开始执行自动对话
+
+[21:55:52.665] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "启用"
+
+[21:55:54.807] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.AutoSkip.AutoSkipTrigger
+自动剧情："点击感叹号选项"
+
+[21:55:59.377] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+已返回主界面，AutoSkip 对话执行完成
+
+[21:55:59.415] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "停用"
+
+[21:55:59.635] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+执行流程步骤 "7": "执行子流程" - "分支名字正确的情况"
+
+[21:55:59.635] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+检查委托描述是否包含 : "把信件送给莎拉"
+
+[21:56:00.013] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+OCR结果: "鸽子习惯"，等待确认...
+
+[21:56:00.278] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+OCR结果稳定: "鸽子习惯"
+
+[21:56:00.278] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+步骤 desc 不匹配，跳过步骤。识别："鸽子习惯", 期望包含："把信件送给莎拉"
+
+[21:56:00.530] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+NPC委托流程执行完成: "鸽子习惯一去不回"
+
+[21:56:02.141] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+已进入委托界面
+
+[21:56:03.069] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+冒险历练已解锁
+
+[21:56:03.111] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+委托名称标准化: "冰凉凉的大团危机！" -> "冰凉凉的大团危机"
+
+[21:56:04.068] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+找到委托 "鸽子习惯一去不回"，检测完成状态
+
+[21:56:05.030] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+委托 "鸽子习惯一去不回" 状态已更新为 "已完成"，UID: "100000001"
+
+[21:56:05.030] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+委托执行成功：鸽子习惯一去不回
+
+[21:56:05.036] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+委托追踪全部执行完成，共执行 1/1 个委托
+
+[21:56:05.046] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+前往安全地点
+
+[21:56:05.649] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+将传送至 "须弥" "道成林" 七天神像
+
+[21:56:05.871] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+开始传送："须弥 / 道成林 / 化城郭 - 七天神像「七天神像-草」"
+
+[21:56:07.719] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+切换到区域："须弥"
+
+[21:56:14.107] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+传送完成
+
+[21:56:19.121] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+每日委托执行完成
+
+[21:56:19.121] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+自动委托执行完毕
+
+[21:56:19.146] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Service.ScriptService
+→ 脚本执行结束: "自动每日委托", 耗时: 4分6.307秒
+
+[21:56:19.146] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Service.ScriptService
+------------------------------
+
+[21:56:20.159] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Service.ScriptService
+------------------------------
+
+[21:56:20.159] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Service.ScriptService
+→ 开始执行JS脚本: "使用历练点完成每日委托"
+
+[21:56:20.187] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+检查是否可以领取历练点奖励
+
+[21:56:21.500] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+正在打开冒险之证檢查历练点完成度
+
+[21:56:24.320] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+识别到冒险之证按钮
+
+[21:56:28.103] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+识别到 完成所有任務
+
+[21:56:28.616] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+可领取历练点奖励
+
+[21:56:28.616] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+没有设置切换队伍，使用当前队伍使用历练點
+
+[21:56:28.617] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+不使用好友尘歌壶历练点领取双倍好感，直接使用历练点
+
+[21:56:28.622] [WRN] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+未识别到历练点领取奖励按钮，可能是已领取或未完成
+
+[21:56:32.528] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+可以领取历练点奖励，开始执行
+
+[21:56:33.546] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Recognition.ONNX.BgiOnnxFactory
+[ONNX]当前引擎 Cpu，设备 "处理器"，OCR 强制 CPU：True
+
+[21:56:33.595] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+识别到的队伍角色:"宵宫,钟离,夜兰,云堇"
+
+[21:56:33.597] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+开始前往蒙德冒险家协会領奬
+
+[21:56:34.696] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+开始传送："蒙德 / 坠星山谷 / 蒙德城 - 传送锚点"
+
+[21:56:36.618] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+切换到区域："蒙德"
+
+[21:56:37.714] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+点击候选列表："传送锚点"
+
+[21:56:41.828] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+传送完成
+
+[21:56:42.417] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-882.1","2262.4")
+
+[21:56:47.660] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:56:47.760] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-911.3","2240.6")
+
+[21:56:54.239] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:56:54.317] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("-913.9","2232.6")
+
+[21:56:56.419] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:56:56.723] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+开始领取每日委托，若无退出对话，则说明重复领取
+
+[21:56:57.770] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "启用"
+
+[21:56:59.273] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.AutoSkip.AutoSkipTrigger
+自动剧情："领取【每日委托」奖励"
+
+[21:56:59.617] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.AutoSkip.AutoSkipTrigger
+自动剧情："领取「每日委托」奖励"
+
+[21:57:08.756] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Script.Dependence.Log
+交互或拾取："领取完成"
+
+[21:57:08.763] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Service.ScriptService
+→ 脚本执行结束: "使用历练点完成每日委托", 耗时: 0分48.603秒
+
+[21:57:08.763] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Service.ScriptService
+------------------------------
+
+[21:57:09.766] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskRunner
+→ "任务结束"
+
+[21:57:09.766] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Service.ScriptService
+配置组 "test" 执行结束
+
+[21:57:09.827] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动拾取" "启用"
+
+[21:57:09.828] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "启用"
+
+[21:57:10.781] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+一条龙任务执行: 2/3
+
+[21:57:10.781] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskRunner
+→ "任务启动！"
+
+[21:57:10.784] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+→ "前往冒险家协会领取奖励" 开始
+
+[21:57:10.813] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动拾取" "停用"
+
+[21:57:10.813] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+实时触发器 "自动剧情" "停用"
+
+[21:57:13.096] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+"历练点："未找到领取历练点奖励按钮
+
+[21:57:14.233] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+"历练点："未找到领取历练点奖励按钮
+
+[21:57:15.536] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.Core.Recognition.ONNX.BgiOnnxFactory
+[ONNX]当前引擎 Cpu，设备 "处理器"，OCR 强制 CPU：True
+
+[21:57:15.576] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+识别到的队伍角色:"宵宫,钟离,夜兰,云堇"
+
+[21:57:16.606] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+开始传送："枫丹 / 枫丹廷区 / 枫丹廷·利奥奈区 - 传送锚点"
+
+[21:57:18.614] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+切换到区域："枫丹"
+
+[21:57:19.865] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+点击候选列表："传送锚点"
+
+[21:57:24.013] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+传送完成
+
+[21:57:24.628] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("4500.6","3630.7")
+
+[21:57:26.403] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:57:26.534] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+粗略接近途经点，位置("4495.9","3638.5")
+
+[21:57:28.924] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+到达路径点附近
+
+[21:57:28.925] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+精确接近目标点，位置("4495.9","3638.5")
+
+[21:57:34.361] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.Job.ChooseTalkOptionTask
+识别到橙色文字区域占比:0
+
+[21:57:34.361] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+▶ "领取『每日委托』奖励" 未完成或者已领取
+
+[21:57:36.745] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.Job.ChooseTalkOptionTask
+识别到橙色文字区域占比:0
+
+[21:57:36.746] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+▶ "探索派遣" 未探索完成或已领取
+
+[21:57:40.190] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+退出当前对话
+
+[21:57:40.191] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+→ "前往冒险家协会领取奖励" 结束
+
+[21:57:42.216] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+纪行："一键领取"
+
+[21:57:47.790] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+纪行："一键领取"
+
+[21:57:51.878] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskRunner
+→ "任务结束"
+
+[21:57:51.878] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskRunner
+→ "任务启动！"
+
+[21:57:54.035] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.Common.TaskControl
+检查每日奖励结果："今日奖励已领取"
+
+[21:57:55.692] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.ViewModel.Pages.OneDragonFlowViewModel
+一条龙和配置组任务结束
+
+[21:57:56.116] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskTriggerDispatcher
+游戏已退出，BetterGI 自动停止截图器
+
+[21:57:57.757] [INF] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.GameTask.TaskRunner
+→ "任务结束"
+
+[21:57:57.769] [DBG] [Primary:S1:P6988:T1795787472813] BetterGenshinImpact.View.MainWindow
+主窗体退出
+
