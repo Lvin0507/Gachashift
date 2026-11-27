@@ -141,7 +141,8 @@ def remove_file(path):
 END_SHOT_NOTES = ("note.error", "note.stalled", "note.timeout", "note.not_started", "note.no_records",
                   "note.no_done_marker", "note.maybe_update", "note.update_failed",
                   "note.baas_not_started", "note.baas_stopped_after_work", "note.baas_stuck_at",
-                  "note.baas_stopped_at", "note.baas_closed_with_dailies", "note.locked")
+                  "note.baas_stopped_at", "note.baas_closed_with_dailies", "note.baas_stuck_twice",
+                  "note.locked")
 
 
 def end_shot_wanted(rep):

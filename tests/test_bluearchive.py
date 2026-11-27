@@ -23,14 +23,19 @@ RUNNING = [P("BlueArchiveAutoScript.exe"), P("pythonw.exe")]
 
 
 class Runs:
-    def play(self, sightings, seconds_per_look=2, stuck_after=None, events=None):
+    def play(self, sightings, frozen_from=None, events=None, tap_unfreezes=False):
         """sightings: what is running in the BAAS folder at each look; the last one stays.
-        stuck_after: seconds after which the screen counts as still for 15 min.
-        events: (before, after) event.json contents; None means no event.json was found."""
+        frozen_from: seconds after the start from which nothing on the screen moves.
+        events: seconds since the start -> event.json contents; None means no event.json.
+        tap_unfreezes: the tap on a still screen gets things moving again."""
         clock = [1000.0]
-        records = iter([{"event.json": e} for e in events] if events else [])
         looks = iter(sightings)
         last = [sightings[-1]]
+        frame = [0]
+        self.taps, self.starts = [], []
+
+        def elapsed():
+            return clock[0] - 1000
 
         def processes_in(folder):
             last[0] = next(looks, last[0])
@@ -39,53 +44,70 @@ class Runs:
         def pause(seconds):
             clock[0] += seconds
 
+        def fingerprint():
+            if frozen_from is not None and elapsed() >= frozen_from and not (tap_unfreezes and self.taps):
+                return (0,) * 4
+            frame[0] += 1
+            return (10 + frame[0] * 10 % 200,) * 4   # something moves between two looks
+
+        def tap(game):
+            self.taps.append(elapsed())
+            return True
+
+        def read_events(paths):
+            return {"event.json": events(elapsed())} if events else {}
+
         game = bluearchive.BlueArchive({"baas_dir": "C:/BAAS", "launcher_path": "C:/BA/launcher.exe",
                                         "start_button": [0.85, 0.86]})
         with mock.patch.multiple(bluearchive, launch_and_click=lambda *a, **k: True,
                                  set_windowed=lambda: None, processes_in=processes_in, pause=pause,
                                  kill=lambda names: None, kill_processes=lambda procs: None,
-                                 event_paths=lambda folder: ["event.json"],
-                                 read_events=lambda paths: next(records, {})), \
-                mock.patch.object(bluearchive.subprocess, "Popen", lambda *a, **k: None), \
+                                 screen_fingerprint=fingerprint, event_paths=lambda folder: ["event.json"],
+                                 read_events=read_events), \
+                mock.patch.object(bluearchive.BlueArchive, "tap_popup", tap), \
+                mock.patch.object(bluearchive.subprocess, "Popen",
+                                  lambda *a, **k: self.starts.append(elapsed())), \
                 mock.patch.object(bluearchive.subprocess, "CREATE_NEW_CONSOLE", 16, create=True), \
                 mock.patch.object(bluearchive.time, "time", lambda: clock[0]), \
                 mock.patch.object(bluearchive.time, "sleep", lambda s: None), \
-                mock.patch.object(Game, "capture", lambda self, *a: None), \
-                mock.patch.object(Game, "stuck", lambda game, watch: self.still(game, clock, stuck_after)):
+                mock.patch.object(Game, "capture", lambda self, *a: None):
             return game.run()
 
-    @staticmethod
-    def still(game, clock, stuck_after):
-        if stuck_after is not None and clock[0] - 1000 >= stuck_after:
-            game.stalled = 15
-            return True
-        return False
+
+MIN = 60
 
 
 class BlueArchiveTest(Runs, unittest.TestCase):
     """No event.json found: the timing decides."""
 
     def test_long_run_then_stuck_counts_as_done(self):
-        # 27 Nov: BAAS did its dailies, then stood on a rewards screen until the stall check
-        # ended it; the report said "nothing got done" and ran it a second time
-        rep = self.play([BAAS] + [RUNNING] * 1000, stuck_after=40 * 60)
+        # 27 Nov: BAAS did its dailies, then stood on a rewards screen; the report said
+        # "nothing got done" and ran it a second time
+        rep = self.play([BAAS] + [RUNNING] * 1000, frozen_from=32 * MIN)
         self.assertEqual([(t.key, t.status) for t in rep.tasks], [("baas", R.PARTIAL)])
         key, params = rep.notes[0]
         self.assertEqual(key, "note.baas_stopped_after_work")
-        self.assertAlmostEqual(params["minutes"], 25, delta=1)   # 40 min run, the last 15 still
+        self.assertAlmostEqual(params["minutes"], 32, delta=1)
+        self.assertEqual(len(self.taps), 1)   # tapped once before giving up
+        self.assertEqual(len(self.starts), 1)  # with no record, BAAS isn't started again
         self.assertFalse(R.nothing_done(rep))
 
     def test_27_nov_first_attempt(self):
-        # BAAS started 05:25:41 and was ended at 05:44:28 for 15 still minutes: about 4 min of
-        # work, then stuck. Partly done, and run again for the rest
-        rep = self.play([BAAS] + [RUNNING] * 1000, stuck_after=18 * 60 + 47)
+        # BAAS worked about 4 min, then stood still: partly done, run again for the rest
+        rep = self.play([BAAS] + [RUNNING] * 1000, frozen_from=4 * MIN)
         self.assertEqual([(t.key, t.status) for t in rep.tasks], [("baas", R.PARTIAL)])
         self.assertTrue(runner.needs_retry(rep))
 
     def test_stuck_soon_after_starting_is_not_done(self):
-        rep = self.play([BAAS] + [RUNNING] * 1000, stuck_after=17 * 60)
+        rep = self.play([BAAS] + [RUNNING] * 1000, frozen_from=2 * MIN)
         self.assertEqual([(t.key, t.status) for t in rep.tasks], [("baas", R.WARN)])
         self.assertTrue(R.nothing_done(rep))
+
+    def test_tap_gets_it_moving(self):
+        rep = self.play([BAAS] + [RUNNING] * 120 + [[]], frozen_from=10 * MIN, tap_unfreezes=True)
+        self.assertEqual([(t.key, t.status) for t in rep.tasks], [("baas", R.OK)])
+        self.assertEqual(len(self.taps), 1)
+        self.assertAlmostEqual(self.taps[0], 15 * MIN, delta=30)   # after 5 still minutes
 
     def test_restart_while_updating_is_not_an_exit(self):
         # BAAS closes and starts again when it updates itself: a short gap isn't the end
@@ -106,6 +128,7 @@ class BlueArchiveTest(Runs, unittest.TestCase):
     def test_full_run(self):
         rep = self.play([BAAS] + [RUNNING] * 100 + [[]])
         self.assertEqual([(t.key, t.status) for t in rep.tasks], [("baas", R.OK)])
+        self.assertEqual(self.taps, [])
 
     def test_baas_never_starts_its_tasks(self):
         rep = self.play([BAAS])
@@ -124,7 +147,7 @@ def daily(name, priority, tick, func=None, enabled=True):
             "func_name": func or name}
 
 
-DUE, DONE = 900, 5000   # next_tick before the run (1000) and after it
+DUE, DONE = 900, 10 ** 6   # next_tick before the run (which starts at 1000) and once finished
 # the dailies BAAS has switched on in the player's config, in BAAS's order (lowest first)
 NAMES = ["竞技场", "咖啡厅", "日程", "查收邮箱", "悬赏通缉", "普通关清体力", "自动制造", "收集奖励"]
 
@@ -136,76 +159,141 @@ def dailies(ticks):
     return found + [daily(name, i, ticks.get(name, DUE)) for i, name in enumerate(NAMES)]
 
 
+def schedule(done_at, already=()):
+    """event.json as time goes on: done_at {daily: seconds after the start it is finished}."""
+    def events(elapsed):
+        ticks = {name: DONE for name in already}
+        ticks.update({name: DONE for name, when in done_at.items() if elapsed >= when})
+        return dailies(ticks)
+    return events
+
+
+def every(minutes, names, offset=0):
+    return {name: (offset + minutes * (i + 1)) * MIN for i, name in enumerate(names)}
+
+
 class DailyRecordTest(Runs, unittest.TestCase):
-    """BAAS's event.json, read before and after the run."""
+    """BAAS's event.json, read while BAAS runs."""
 
     def tasks(self, rep):
         return [(t.key, t.status) for t in rep.tasks]
 
     def test_everything_done(self):
-        rep = self.play([BAAS] + [RUNNING] * 100 + [[]],
-                        events=(dailies({}), dailies({name: DONE for name in NAMES})))
+        rep = self.play([BAAS] + [RUNNING] * 100 + [[]], events=schedule(every(2, NAMES)))
         self.assertEqual(self.tasks(rep), [(name, R.OK) for name in NAMES])
         self.assertEqual([k for k, _ in rep.notes], ["note.finished"])
         self.assertEqual(R.outcome(rep), "ok")
         self.assertFalse(runner.end_shot_wanted(rep))
         self.assertFalse(runner.needs_retry(rep))
+        self.assertEqual((self.taps, len(self.starts)), ([], 1))
 
-    def test_stuck_on_the_last_daily(self):
-        # 27 Nov: BAAS stood on a 報酬獲得 screen until the stall check closed it
-        after = dailies({name: DONE for name in NAMES[:-1]})
-        rep = self.play([BAAS] + [RUNNING] * 1000, stuck_after=40 * 60, events=(dailies({}), after))
+    def test_tap_closes_the_reward_popup(self):
+        # 27 Nov: rewards claimed, then BAAS stood on 報酬獲得 waiting for a touch
+        done = every(1, NAMES[:-1])
+        done["收集奖励"] = 17 * MIN   # BAAS goes on once the pop-up is gone
+        rep = self.play([BAAS] + [RUNNING] * 100 + [[]], frozen_from=9 * MIN, tap_unfreezes=True,
+                        events=schedule(done))
+        self.assertEqual(self.tasks(rep), [(name, R.OK) for name in NAMES])
+        self.assertEqual(len(self.taps), 1)
+        self.assertEqual(len(self.starts), 1)
+        self.assertEqual(R.outcome(rep), "ok")
+
+    def test_stuck_twice_on_the_same_daily(self):
+        # the tap doesn't help, BAAS is started again, and stops at the same place
+        rep = self.play([BAAS] + [RUNNING] * 1000, frozen_from=9 * MIN,
+                        events=schedule(every(1, NAMES[:-1])))
         self.assertEqual(self.tasks(rep), [(n, R.OK) for n in NAMES[:-1]] + [("收集奖励", R.FAIL)])
-        self.assertEqual(rep.notes, [("note.baas_stuck_at", {"task": "收集奖励"})])
-        self.assertFalse(R.nothing_done(rep))
-        self.assertTrue(runner.end_shot_wanted(rep))   # the picture shows where it stopped
-        self.assertTrue(runner.needs_retry(rep))       # a second run does what is left
+        self.assertEqual(rep.notes, [("note.baas_stuck_twice", {"task": "收集奖励"})])
+        self.assertEqual((len(self.taps), len(self.starts)), (2, 2))
+        self.assertTrue(runner.end_shot_wanted(rep))
+        self.assertFalse(runner.needs_retry(rep))   # the same again later wouldn't help
+        self.assertEqual(R.actions(rep, "zh"), ["蔚蓝档案：收集奖励失败"])
+
+    def test_going_round_in_circles_is_restarted(self):
+        # the screen keeps moving, but no daily gets finished: BAAS is looking for something
+        # it won't find. Starting it again (what the player did by hand) gets it past
+        done = every(2, NAMES[:2])
+        done.update(every(2, NAMES[2:], offset=25))   # only after the restart at 24 min
+        rep = self.play([BAAS] + [RUNNING] * 250 + [[]], events=schedule(done))
+        self.assertEqual(self.tasks(rep), [(name, R.OK) for name in NAMES])
+        self.assertEqual(len(self.starts), 2)
+        self.assertAlmostEqual(self.starts[1], 24 * MIN, delta=30)   # 20 min after 咖啡厅
+        self.assertEqual([k for k, _ in rep.notes], ["note.baas_restarted", "note.finished"])
+        self.assertEqual(rep.notes[0][1], {"task": "日程"})
+        self.assertEqual(R.outcome(rep), "ok")
+        line = R.render_compact(rep, "zh")
+        self.assertTrue(line.startswith("『📘 蔚蓝档案』✅ 全部完成（8 项）"), line)
+        self.assertIn("卡在「日程」后重开过 BAAS", line)
+
+    # looks before the restart at 24 min (each look takes 2 s in the first minute, then 15 s)
+    BEFORE_RESTART = [BAAS] + [RUNNING] * 121
+
+    def test_slow_to_come_back_after_the_restart(self):
+        done = every(2, NAMES[:2])
+        done.update(every(2, NAMES[2:], offset=28))
+        rep = self.play(self.BEFORE_RESTART + [BAAS] * 40 + [RUNNING] * 120 + [[]], events=schedule(done))
+        self.assertEqual(self.tasks(rep), [(name, R.OK) for name in NAMES])
+        self.assertEqual(rep.notes[0], ("note.baas_restarted", {"task": "日程"}))
+
+    def test_never_comes_back_after_the_restart(self):
+        rep = self.play(self.BEFORE_RESTART + [BAAS] * 400, events=schedule(every(2, NAMES[:2])))
+        self.assertEqual(self.tasks(rep)[2], ("日程", R.FAIL))
+        self.assertEqual(rep.notes, [("note.baas_stuck_at", {"task": "日程"})])
+        self.assertTrue(runner.needs_retry(rep))   # later, with the game started afresh
 
     def test_stuck_early_leaves_the_rest_not_run(self):
-        after = dailies({"竞技场": DONE, "咖啡厅": DONE})
-        rep = self.play([BAAS] + [RUNNING] * 1000, stuck_after=20 * 60, events=(dailies({}), after))
+        rep = self.play([BAAS] + [RUNNING] * 1000, frozen_from=5 * MIN,
+                        events=schedule(every(2, NAMES[:2])))
         self.assertEqual(self.tasks(rep)[:4], [("竞技场", R.OK), ("咖啡厅", R.OK), ("日程", R.FAIL),
                                                ("查收邮箱", R.SKIPPED)])
-        self.assertEqual(rep.notes, [("note.baas_stuck_at", {"task": "日程"})])
+        self.assertEqual(rep.notes, [("note.baas_stuck_twice", {"task": "日程"})])
 
     def test_baas_gave_up_on_a_daily(self):
         # BAAS stops by itself when a daily fails three times
-        after = dailies({name: DONE for name in NAMES[:4]})
-        rep = self.play([BAAS] + [RUNNING] * 100 + [[]], events=(dailies({}), after))
+        rep = self.play([BAAS] + [RUNNING] * 100 + [[]], events=schedule(every(2, NAMES[:4])))
         self.assertEqual(self.tasks(rep)[4], ("悬赏通缉", R.FAIL))
         self.assertEqual(rep.notes, [("note.baas_stopped_at", {"task": "悬赏通缉"})])
         self.assertTrue(runner.needs_retry(rep))
 
     def test_second_attempt_does_the_rest(self):
-        before = dailies({name: DONE for name in NAMES[:-1]})
         rep = self.play([BAAS] + [RUNNING] * 60 + [[]],
-                        events=(before, dailies({name: DONE for name in NAMES})))
+                        events=schedule({"收集奖励": 3 * MIN}, already=NAMES[:-1]))
         self.assertEqual(self.tasks(rep), [(n, R.ALREADY) for n in NAMES[:-1]] + [("收集奖励", R.OK)])
         self.assertEqual(R.outcome(rep), "ok")
 
     def test_nothing_due_and_baas_left_at_once(self):
         # e.g. BAAS was run by hand earlier: not a warning any more, the record says so
-        done = dailies({name: DONE for name in NAMES})
-        rep = self.play([BAAS, []], events=(done, done))
+        rep = self.play([BAAS, []], events=schedule({}, already=NAMES))
         self.assertEqual(self.tasks(rep), [(n, R.ALREADY) for n in NAMES])
         self.assertEqual(rep.notes, [])
         self.assertEqual(R.outcome(rep), "ok")
 
     def test_baas_left_at_once_with_dailies_due(self):
-        rep = self.play([BAAS, []], events=(dailies({}), dailies({})))
+        rep = self.play([BAAS, []], events=schedule({}))
         self.assertEqual(self.tasks(rep), [("baas", R.FAIL)])
         self.assertEqual(rep.notes, [("note.baas_closed_with_dailies", {"count": len(NAMES)})])
         self.assertTrue(runner.needs_retry(rep))
 
     def test_baas_never_starts_its_tasks(self):
-        rep = self.play([BAAS], events=(dailies({}), dailies({})))
+        rep = self.play([BAAS], events=schedule({}))
         self.assertEqual(self.tasks(rep), [("baas", R.FAIL)])
         self.assertEqual(rep.notes[0][0], "note.baas_not_started")
+
+    def test_stuck_at_different_dailies(self):
+        # started again twice already: the third time it ends, and runs again later
+        rep = R.GameReport("bluearchive")
+        results = [(n, R.OK) for n in NAMES[:5]] + [("普通关清体力", R.FAIL), ("自动制造", R.SKIPPED),
+                                                    ("收集奖励", R.SKIPPED)]
+        bluearchive.BlueArchive.judge_dailies(rep, results, "stalled", 50, ["日程", "悬赏通缉"], None)
+        self.assertEqual([k for k, _ in rep.notes],
+                         ["note.baas_restarted", "note.baas_restarted", "note.baas_stuck_at"])
+        self.assertTrue(runner.needs_retry(rep))
 
     def test_texts_exist(self):
         from gachashift.i18n import STRINGS
         for lang in ("en", "zh"):
-            for key in ("note.baas_stuck_at", "note.baas_stopped_at", "note.baas_closed_with_dailies"):
+            for key in ("note.baas_stuck_at", "note.baas_stopped_at", "note.baas_closed_with_dailies",
+                        "note.baas_restarted", "note.baas_stuck_twice", "compact.restarted"):
                 self.assertIn(key, STRINGS[lang], (lang, key))
 
 

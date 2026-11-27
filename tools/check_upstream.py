@@ -92,6 +92,7 @@ WATCH = [
             "x['next_tick'] <= time_since_epoch",             # what is due
             "key=lambda x: x['priority']",                    # the order dailies run in
             "'func_name'", "'event_name'", "'enabled'",
+            '"reward_acquired": (640, 100)',                  # where a stuck screen is tapped
         ],
     },
     {

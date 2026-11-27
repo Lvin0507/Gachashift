@@ -29,6 +29,8 @@ STRINGS = {
         "note.baas_stuck_at": "⚠️ BAAS stopped moving at “{task}” and was closed: the dailies before it are done, it and the ones after weren't reached (the picture shows where it stopped)",
         "note.baas_stopped_at": "⚠️ BAAS stopped by itself after “{task}” went wrong: the dailies after it weren't reached (the picture shows where it stopped)",
         "note.baas_closed_with_dailies": "❌ The game started, but BAAS closed again without doing any of today's {count} dailies (open BAAS to see whether it fails to start)",
+        "note.baas_restarted": "🔁 BAAS got stuck at “{task}”, so it was closed and started again, and got past it",
+        "note.baas_stuck_twice": "❌ BAAS got stuck at “{task}” twice, so Gachashift gave up: most likely that daily's settings in BAAS don't match what the game shows. Open BAAS and check that daily's settings (the picture is from the second time)",
         "note.finished": "✅ Finished in {minutes} min",
         "note.no_task_lines": "⚠️ Couldn't read which tasks ran from the log",
         "note.interrupted": "❌ Interrupted ({reason})",
@@ -91,6 +93,7 @@ STRINGS = {
         "compact.rest_done": "✅ The other {n} done",
         "compact.retried": " · second attempt",
         "compact.updated": " · updated first",
+        "compact.restarted": " · BAAS restarted after getting stuck at “{task}”",
     },
     "zh": {
         "report.title": "🌅 Gachashift 战报 ({date})",
@@ -113,6 +116,8 @@ STRINGS = {
         "note.baas_stuck_at": "⚠️ BAAS 停在「{task}」不动，已关掉：它前面的任务都做完了，它和后面的没做到（截图是停住时的画面）",
         "note.baas_stopped_at": "⚠️ BAAS 在「{task}」出错后自己停了：后面的任务没做到（截图是停住时的画面）",
         "note.baas_closed_with_dailies": "❌ 游戏开了，但 BAAS 一个每日都没做就关了（今天该做 {count} 个；打开 BAAS 看看是不是启动失败）",
+        "note.baas_restarted": "🔁 BAAS 卡在「{task}」，已关掉 BAAS 重开，重开后过了",
+        "note.baas_stuck_twice": "❌ BAAS 两次都卡在「{task}」，已放弃：多半是 BAAS 里这个任务的设定和游戏画面对不上，请打开 BAAS 检查这个任务的设定（截图是第二次卡住时的画面）",
         "note.finished": "✅ 已运行完毕（用时 {minutes} 分钟）",
         "note.no_task_lines": "⚠️ 日志里读不到各项任务的结果",
         "note.interrupted": "❌ 中断（{reason}）",
@@ -175,6 +180,7 @@ STRINGS = {
         "compact.rest_done": "✅ 其余 {n} 项完成",
         "compact.retried": " · 第二次尝试",
         "compact.updated": " · 先更新了客户端",
+        "compact.restarted": " · 卡在「{task}」后重开过 BAAS",
     },
 }
 

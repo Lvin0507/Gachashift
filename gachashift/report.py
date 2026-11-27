@@ -15,7 +15,8 @@ OK, FAIL, SKIPPED, ALREADY, PARTIAL, WARN, NOTHING = (
     "ok", "fail", "skipped", "already", "partial", "warn", "nothing")
 CLEAN = (OK, ALREADY, NOTHING)          # nothing to look at
 SUCCESS = CLEAN + (PARTIAL,)            # at least something got done
-INFO_NOTES = ("note.finished", "note.retried", "note.retried_rest", "note.updated")  # notes that don't mean a problem
+INFO_NOTES = ("note.finished", "note.retried", "note.retried_rest", "note.updated",
+              "note.baas_restarted")  # notes that don't mean a problem
 
 
 @dataclass
@@ -144,6 +145,8 @@ def render_compact(report, lang):
         line += t(lang, "compact.retried")
     if "note.updated" in notes:
         line += t(lang, "compact.updated")
+    if "note.baas_restarted" in notes:
+        line += t(lang, "compact.restarted", task=notes["note.baas_restarted"]["task"])
     return line
 
 
