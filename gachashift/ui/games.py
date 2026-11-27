@@ -4,12 +4,13 @@ import os
 import webbrowser
 
 from PySide6.QtCore import Qt, QTimer
-from PySide6.QtWidgets import QCheckBox, QDialog, QHBoxLayout, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QCheckBox, QComboBox, QDialog, QHBoxLayout, QVBoxLayout, QWidget
 
 from .. import buttonfind
 from ..config import app_dir
 from ..games import ordered
 from ..system import bring_to_front, main_window_of, move_mouse_to
+from ..toolcheck import bgi_flow_names
 from ..winutil import (DAY_KEYS_EN, DAY_KEYS_ZH, FIELDS, PATH_KINDS, SHORT_NAMES, STEAM_ONLY, TOOLS,
                        launcher_of, parse_point, plain_name, window_under_cursor)
 from .widgets import (Choice, DayChips, Field, ImageBox, Toggle, button, label, panel, pick_file,
@@ -110,6 +111,9 @@ def make_field(app, gid, key, kind, extra):
         col.addWidget(choice)
         return holder
 
+    if kind == "bgi_config":
+        return bgi_config_field(app, gid, key, title, hint)
+
     value = game_cfg.get(key, "")
     if kind == "point":
         value = ", ".join(str(v) for v in value) if isinstance(value, list) else str(value)
@@ -143,6 +147,61 @@ def make_field(app, gid, key, kind, extra):
     if value:
         check(field.edit.text())  # show problems with the saved value straight away
     return field
+
+
+class FlowPicker(QComboBox):
+    """BetterGI's one-dragon configs, read again each time the list opens (the BetterGI path
+    may have just been filled in, or a config added in BetterGI). A name can still be typed."""
+
+    def __init__(self, names_now, value):
+        super().__init__()
+        self.names_now = names_now
+        self.setEditable(True)
+        self.setInsertPolicy(QComboBox.NoInsert)
+        self.refill(value)
+
+    def refill(self, value):
+        self.blockSignals(True)
+        self.clear()
+        self.addItems(self.names_now())
+        self.setEditText(value)
+        self.blockSignals(False)
+
+    def showPopup(self):
+        self.refill(self.currentText())
+        super().showPopup()
+
+
+def bgi_config_field(app, gid, key, title, hint):
+    game_cfg = app.cfg["games"][gid]
+    holder = QWidget()
+    col = QVBoxLayout(holder)
+    col.setContentsMargins(0, 0, 0, 0)
+    col.setSpacing(4)
+    col.addWidget(label(title, "h2"))
+    col.addWidget(label(hint, "hint", wrap=True))
+    names = lambda: bgi_flow_names(game_cfg.get("bgi_path", ""))
+    picker = FlowPicker(names, game_cfg.get(key, ""))
+    picker.lineEdit().setPlaceholderText("默认配置")   # what runs when it's left empty
+    col.addWidget(picker)
+    error = label("", "error")
+    error.hide()
+    col.addWidget(error)
+
+    def check(text):
+        text = text.strip()
+        if game_cfg.get(key, "") != text:
+            game_cfg[key] = text
+            app.changed()
+        found = names()
+        # only when BetterGI's configs can be read: otherwise there's nothing to compare with
+        message = app.tr("bgi.config_missing") if found and (text or "默认配置") not in found else ""
+        error.setText(message)
+        error.setVisible(bool(message))
+
+    picker.currentTextChanged.connect(check)
+    check(picker.currentText())
+    return holder
 
 
 def calibrate(app, gid, edit):

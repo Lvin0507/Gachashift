@@ -245,6 +245,15 @@ def bgi_paths(cfg):
     return os.path.join(user, "config.json"), flows, os.path.join(flows, name + ".json")
 
 
+def bgi_flow_names(bgi_path):
+    """Names of the one-dragon configs in BetterGI (User/OneDragon/<name>.json), sorted."""
+    folder = os.path.join(os.path.dirname(bgi_path or ""), "User", "OneDragon")
+    if not bgi_path or not os.path.isdir(folder):
+        return []
+    return sorted(name[:-5] for name in os.listdir(folder)
+                  if name.lower().endswith(".json") and os.path.isfile(os.path.join(folder, name)))
+
+
 def bgi_files(cfg):
     paths = bgi_paths(cfg)
     if not paths:

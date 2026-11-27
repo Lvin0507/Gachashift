@@ -37,7 +37,8 @@ TOOLS = {
     "genshin": ("BetterGI", "https://github.com/babalae/better-genshin-impact"),
 }
 
-# Per-game form: (config key, kind, extra). Kinds: exe, file, dir, text, bool, choice, point
+# Per-game form: (config key, kind, extra). Kinds: exe, file, dir, text, bool, choice, point,
+# bgi_config (a list of BetterGI's one-dragon configs)
 FIELDS = {
     "endfield": [("maaend_path", "exe", None), ("game_path", "exe", None), ("log_dir", "dir", None),
                  ("via_steam", "bool", None)],
@@ -53,7 +54,7 @@ FIELDS = {
             ("od_dir", "dir", None), ("game_path", "exe", None), ("steam_appid", "text", None), ("launcher_exe", "text", None),
             ("start_button", "point", None), ("wait_for_reset", "bool", None)],
     "genshin": [("server", "choice", ["asia", "america", "europe"]), ("bgi_path", "exe", None), ("game_path", "exe", None),
-                ("onedragon_config", "text", None), ("wait_for_reset", "bool", None)],
+                ("onedragon_config", "bgi_config", None), ("wait_for_reset", "bool", None)],
 }
 # every game has the retry switch, last on its page
 for _fields in FIELDS.values():

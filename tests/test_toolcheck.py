@@ -226,6 +226,22 @@ class BetterGITest(unittest.TestCase):
             self.assertEqual(toolcheck.check_game("genshin", cfg), ["tool.bgi_game_path", "tool.bgi_config"])
 
 
+class BetterGIConfigListTest(unittest.TestCase):
+    def test_lists_the_one_dragon_configs(self):
+        with tempfile.TemporaryDirectory() as folder:
+            flows = os.path.join(folder, "User", "OneDragon")
+            os.makedirs(os.path.join(flows, "backup.json"))   # a folder, not a config
+            for name in ("默认配置.json", "只刷树脂.json", "notes.txt"):
+                with open(os.path.join(flows, name), "w", encoding="utf-8") as f:
+                    f.write("{}")
+            self.assertEqual(toolcheck.bgi_flow_names(os.path.join(folder, "BetterGI.exe")),
+                             ["只刷树脂", "默认配置"])
+
+    def test_no_bettergi_yet(self):
+        self.assertEqual(toolcheck.bgi_flow_names(""), [])
+        self.assertEqual(toolcheck.bgi_flow_names("C:/nowhere/BetterGI.exe"), [])
+
+
 class WholeCheckTest(unittest.TestCase):
     def test_only_games_that_are_on(self):
         with tempfile.TemporaryDirectory() as tmp:

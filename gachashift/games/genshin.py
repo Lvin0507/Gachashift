@@ -15,7 +15,7 @@ import time
 
 from .. import report as R
 from ..system import StopRequested, kill, log_size, pause, process_running, read_since, ts
-from .base import Game, minutes_since
+from .base import FailureShots, Game, minutes_since, remove_file
 from .zzz import SERVER_UTC
 
 TOOL_EXE = "BetterGI.exe"
@@ -41,6 +41,70 @@ DOMAIN = re.compile(r"自动秘境任务：执行|自动秘境[\"”]?：")
 DOMAIN_CLAIMED = re.compile(r"自动秘境[\"”]?：使用 [\"“]?[^\"”，,\r\n]+[\"”]?[,，] ?(?:数量|消耗)：\d+")
 DOMAIN_ENDED = ("体力耗尽或者设置轮次已达标，结束自动秘境",  # resin used up, or the set rounds done
                 "自动秘境：检测到树脂不足提示")             # no resin to start with
+
+
+# Read while BetterGI runs, for the failure pictures. Each entry is a header line with the
+# level, then the message on the next line.
+HEADER = re.compile(r"^\[\d\d:\d\d:\d\d\.\d+\] \[(\w+)\]")
+COMMISSION_START = re.compile(r"^执行委托：(.+?) \| ")
+COMMISSION_FAILED = re.compile(r"^委托 [\"“]?(.+?)[\"”]? 执行失败（第 (\d+)/(\d+) 次）")
+COMMISSION_DONE = re.compile(r"^委托执行成功：[\"“]?(.+?)[\"”]?$")
+WIPED = "存在角色被击败"   # the party fell; BetterGI revives them and tries again
+REWARD_MISSED = re.compile(r"^检查每日奖励结果：[\"“]?未领取")
+TASK_ENDED = '→ "任务结束"'
+
+
+class BetterGIFailures(FailureShots):
+    """BetterGI's log while it runs. A commission is one task (picture keyed by its name), the
+    domains another. A fallen party or an error takes a picture at once; it is kept if the
+    commission fails its last attempt or the domains end without using up the resin, and
+    deleted if they get past it. A commission reward left unclaimed gets a picture too."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.level = ""
+
+    def line(self, raw):
+        header = HEADER.match(raw)
+        if header:
+            self.level = header.group(1)
+            return
+        level, self.level = self.level, ""
+        current = self.current[0] if self.current else None
+        m = COMMISSION_START.match(raw)
+        if m:
+            if current != m.group(1):   # a second attempt is the same commission
+                self.begin(m.group(1), m.group(1))
+            return
+        m = COMMISSION_FAILED.match(raw)
+        if m:
+            name, attempt, attempts = m.group(1), int(m.group(2)), int(m.group(3))
+            if attempt >= attempts:
+                self.failed(name, name)
+            else:
+                self.error()
+            return
+        m = COMMISSION_DONE.match(raw)
+        if m:
+            self.succeeded(m.group(1))
+            return
+        if DOMAIN.search(raw) and current != "domain":
+            self.begin("domain", "domain")
+            current = "domain"
+        if any(end in raw for end in DOMAIN_ENDED) and current == "domain":
+            self.succeeded("domain")
+            self.current = None
+        elif raw == TASK_ENDED:
+            # one of the one-dragon's tasks is over; what follows belongs to the next one
+            if current == "domain":
+                self.failed("domain", "domain")   # ended without using up the resin
+            self.finish_current()
+            self.current = None
+        elif REWARD_MISSED.match(raw):
+            self.begin("daily_reward", "daily_reward")
+            self.failed("daily_reward", "daily_reward")
+        elif WIPED in raw or level == "ERR":
+            self.error()
 
 
 def log_path(bgi_dir, day):
@@ -141,12 +205,21 @@ class Genshin(Game):
         kill([TOOL_EXE, *GAME_EXES])
         offset = log_size(log)
         start, reason, saw_bgi, ended_at, stop = time.time(), "timeout", False, None, None
+        failures = None
         try:
             print(f"[{ts()}] starting {exe} startOneDragon {config}")
             subprocess.Popen([exe, "startOneDragon", config], cwd=folder)
             watch = self.watch(log)
+            failures = BetterGIFailures(log, self.snap, remove_file, offset) if self.shot_dir else None
+            rounds = 0
             while time.time() - start < timeout:
-                pause(15)
+                # every 3 s for the failure pictures; the rest every 15 s as before
+                pause(3)
+                rounds += 1
+                if failures:
+                    failures.poll()
+                if rounds % 5:
+                    continue
                 if self.stuck(watch):
                     reason = "stalled"
                     break
@@ -167,6 +240,8 @@ class Genshin(Game):
         except StopRequested as e:
             stop, reason = e, "stopped"
         finally:
+            if failures:
+                self.failure_shots = failures.close()
             self.capture([TOOL_EXE, *GAME_EXES])
             kill([TOOL_EXE, *GAME_EXES])
             time.sleep(3)

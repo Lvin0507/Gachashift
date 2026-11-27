@@ -10,6 +10,7 @@ from gachashift import report as R
 from gachashift import system
 from gachashift.games.arknights import MaaFailures
 from gachashift.games.base import LiveLog
+from gachashift.games.genshin import BetterGIFailures
 from gachashift.games.zzz import OneDragonFailures, parse_od_log
 
 LOGS = Path(__file__).parent / "logs"
@@ -130,6 +131,73 @@ class MaaFailuresTest(Folder, Pictures):
                    "[2026-11-27 05:20:00][ERR] Task error: Auto Recruit\n")
         watch = MaaFailures(self.path, self.snap, self.removed.append)
         self.assertEqual([key for key, _ in watch.close()], ["刷理智", "Auto Recruit"])
+
+
+def bgi(level, message, second=0):
+    """One BetterGI log entry: the header line, then the message."""
+    return (f"[22:00:{second:02d}.000] [{level}] [Primary:S1:P1:T1] BetterGenshinImpact.Core.Script.Dependence.Log\n"
+            f"{message}\n\n")
+
+
+class BetterGIFailuresTest(Folder, Pictures):
+    def watch(self, *entries):
+        self.setup_pictures()
+        self.write("".join(entries))
+        return BetterGIFailures(self.path, self.snap, self.removed.append).close()
+
+    def test_27_nov_run(self):
+        # everything done: nothing to show
+        self.setup_pictures()
+        watch = BetterGIFailures(str(LOGS / "bettergi_2026-11-27.log"), self.snap, self.removed.append)
+        self.assertEqual((watch.close(), self.snaps), ([], []))
+
+    def test_commission_that_fails_both_attempts(self):
+        kept = self.watch(
+            bgi("INF", "执行委托：圆滚滚的易爆品 | 蒙德/果酒湖 | Basic | 第 1/2 次"),
+            bgi("ERR", '["processor:自动战斗"] "执行 自动战斗 步骤" 失败: "战斗过程检测到游泳，前往七天神像重试"'),
+            bgi("WRN", '委托 "圆滚滚的易爆品" 执行失败（第 1/2 次）'),
+            bgi("INF", "执行委托：圆滚滚的易爆品 | 蒙德/果酒湖 | Basic | 第 2/2 次"),
+            bgi("WRN", '委托 "圆滚滚的易爆品" 执行失败（第 2/2 次）'))
+        # one picture, from the first sign of trouble
+        self.assertEqual(kept, [("圆滚滚的易爆品", "圆滚滚的易爆品-0.jpg")])
+        self.assertEqual(len(self.snaps), 1)
+
+    def test_commission_that_gets_there_on_the_second_try(self):
+        kept = self.watch(
+            bgi("INF", "执行委托：临危受命 | 蒙德/奔狼领 | Basic | 第 1/2 次"),
+            bgi("WRN", "检测到复苏界面，存在角色被击败，前往七天神像复活"),
+            bgi("WRN", '委托 "临危受命" 执行失败（第 1/2 次）'),
+            bgi("INF", "执行委托：临危受命 | 蒙德/奔狼领 | Basic | 第 2/2 次"),
+            bgi("INF", "委托执行成功：临危受命"))
+        self.assertEqual(kept, [])
+        self.assertEqual(self.removed, ["临危受命-0.jpg"])
+
+    def test_party_falls_in_a_domain_but_the_resin_gets_used(self):
+        kept = self.watch(
+            bgi("INF", "自动秘境任务：执行"),
+            bgi("WRN", "检测到复苏界面，存在角色被击败，前往七天神像复活"),
+            bgi("INF", '"自动秘境"：使用 "原粹树脂", 数量：20'),
+            bgi("INF", "体力耗尽或者设置轮次已达标，结束自动秘境"),
+            bgi("INF", '→ "任务结束"'))
+        self.assertEqual(kept, [])
+        self.assertEqual(self.removed, ["domain-0.jpg"])
+
+    def test_domain_that_ends_with_resin_left(self):
+        kept = self.watch(
+            bgi("INF", "自动秘境任务：执行"),
+            bgi("ERR", "自动秘境：未找到对应的秘境椛染之庭的传送点"),
+            bgi("INF", '→ "任务结束"'),
+            bgi("ERR", "前往冒险家协会领取奖励执行异常：timeout"))   # the next task's own error
+        self.assertEqual(kept, [("domain", "domain-0.jpg")])
+
+    def test_domain_cancelled_by_hand(self):
+        self.setup_pictures()
+        watch = BetterGIFailures(str(LOGS / "bettergi_2026-11-27_domain.log"), self.snap, self.removed.append)
+        self.assertEqual([key for key, _ in watch.close()], ["domain"])
+
+    def test_commission_reward_not_claimed(self):
+        kept = self.watch(bgi("WRN", '检查每日奖励结果："未领取"，请手动检查！'))
+        self.assertEqual(kept, [("daily_reward", "daily_reward-0.jpg")])
 
 
 if __name__ == "__main__":
