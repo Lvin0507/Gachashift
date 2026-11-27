@@ -149,22 +149,29 @@ def make_field(app, gid, key, kind, extra):
     return field
 
 
+DEFAULT_FLOW = "默认配置"   # what BetterGI runs when no config is named
+
+
 class FlowPicker(QComboBox):
     """BetterGI's one-dragon configs, read again each time the list opens (the BetterGI path
-    may have just been filled in, or a config added in BetterGI). A name can still be typed."""
+    may have just been filled in, or a config added in BetterGI). A plain list like the other
+    pickers in the app, so a click anywhere opens it; a saved name BetterGI no longer has
+    stays in the list so it can be seen (and is flagged)."""
 
     def __init__(self, names_now, value):
         super().__init__()
         self.names_now = names_now
-        self.setEditable(True)
-        self.setInsertPolicy(QComboBox.NoInsert)
         self.refill(value)
 
     def refill(self, value):
+        value = value or DEFAULT_FLOW
+        names = self.names_now()
+        if value not in names:
+            names = [value] + names
         self.blockSignals(True)
         self.clear()
-        self.addItems(self.names_now())
-        self.setEditText(value)
+        self.addItems(names)
+        self.setCurrentText(value)
         self.blockSignals(False)
 
     def showPopup(self):
@@ -182,20 +189,22 @@ def bgi_config_field(app, gid, key, title, hint):
     col.addWidget(label(hint, "hint", wrap=True))
     names = lambda: bgi_flow_names(game_cfg.get("bgi_path", ""))
     picker = FlowPicker(names, game_cfg.get(key, ""))
-    picker.lineEdit().setPlaceholderText("默认配置")   # what runs when it's left empty
-    col.addWidget(picker)
+    row = QHBoxLayout()
+    row.addWidget(picker)
+    row.addStretch()
+    col.addLayout(row)
     error = label("", "error")
     error.hide()
     col.addWidget(error)
 
     def check(text):
-        text = text.strip()
-        if game_cfg.get(key, "") != text:
+        saved = game_cfg.get(key, "")
+        if text != (saved or DEFAULT_FLOW):
             game_cfg[key] = text
             app.changed()
         found = names()
         # only when BetterGI's configs can be read: otherwise there's nothing to compare with
-        message = app.tr("bgi.config_missing") if found and (text or "默认配置") not in found else ""
+        message = app.tr("bgi.config_missing") if found and text not in found else ""
         error.setText(message)
         error.setVisible(bool(message))
 

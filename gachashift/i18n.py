@@ -670,7 +670,7 @@ QT_STRINGS = {
         "h.launcher_exe": "The launcher Steam opens before the game: HYP.exe for ZZZ, launcher_main.exe for Wuthering Waves",
         "h.bgi_path": "BetterGI.exe, inside your BetterGI folder. Its log folder is read from next to it.",
         "h.game_path": "The game itself (not its launcher). Optional: used to fix the tool's settings when its game path is missing. Find tools fills it in.",
-        "h.onedragon_config": "The one-dragon config to run in the morning, from the ones in BetterGI (empty means 默认配置). You can keep several in BetterGI, say one for resin only and one for commissions, and pick here. In that config, set the finishing action to close both the game and BetterGI.",
+        "h.onedragon_config": "The one-dragon config to run in the morning, picked from the ones in BetterGI (the list is read again each time it opens). You can keep several in BetterGI, say one for resin only and one for commissions, and pick here. In that config, set the finishing action to close both the game and BetterGI.",
         "bgi.config_missing": "BetterGI has no one-dragon config with this name.",
     },
     "zh": {
@@ -811,7 +811,7 @@ QT_STRINGS = {
         "h.launcher_exe": "Steam 在游戏前打开的启动器：绝区零是 HYP.exe，鸣潮是 launcher_main.exe",
         "h.bgi_path": "BetterGI 文件夹里的 BetterGI.exe，日志从旁边的 log 文件夹读取。",
         "h.game_path": "游戏本体的 exe（不是启动器）。可以不填：工具的游戏路径不见了时，用它来帮你改。“自动寻找工具”会顺便填好。",
-        "h.onedragon_config": "早上要跑的一条龙配置，从 BetterGI 里已有的配置中选（留空就是默认配置）。你可以在 BetterGI 里准备好几个，例如只刷树脂、只做委托，再在这里选一个。请在该配置里把完成后操作设为同时关闭游戏和 BetterGI。",
+        "h.onedragon_config": "早上要跑的一条龙配置，从 BetterGI 里已有的配置中选（每次打开选单都会重新读取）。你可以在 BetterGI 里准备好几个，例如只刷树脂、只做委托，再在这里选一个。请在该配置里把完成后操作设为同时关闭游戏和 BetterGI。",
         "bgi.config_missing": "BetterGI 里没有这个名称的一条龙配置。",
     },
 }
