@@ -257,6 +257,10 @@ class Genshin(Game):
             rep.note("note.not_started", hint="hint.bgi")
             return rep
         rep = parse_bgi_log(text, rep, minutes_since(start), reason, stopped=bool(stop))
+        if reason == "done, left open":
+            # it worked, but only because Gachashift closed BetterGI after a minute; a config
+            # whose finishing action is empty does this (each config has its own)
+            rep.note("tool.bgi_finish", config=config)
         if stop:
             stop.report = rep
             raise stop

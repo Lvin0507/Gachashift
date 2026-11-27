@@ -10,7 +10,7 @@ from .. import buttonfind
 from ..config import app_dir
 from ..games import ordered
 from ..system import bring_to_front, main_window_of, move_mouse_to
-from ..toolcheck import bgi_flow_names
+from ..toolcheck import bgi_files, bgi_flow_names, check_bgi
 from ..winutil import (DAY_KEYS_EN, DAY_KEYS_ZH, FIELDS, PATH_KINDS, SHORT_NAMES, STEAM_ONLY, TOOLS,
                        launcher_of, parse_point, plain_name, window_under_cursor)
 from .widgets import (Choice, DayChips, Field, ImageBox, Toggle, button, label, panel, pick_file,
@@ -176,6 +176,7 @@ class FlowPicker(QComboBox):
 
     def showPopup(self):
         self.refill(self.currentText())
+        self.currentTextChanged.emit(self.currentText())   # check the config again too
         super().showPopup()
 
 
@@ -204,7 +205,13 @@ def bgi_config_field(app, gid, key, title, hint):
             app.changed()
         found = names()
         # only when BetterGI's configs can be read: otherwise there's nothing to compare with
-        message = app.tr("bgi.config_missing") if found and text not in found else ""
+        if found and text not in found:
+            message = app.tr("bgi.config_missing")
+        else:
+            # each config has its own finishing action: an empty one leaves BetterGI open
+            problems = check_bgi(bgi_files({"bgi_path": game_cfg.get("bgi_path", ""),
+                                            "onedragon_config": text}))
+            message = "\n".join(app.tr(p) for p in problems if p in ("tool.bgi_finish", "tool.power"))
         error.setText(message)
         error.setVisible(bool(message))
 

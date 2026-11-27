@@ -124,8 +124,10 @@ def explain(rep, game_cfg, game=None):
     if R.outcome(rep) != "ok":
         if game is not None and game.launcher_left and not getattr(rep, "update", None):
             rep.note("note.maybe_update")
+        noted = {key for key, _ in rep.notes}
         for key in toolcheck.check_game(rep.game, game_cfg):
-            rep.note(key)
+            if key not in noted:
+                rep.note(key)
     return rep
 
 

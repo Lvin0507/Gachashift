@@ -217,6 +217,8 @@ class BetterGITest(unittest.TestCase):
     def test_finish_action(self):
         self.assertEqual(toolcheck.check_bgi(self.files(action="关闭游戏"), exists=always), ["tool.bgi_finish"])
         self.assertEqual(toolcheck.check_bgi(self.files(action="关机"), exists=always), ["tool.power"])
+        # a config added in BetterGI starts with no finishing action at all
+        self.assertEqual(toolcheck.check_bgi(self.files(action=""), exists=always), ["tool.bgi_finish"])
 
     def test_reads_user_folder(self):
         with tempfile.TemporaryDirectory() as tmp:

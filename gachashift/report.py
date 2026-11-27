@@ -105,6 +105,8 @@ def actions(report, lang):
         missing = any("missing settings" in str(p.get("error", "")) for _, p in report.notes)
         return [t(lang, "action.setup" if missing else "action.nothing_done", game=game)]
     found = []
+    if any(key.startswith("tool.") for key, _ in report.notes):
+        found.append(t(lang, "action.tool_settings", game=game))
     for task in report.tasks:
         if task.status != FAIL:
             continue
