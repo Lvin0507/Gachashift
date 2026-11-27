@@ -2,6 +2,7 @@
 
     python -m gachashift                      # scheduled run (asks first if someone is at the PC)
     python -m gachashift --no-shutdown        # run everything now, keep the PC on
+    python -m gachashift --shutdown-after     # run everything now, then shut the PC down
     python -m gachashift --only zzz           # one game, no Telegram, no shutdown
     python -m gachashift --dry-run-endfield logs\\go-service_....log
 """
@@ -55,6 +56,8 @@ def start_run_log(keep_days=14):
 def main():
     p = argparse.ArgumentParser(prog="gachashift", description="Gachashift - daily game butler")
     p.add_argument("--no-shutdown", action="store_true", help="run now and keep the PC on afterwards")
+    p.add_argument("--shutdown-after", action="store_true",
+                   help="run now, then shut the PC down (even if General's switch is off)")
     p.add_argument("--dim", action="store_true", help="darken the screen during this run")
     p.add_argument("--only", choices=sorted(GAMES_BY_ID), help="run one game; no Telegram, no shutdown")
     p.add_argument("--dry-run-endfield", metavar="LOG", help="parse a MaaEnd log and print the report")
@@ -76,9 +79,10 @@ def main():
     try:
         if args.only:
             run_all(cfg, only=args.only, allow_shutdown=False, send=False, tray=True)
-        elif args.no_shutdown:
+        elif args.no_shutdown or args.shutdown_after:
             # started by hand, so no need to ask
-            run_all(cfg, allow_shutdown=False, tray=True, dim=args.dim)
+            run_all(cfg, allow_shutdown=False, tray=True, dim=args.dim,
+                    shutdown_after=args.shutdown_after)
         else:
             run_all(cfg, ask_first=True, tray=True)        # the scheduled morning run
     except Exception as e:

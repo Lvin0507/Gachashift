@@ -26,7 +26,7 @@ def build(app):
     inner.addWidget(label(app.tr("run.all_explain"), "hint", wrap=True))
     def start_all():
         dark = ["--dim"] if app.cfg["options"].get("dim_manual", False) else []
-        app.start_run("--no-shutdown", *dark)
+        app.start_run("--shutdown-after" if app.shutdown_after else "--no-shutdown", *dark)
 
     run_all = button(app.tr("run.all"), "primary", start_all)
     run_all.setEnabled(not busy)
@@ -39,6 +39,13 @@ def build(app):
     inner.addLayout(switch_row(app.tr("run.dim"), bool(app.cfg["options"].get("dim_manual", False)),
                                lambda on: app.set_option_now("dim_manual", on)))
     inner.addWidget(label(app.tr("run.dim_hint"), "hint", wrap=True))
+    # not saved: it only counts for the next run started here, so a test run some afternoon
+    # can't shut the PC down because of a switch left on the night before
+    row = switch_row(app.tr("run.shutdown"), app.shutdown_after,
+                     lambda on: setattr(app, "shutdown_after", on))
+    app.shutdown_toggle = row.itemAt(1).widget()
+    inner.addLayout(row)
+    inner.addWidget(label(app.tr("run.shutdown_hint"), "hint", wrap=True))
     box.addWidget(card)
 
     card, inner = panel(spacing=6)

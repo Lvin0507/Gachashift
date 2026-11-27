@@ -71,6 +71,8 @@ class MainWindow(QWidget):
         self.run_start_offset = self.run_offset = 0
         self.run_output = self.run_status = None
         self.run_buttons = []
+        self.shutdown_after = False   # Run page's "shut down when done", for the next run only
+        self.shutdown_toggle = None
         self.stopping = False
         self.run_timer = QTimer(self)
         self.run_timer.timeout.connect(self.poll_run)
@@ -453,6 +455,10 @@ class MainWindow(QWidget):
         save_config(self.saved_cfg)
         for b in self.run_buttons:
             b.setEnabled(True)
+        # the switch counted for that run only (if it ran to the end, the PC is shutting down)
+        self.shutdown_after = False
+        if self.shutdown_toggle is not None:
+            self.shutdown_toggle.setChecked(False)
         if self.run_status is not None:
             self.run_status.setText(self.tr("test.done"))
 

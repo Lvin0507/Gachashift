@@ -99,7 +99,7 @@ The app takes it from there. Home shows a short setup checklist with a button fo
 
 Other pages:
 
-- **Run**: run everything now, or test one game; the output appears as it happens
+- **Run**: run everything now, or test one game; the output appears as it happens. For a run started before bed, two switches: darken the screens, and shut the PC down when it's done (that one counts for the next run only)
 - **Schedule**: the daily Task Scheduler task (highest privileges, never starts late after a missed time)
 - **History**: past runs, with the report at the end. **Pack a problem report** puts the recent logs, screenshots, the end of each tool's log and your settings into one zip on the Desktop, with the Telegram token, Discord webhook, game UIDs and your Windows user name removed, ready to send to whoever helps you
 - **General**: languages, mute / darken the screen / shut down while running, Telegram and Discord with a test message, the update check
@@ -114,6 +114,7 @@ The app runs the same commands, so they also work on their own:
 ```
 python -m gachashift                   # the scheduled run (asks first if someone is at the PC)
 python -m gachashift --no-shutdown     # run everything now and keep the PC on
+python -m gachashift --shutdown-after  # run everything now, then shut down
 python -m gachashift --only zzz        # one game: endfield, arknights, wuthering, bluearchive, zzz or genshin
 python -m gachashift --dry-run-endfield logs\go-service_<date>.log
 ```

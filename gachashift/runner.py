@@ -369,11 +369,13 @@ def stopped_report():
 
 
 def run_all(cfg=None, only=None, allow_shutdown=True, send=True, ask_first=False, log=print,
-            tray=False, dim=False):
+            tray=False, dim=False, shutdown_after=False):
     """Run the games, then send the report and (optionally) shut down.
     ask_first: for scheduled runs, ask before starting if someone is using the PC.
     tray: show a tray icon with the game that is running and a way to stop.
-    dim: darken the screen even though this isn't the scheduled run (Run page's switch)."""
+    dim: darken the screen even though this isn't the scheduled run (Run page's switch).
+    shutdown_after: shut down when done whatever General says (Run page's switch, for a run
+    started before going to sleep). A stopped run never shuts down."""
     cfg = cfg or load_config()
     lang = cfg.get("report_language", "en")
     opts = cfg["options"]
@@ -436,6 +438,6 @@ def run_all(cfg=None, only=None, allow_shutdown=True, send=True, ask_first=False
     if send and photos:
         R.send_photos(cfg, photos)
     prune_screenshots()
-    if allow_shutdown and opts.get("shutdown", True) and not stopped:
+    if not stopped and (shutdown_after or (allow_shutdown and opts.get("shutdown", True))):
         shutdown()
     return reports

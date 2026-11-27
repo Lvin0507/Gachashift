@@ -99,7 +99,7 @@ Gachashift 本身不玩游戏。每款游戏它都会打开对应的工具，等
 
 其他页面：
 
-- **运行**：立即全部运行，或测试单款游戏；输出会即时显示
+- **运行**：立即全部运行，或测试单款游戏；输出会即时显示。睡前手动开跑时有两个开关：调暗屏幕，以及跑完后关机（关机只对下一次运行有效）
 - **排程**：每天运行的任务计划程序任务（使用最高权限，错过时间不会补跑）
 - **历史**：过去的运行记录，战报在最后面。**打包问题回报** 会把最近的日志、截图、各工具日志的最后一段和你的设置装进一个 zip 放到桌面，并拿掉 Telegram token、Discord webhook、游戏 UID 和你的 Windows 用户名，可以直接传给帮你看问题的人
 - **通用设置**：语言、运行期间的静音／调暗屏幕／关机、Telegram 和 Discord 与测试消息、检查更新
@@ -114,6 +114,7 @@ App 执行的就是这些命令，所以它们也可以单独使用：
 ```
 python -m gachashift                   # 排程运行（有人在用电脑时会先询问）
 python -m gachashift --no-shutdown     # 立即全部运行，结束后不关机
+python -m gachashift --shutdown-after  # 立即全部运行，结束后关机
 python -m gachashift --only zzz        # 只跑一款：endfield、arknights、wuthering、bluearchive、zzz 或 genshin
 python -m gachashift --dry-run-endfield logs\go-service_<日期>.log
 ```
