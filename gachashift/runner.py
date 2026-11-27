@@ -140,7 +140,7 @@ def remove_file(path):
 # Notes that say the run itself ended badly: the screen at the end shows why
 END_SHOT_NOTES = ("note.error", "note.stalled", "note.timeout", "note.not_started", "note.no_records",
                   "note.no_done_marker", "note.maybe_update", "note.update_failed",
-                  "note.baas_not_started", "note.locked")
+                  "note.baas_not_started", "note.baas_stopped_after_work", "note.locked")
 
 
 def end_shot_wanted(rep):
@@ -192,11 +192,23 @@ def prune_screenshots(keep_days=SCREENSHOT_DAYS):
             remove_file(old)
 
 
+# The tool stopped partway through its own list: a second run picks up what is left (BAAS
+# skips what it already did). 27 Nov: BAAS got stuck after 4 min, and the second run did 11
+# more minutes of dailies.
+RETRY_NOTES = ("note.baas_stopped_after_work",)
+
+
+def stuck_partway(rep):
+    return any(key in RETRY_NOTES for key, _ in rep.notes)
+
+
 def needs_retry(rep):
     """True when nothing in the game got done: the game didn't start, the tool left no records,
     or its only task failed. Those are usually one-off (a client update, a slow first launch)
     and pass on a second try. A run where some tasks worked and some failed isn't repeated:
     the failures there are usually the same every time."""
+    if stuck_partway(rep):
+        return True
     if not R.nothing_done(rep):
         return False
     # a setting that was never filled in won't fix itself on a second try
@@ -294,18 +306,21 @@ def run_games(cfg, only, lang, opts, log, dim=False, shots=None, status=None, up
                 updates.finish_all()
 
         for index, game_cls, game_cfg in retry:
-            log(f"[{ts()}] " + t(lang, "log.retry", game=game_name(game_cls.id, lang)))
+            # "nothing got done" or "got stuck partway": the report says which
+            why = "note.retried_rest" if stuck_partway(reports[index]) else "note.retried"
+            log(f"[{ts()}] " + t(lang, "log.retry_rest" if why == "note.retried_rest" else "log.retry",
+                                 game=game_name(game_cls.id, lang)))
             status(t(lang, "tray.retrying", game=plain(game_cls.id, lang)))
             try:
                 rep = run_game(game_cls, game_cfg, lang, wait_reset=False, shots=shots)
             except StopRequested as stop:
                 if getattr(stop, "report", None):
-                    stop.report.note("note.retried")
+                    stop.report.note(why)
                     reports[index] = stop.report
                 reports.append(stopped_report())
                 return reports, True
             # the second attempt is what the game is in now, so it replaces the first
-            rep.note("note.retried")
+            rep.note(why)
             discard_pictures(reports[index])
             reports[index] = rep
     return reports, False

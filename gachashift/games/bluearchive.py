@@ -13,6 +13,8 @@ from ..system import StopRequested, kill, kill_processes, launch_and_click, paus
 from .base import Game, minutes_since
 
 REG_KEY = r"Software\YostarJP\BlueArchive"
+RESTART_GRACE = 45   # seconds BAAS may be gone while it restarts itself (an update)
+WORKED_MINUTES = 3   # a runner that worked this long before being stopped did part of its list
 GAME_EXE = "BlueArchive.exe"
 # Unity stores screen settings as "<name>_h<hash>"; match on the prefix
 WINDOWED = {
@@ -74,6 +76,7 @@ class BlueArchive(Game):
         except OSError as e:
             print(f"could not set window size: {e}")
         reason, saw_baas = "timeout", False
+        ran_since = gone_since = None  # BAAS's task runner first seen; BAAS last seen gone
         start = time.time()
         try:
             ok = launch_and_click(self.open_launcher(), launcher_exe, self.cfg["start_button"],
@@ -97,16 +100,24 @@ class BlueArchive(Game):
                 procs = processes_in(baas_dir)
                 baas_running = any((p.info.get("name") or "").lower() == "pythonw.exe" for p in procs)
                 if baas_running:
-                    saw_baas = True
-                elif saw_baas:
+                    saw_baas, gone_since = True, None
+                    ran_since = ran_since or time.time()
+                    continue
+                # BAAS's runner is gone (or never came). BAAS closes and starts again when it
+                # updates itself, so only a gap that lasts counts
+                if gone_since is None:
+                    gone_since = time.time()
+                if time.time() - gone_since < RESTART_GRACE:
+                    continue
+                if saw_baas:
                     # BAAS itself has exited; helpers it leaves behind (e.g. adb.exe)
                     # are closed in the finally block below
                     reason = "exited"
                     break
                 if not procs:
-                    # nothing of BAAS left: it either ran and exited, or closed before its
-                    # tasks started (BAAS itself was started; it just didn't stay)
-                    reason = "exited" if saw_baas else "closed_early"
+                    # nothing of BAAS left before its tasks started (BAAS itself was
+                    # started; it just didn't stay)
+                    reason = "closed_early"
                     break
                 if not saw_baas and time.time() - start > start_timeout:
                     reason = "not_started"
@@ -123,7 +134,16 @@ class BlueArchive(Game):
             time.sleep(3)
 
         minutes = minutes_since(start)
-        if reason == "exited" and minutes >= 3:
+        # BAAS keeps no task log; how long its runner worked before it was stopped is the
+        # best sign of whether the dailies got done
+        stalled = self.stalled * 60 if reason == "stalled" else 0
+        worked = (time.time() - ran_since - stalled) / 60 if ran_since else 0
+        print(f"[{ts()}] Blue Archive ended: {reason}, BAAS runner seen={saw_baas}, "
+              f"worked about {worked:.0f} min")
+        if reason in ("stalled", "timeout") and worked >= WORKED_MINUTES:
+            rep.add("baas", R.PARTIAL)
+            rep.note("note.baas_stopped_after_work", minutes=round(worked))
+        elif reason == "exited" and minutes >= 3:
             rep.add("baas", R.OK)
             rep.note("note.finished", minutes=minutes)
         elif reason == "exited":
