@@ -74,6 +74,7 @@ class Runs:
                 mock.patch.object(bluearchive.time, "time", lambda: clock[0]), \
                 mock.patch.object(bluearchive.time, "sleep", lambda s: None), \
                 mock.patch.object(Game, "capture", lambda self, *a: None):
+            self.game = game
             return game.run()
 
 
@@ -93,6 +94,7 @@ class BlueArchiveTest(Runs, unittest.TestCase):
         self.assertAlmostEqual(params["minutes"], 32, delta=1)
         self.assertEqual(len(self.taps), 1)   # tapped once before giving up
         self.assertEqual(len(self.starts), 1)  # with no record, BAAS isn't started again
+        self.assertEqual(self.game.stalled, 8)   # and the general "nothing moved" note applies
         self.assertFalse(R.nothing_done(rep))
 
     def test_27_nov_first_attempt(self):
@@ -207,6 +209,7 @@ class DailyRecordTest(Runs, unittest.TestCase):
                         events=schedule(every(1, NAMES[:-1])))
         self.assertEqual(self.tasks(rep), [(n, R.OK) for n in NAMES[:-1]] + [("收集奖励", R.FAIL)])
         self.assertEqual(rep.notes, [("note.baas_stuck_twice", {"task": "收集奖励"})])
+        self.assertEqual(self.game.stalled, 0)   # the note above says it all
         self.assertEqual((len(self.taps), len(self.starts)), (2, 2))
         self.assertTrue(runner.end_shot_wanted(rep))
         self.assertFalse(runner.needs_retry(rep))   # the same again later wouldn't help
@@ -224,6 +227,8 @@ class DailyRecordTest(Runs, unittest.TestCase):
         self.assertEqual([k for k, _ in rep.notes], ["note.baas_restarted", "note.finished"])
         self.assertEqual(rep.notes[0][1], {"task": "日程"})
         self.assertEqual(R.outcome(rep), "ok")
+        # 28 Nov: the runner then added "nothing moved for 20 min, ended early" as well
+        self.assertEqual(self.game.stalled, 0)
         line = R.render_compact(rep, "zh")
         self.assertTrue(line.startswith("『📘 蔚蓝档案』✅ 全部完成（8 项）"), line)
         self.assertIn("卡在「日程」后重开过 BAAS", line)
@@ -243,6 +248,15 @@ class DailyRecordTest(Runs, unittest.TestCase):
         self.assertEqual(self.tasks(rep)[2], ("日程", R.FAIL))
         self.assertEqual(rep.notes, [("note.baas_stuck_at", {"task": "日程"})])
         self.assertTrue(runner.needs_retry(rep))   # later, with the game started afresh
+
+    def test_going_round_in_circles_at_the_first_daily_twice(self):
+        # 28 Nov: after an account transfer, BAAS kept moving in 竞技场 without finishing it,
+        # before and after being started again
+        rep = self.play([BAAS] + [RUNNING] * 1000, events=schedule({}))
+        self.assertEqual(self.tasks(rep)[0], ("竞技场", R.FAIL))
+        self.assertEqual(rep.notes, [("note.baas_stuck_twice", {"task": "竞技场"})])
+        self.assertEqual((len(self.starts), self.taps), (2, []))
+        self.assertEqual(self.game.stalled, 0)
 
     def test_stuck_early_leaves_the_rest_not_run(self):
         rep = self.play([BAAS] + [RUNNING] * 1000, frozen_from=5 * MIN,

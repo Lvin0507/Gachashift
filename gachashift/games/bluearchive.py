@@ -172,6 +172,7 @@ class BlueArchive(Game):
         reason, saw_baas, before = "timeout", False, {}
         ran_since = gone_since = None  # BAAS's task runner first seen; BAAS last seen gone
         restarts = []      # the daily BAAS was stuck at, each time it was started again
+        still_for = 0      # minutes BAAS had made no progress when it was last found stuck
         gave_up_at = None  # the daily BAAS got stuck at a second time
         start = time.time()
         try:
@@ -211,8 +212,8 @@ class BlueArchive(Game):
                         elif why is None and now - progress_at >= NO_PROGRESS_MINUTES * 60:
                             why = "no_progress"
                 if why:
-                    self.stalled = (STILL_MINUTES + AFTER_TAP_MINUTES if why == "stalled"
-                                    else NO_PROGRESS_MINUTES)
+                    still_for = (STILL_MINUTES + AFTER_TAP_MINUTES if why == "stalled"
+                                 else NO_PROGRESS_MINUTES)
                     at = stuck_at(before, read_events(list(before)), start) if before else None
                     print(f"[{ts()}] BAAS is stuck ({why}) at {at or 'an unknown daily'}")
                     if at is None or at in restarts or len(restarts) >= MAX_RESTARTS:
@@ -271,16 +272,20 @@ class BlueArchive(Game):
             time.sleep(3)
 
         minutes = minutes_since(start)
-        stalled = self.stalled * 60 if reason == "stalled" else 0
+        stalled = still_for * 60 if reason == "stalled" else 0
         worked = (time.time() - ran_since - stalled) / 60 if ran_since else 0
         print(f"[{ts()}] Blue Archive ended: {reason}, BAAS runner seen={saw_baas}, "
               f"worked about {worked:.0f} min, started again for {restarts}")
         dailies = daily_results(before, read_events(list(before)), start) if before else []
         if dailies and reason != "not_started":
             print(f"[{ts()}] BAAS dailies: " + ", ".join(f"{name}={status}" for name, status in dailies))
+            # the notes say where BAAS got stuck; the generic "nothing moved" note would be
+            # wrong when it went round in circles, or when starting it again got it past
             self.judge_dailies(rep, dailies, reason, minutes, restarts, gave_up_at)
             return rep
         # no record to read (event.json not found): how long BAAS worked is the best sign
+        if reason == "stalled":
+            self.stalled = still_for
         if reason in ("stalled", "timeout") and worked >= WORKED_MINUTES:
             rep.add("baas", R.PARTIAL)
             rep.note("note.baas_stopped_after_work", minutes=round(worked))
